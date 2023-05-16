@@ -3,6 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 import Generative_models
+import PCA_LDA
 
 def mcol(v):
     return v.reshape((v.size, 1))
@@ -30,3 +31,54 @@ def load(fname):
 
 if __name__ == '__main__':
     D, L = load('Data/Train.txt')
+
+    (DTR, LTR), (DTE, LTE) = Generative_models.split_db_2to1(D, L)
+    acc = Generative_models.Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Gaussian_classify_log(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Naive_Bayes_Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Tied_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+
+    print("------")
+
+    P = PCA_LDA.PCA(D, 5)
+    D1 = (numpy.dot(P.T, D))
+    (DTR, LTR), (DTE, LTE) = Generative_models.split_db_2to1(D1, L)
+    acc = Generative_models.Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Gaussian_classify_log(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Naive_Bayes_Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Tied_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+
+    print("-----")
+
+    P2 = PCA_LDA.LDA1(D1, L, 5)
+    D2 = (numpy.dot(P2.T, D1))
+    (DTR, LTR), (DTE, LTE) = Generative_models.split_db_2to1(D2, L)
+    acc = Generative_models.Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Gaussian_classify_log(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Naive_Bayes_Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Tied_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Generative_models.Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+
+    print("-----")
+
+    Generative_models.kFold_AllTests(D, L, D.shape[1])
+
+
+

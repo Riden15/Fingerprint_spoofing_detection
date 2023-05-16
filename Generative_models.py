@@ -2,6 +2,7 @@ import numpy
 import scipy
 import matplotlib
 import matplotlib.pyplot as plt
+import PCA_LDA
 
 # mette tutti i dati in una colonna
 def mcol(v):
@@ -80,14 +81,14 @@ def split_db_2to1(D, L, seed=0):
 ## CLASSIFIERS ##
 def Gaussian_classify(DTR,LTR,DTV,LTV):
     hCLs = {}
-    for lab in [0,1,2]:
+    for lab in [0,1]:
         DCLS = DTR[:, LTR==lab]
         hCLs[lab] = mean_cov_estimate(DCLS)
 
     # ClASSIFICATION
-    prior = mcol(numpy.ones(3)/3.0)
+    prior = mcol(numpy.ones(2)/2.0)
     S = []
-    for hyp in [0,1,2]:
+    for hyp in [0,1]:
         mu, C = hCLs[hyp]
         fcond = numpy.exp(logpdf_GAU_ND_fast(DTV, mu, C))
         S.append(vrow(fcond))
@@ -105,14 +106,14 @@ def Gaussian_classify(DTR,LTR,DTV,LTV):
 
 def Gaussian_classify_log(DTR,LTR,DTV,LTV):
     hCls = {}
-    for lab in [0,1,2]:
+    for lab in [0,1]:
         DCLS = DTR[:, LTR==lab]
         hCls[lab] = mean_cov_estimate(DCLS)
 
     # CLASSIFICATION
-    logprior = numpy.log(mcol(numpy.ones(3)/3.0))
+    logprior = numpy.log(mcol(numpy.ones(2)/2.0))
     S = []
-    for hyp in [0,1,2]:
+    for hyp in [0,1]:
         mu, C = hCls[hyp]
         fcond = logpdf_GAU_ND_fast(DTV, mu, C)
         S.append(vrow(fcond))
@@ -130,14 +131,14 @@ def Gaussian_classify_log(DTR,LTR,DTV,LTV):
     
 def Naive_Bayes_Gaussian_classify(DTR,LTR,DTV,LTV):
     hCLs = {}
-    for lab in [0,1,2]:
+    for lab in [0,1]:
         DCLS = DTR[:, LTR==lab]
         hCLs[lab] = mean_covDiagonal_estimate(DCLS)
 
     # ClASSIFICATION
-    prior = mcol(numpy.ones(3)/3.0) 
+    prior = mcol(numpy.ones(2)/2.0)
     S = []
-    for hyp in [0,1,2]:
+    for hyp in [0,1]:
         mu, C = hCLs[hyp] 
         fcond = numpy.exp(logpdf_GAU_ND_fast(DTV, mu, C)) 
         S.append(vrow(fcond)) 
@@ -150,19 +151,18 @@ def Naive_Bayes_Gaussian_classify(DTR,LTR,DTV,LTV):
     prediction = numpy.vstack(prediction)
     numPrediction = prediction.sum(0).sum(0)
     accuracy = numPrediction/LTV.shape[0]
-    # print("accuracy Naive Bayes= " + str(accuracy))
     return accuracy
 
 def Tied_Covariance_Gaussian_classifier(DTR,LTR,DTV,LTV):
     hCLs = {}
-    for lab in [0,1,2]:
+    for lab in [0,1]:
         DCLS = DTR[:, LTR==lab]
         hCLs[lab] = mean_Sw(DTR, LTR, DCLS)
     
     # ClASSIFICATION
-    prior = mcol(numpy.ones(3)/3.0)
+    prior = mcol(numpy.ones(2)/2.0)
     S = []
-    for hyp in [0,1,2]:
+    for hyp in [0,1]:
         mu, C = hCLs[hyp] 
         fcond = numpy.exp(logpdf_GAU_ND_fast(DTV, mu, C)) 
         S.append(vrow(fcond)) 
@@ -175,19 +175,18 @@ def Tied_Covariance_Gaussian_classifier(DTR,LTR,DTV,LTV):
     prediction = numpy.vstack(prediction)
     numPrediction = prediction.sum(0).sum(0)
     accuracy = numPrediction/LTV.shape[0]
-    # print("accuracy Tied Covariance = " + str(accuracy))
     return accuracy
 
 def Tied_Naive_Covariance_Gaussian_classifier(DTR,LTR,DTV,LTV):
     hCLs = {}
-    for lab in [0,1,2]:
+    for lab in [0,1]:
         DCLS = DTR[:, LTR==lab]
         hCLs[lab] = mean_Sw_Diagonal(DTR, LTR, DCLS)
     
     # ClASSIFICATION
-    prior = mcol(numpy.ones(3)/3.0)
+    prior = mcol(numpy.ones(2)/2.0)
     S = []
-    for hyp in [0,1,2]:
+    for hyp in [0,1]:
         mu, C = hCLs[hyp] 
         fcond = numpy.exp(logpdf_GAU_ND_fast(DTV, mu, C)) 
         S.append(vrow(fcond)) 
@@ -200,19 +199,15 @@ def Tied_Naive_Covariance_Gaussian_classifier(DTR,LTR,DTV,LTV):
     prediction = numpy.vstack(prediction)
     numPrediction = prediction.sum(0).sum(0)
     accuracy = numPrediction/LTV.shape[0]
-    # print("accuracy Tied Naive Covariance = " + str(accuracy))
     return accuracy
-
-
 
 def split_data(D,L,k):
     return numpy.array(numpy.hsplit(D,k)) , numpy.array(numpy.array_split(L,k))
 
-def kFold(D, L):
-    # k è 150 (numero di sample), questo è il LOO
-    k = D.shape[1]
+def kFold(D, L, k):
     splits,labels = split_data(D, L, k)
-    mvgAcc = 0
+    gcAcc = 0
+    gclAcc = 0
     nbgcAcc = 0
     tcgcAcc = 0
     tnbcAcc = 0
@@ -233,24 +228,56 @@ def kFold(D, L):
         # acc ritorna 1 se ha azzeccato e 0 se ha sbagliato.
         # mvgAcc in questo caso è 146 --> di 150 sample ha sbagliato a predirne 4
         acc = Gaussian_classify(DTR,LTR,DTE,LTE)
-        mvgAcc+=acc
-        acc = Naive_Bayes_Gaussian_classify(DTR,LTR,DTE,LTE)
-        nbgcAcc+=acc
-        acc = Tied_Covariance_Gaussian_classifier(DTR,LTR,DTE,LTE)
-        tcgcAcc+=acc
+        gcAcc+=acc
+        acc = Gaussian_classify_log(DTR, LTR, DTE, LTE)
+        gclAcc+=acc
+        acc = Naive_Bayes_Gaussian_classify(DTR, LTR, DTE, LTE)
+        nbgcAcc += acc
+        acc = Tied_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+        tcgcAcc += acc
         acc = Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
         tnbcAcc += acc
+    return gcAcc, gclAcc, nbgcAcc, tcgcAcc, tnbcAcc
 
-    print("Error Rate For Multivariate Gaussian:")
-    print((1 - mvgAcc / L.size)*100)
+def kFold_AllTests(D, L, k):
+    # TODO controllare che k sia valido
 
-    print("Error Rate For Naive Bayes Gaussian:")
-    print((1 - nbgcAcc / L.size)*100)
+    P = PCA_LDA.PCA(D, 10)
+    D_PCA = (numpy.dot(P.T, D))
 
-    print("Error Rate For Tied Covariance Gaussian:")
-    print((1 - tcgcAcc / L.size)*100)
+    P_LDA = PCA_LDA.LDA1(D_PCA, L, 5)
+    D_LDA_PCA = (numpy.dot(P_LDA.T, D_PCA))
 
-    print("Error Rate For Tied Naive Bayes:")
-    print((1 - tnbcAcc / L.size)*100)
+    gcAcc, gclAcc, nbgcAcc, tcgcAcc, tnbcAcc = kFold(D, L, k)
+    gcAcc_PCA, gclAcc_PCA, nbgcAcc_PCA, tcgcAcc_PCA, tnbcAcc_PCA = kFold(D_PCA, L, k)
+    gcAcc_PCA_LDA, gclAcc_PCA_LDA, nbgcAcc_PCA_LDA, tcgcAcc_PCA_LDA, tnbcAcc_PCA_LDA = kFold(D_LDA_PCA, L, k)
+
+    print("Error Rate For Gaussian Classifier: " + str((1 - gcAcc / L.size)*100))
+    print("Error Rate For log Gaussian Classifier: " + str((1 - gclAcc / L.size) * 100))
+    print("Error Rate For Naive Bayes Gaussian: " + str((1 - nbgcAcc / L.size) * 100))
+    print("Error Rate For Tied Covariance Gaussian: " + str((1 - tcgcAcc / L.size) * 100))
+    print("Error Rate For Tied Naive Bayes:" + str((1 - tnbcAcc / L.size) * 100))
+
+    print("-------")
+
+    print("Error Rate For Gaussian Classifier with PCA: " + str((1 - gcAcc_PCA / L.size)*100))
+    print("Error Rate For log Gaussian Classifier with PCA: " + str((1 - gclAcc_PCA / L.size) * 100))
+    print("Error Rate For Naive Bayes Gaussian with PCA: " + str((1 - nbgcAcc_PCA / L.size) * 100))
+    print("Error Rate For Tied Covariance Gaussian with PCA: " + str((1 - tcgcAcc_PCA / L.size) * 100))
+    print("Error Rate For Tied Naive Bayes with PCA: " + str((1 - tnbcAcc_PCA / L.size) * 100))
+
+    print("-------")
+
+    print("Error Rate For Gaussian Classifier with PCA and LDA: " + str((1 - gcAcc_PCA_LDA / L.size)*100))
+    print("Error Rate For log Gaussian Classifier with PCA and LDA: " + str((1 - gclAcc_PCA_LDA / L.size) * 100))
+    print("Error Rate For Naive Bayes Gaussian with PCA and LDA: " + str((1 - nbgcAcc_PCA_LDA / L.size) * 100))
+    print("Error Rate For Tied Covariance Gaussian with PCA and LDA: " + str((1 - tcgcAcc_PCA_LDA / L.size) * 100))
+    print("Error Rate For Tied Naive Bayes with PCA and LDA: " + str((1 - tnbcAcc_PCA_LDA / L.size) * 100))
+
+
+
+
+
+
 
 
