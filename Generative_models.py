@@ -79,6 +79,33 @@ def split_db_2to1(D, L, seed=0):
 
 
 ## CLASSIFIERS ##
+
+def Gaussian_classify_prova(DTR,LTR):
+    hCLs = {}
+    for lab in [0,1]:
+        DCLS = DTR[:, LTR==lab]
+        hCLs[lab] = mean_cov_estimate(DCLS)
+    return hCLs
+
+def Test(hCLs, DTV, LTV):
+    prior = mcol(numpy.ones(2) / 2.0)
+    S = []
+    for hyp in [0, 1]:
+        mu, C = hCLs[hyp]
+        fcond = numpy.exp(logpdf_GAU_ND_fast(DTV, mu, C))
+        S.append(vrow(fcond))
+    S = numpy.vstack(S)
+    S = S * prior
+    P = S / vrow(S.sum(0))
+
+    # CALCOLO ACCURACY
+    max = numpy.argmax(P, axis=0)
+    prediction = [max == LTV]
+    prediction = numpy.vstack(prediction)
+    numPrediction = prediction.sum(0).sum(0)
+    accuracy = numPrediction / LTV.shape[0]
+    return accuracy
+
 def Gaussian_classify(DTR,LTR,DTV,LTV):
     hCLs = {}
     for lab in [0,1]:
@@ -201,6 +228,41 @@ def Tied_Naive_Covariance_Gaussian_classifier(DTR,LTR,DTV,LTV):
     accuracy = numPrediction/LTV.shape[0]
     return accuracy
 
+
+def logreg_obj(v, DTR, LTR, l):
+    w = v[0:-1]
+    b = v[-1]
+    first = l / 2 * numpy.power(numpy.linalg.norm(w), 2)
+    second = 1 / DTR.shape[1]
+    add = 0
+    for i in range(DTR.shape[1]):
+        z = 2 * LTR[i] - 1
+        add += numpy.logaddexp(0, -z * (numpy.dot(w.T, DTR[:, i]) + b))
+    return first + second * add
+
+def lr_binary(l, DTR, LTR, DTE, LTE):
+    param = numpy.zeros(DTR.shape[0] + 1)
+
+    logreg_obj(param, DTR, LTR, l)
+    x, d, f = scipy.optimize.fmin_l_bfgs_b(logreg_obj, param, approx_grad=True, args=(DTR, LTR, l))
+
+    w = x[0:-1]  # tutti tranne l'ultimo
+    b = x[-1]  # ultimo valore di x
+    S = numpy.dot(w.T, DTE) + b
+    predicted_label = numpy.zeros(S.size, dtype=int)
+    for i in range(S.size):
+        if S[i] > 0:
+            predicted_label.put(i, 1)
+        else:
+            predicted_label.put(i, 0)
+
+    equal = predicted_label == LTE
+    correct = sum(equal)
+    accuracy = correct / LTE.size
+    #error_rate = 1 - accuracy
+    return accuracy
+
+
 def split_data(D,L,k):
     return numpy.array(numpy.hsplit(D,k)) , numpy.array(numpy.array_split(L,k))
 
@@ -211,6 +273,7 @@ def kFold(D, L, k):
     nbgcAcc = 0
     tcgcAcc = 0
     tnbcAcc = 0
+    lrAcc = 0
 
     for i in range(len(splits)):
         DTE = splits[i]
@@ -225,8 +288,8 @@ def kFold(D, L, k):
             DTR = numpy.hstack(numpy.vstack((splits[:i], splits[i + 1:])))
             LTR = numpy.hstack(numpy.vstack((labels[:i], labels[i + 1:])))
 
-        # acc ritorna 1 se ha azzeccato e 0 se ha sbagliato.
-        # mvgAcc in questo caso è 146 --> di 150 sample ha sbagliato a predirne 4
+        #acc ritorna 1 se ha azzeccato e 0 se ha sbagliato.
+        #mvgAcc in questo caso è 146 --> di 150 sample ha sbagliato a predirne 4
         acc = Gaussian_classify(DTR,LTR,DTE,LTE)
         gcAcc+=acc
         acc = Gaussian_classify_log(DTR, LTR, DTE, LTE)
@@ -237,43 +300,99 @@ def kFold(D, L, k):
         tcgcAcc += acc
         acc = Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
         tnbcAcc += acc
-    return gcAcc, gclAcc, nbgcAcc, tcgcAcc, tnbcAcc
+        #acc = lr_binary(1, DTR, LTR, DTE, LTE)
+        #lrAcc += acc
+        #print(lrAcc)
+    return gcAcc, gclAcc, nbgcAcc, tcgcAcc, tnbcAcc, lrAcc
 
 def kFold_AllTests(D, L, k):
     # TODO controllare che k sia valido
 
-    P = PCA_LDA.PCA(D, 10)
+    P = PCA_LDA.PCA(D, 5)
     D_PCA = (numpy.dot(P.T, D))
 
     P_LDA = PCA_LDA.LDA1(D_PCA, L, 5)
     D_LDA_PCA = (numpy.dot(P_LDA.T, D_PCA))
 
-    gcAcc, gclAcc, nbgcAcc, tcgcAcc, tnbcAcc = kFold(D, L, k)
-    gcAcc_PCA, gclAcc_PCA, nbgcAcc_PCA, tcgcAcc_PCA, tnbcAcc_PCA = kFold(D_PCA, L, k)
-    gcAcc_PCA_LDA, gclAcc_PCA_LDA, nbgcAcc_PCA_LDA, tcgcAcc_PCA_LDA, tnbcAcc_PCA_LDA = kFold(D_LDA_PCA, L, k)
+    gcAcc, gclAcc, nbgcAcc, tcgcAcc, tnbcAcc, lrAcc = kFold(D, L, k)
+    gcAcc_PCA, gclAcc_PCA, nbgcAcc_PCA, tcgcAcc_PCA, tnbcAcc_PCA, lrAcc_PCA = kFold(D_PCA, L, k)
+    gcAcc_PCA_LDA, gclAcc_PCA_LDA, nbgcAcc_PCA_LDA, tcgcAcc_PCA_LDA, tnbcAcc_PCA_LDA, lrAcc_PCA_LDA = kFold(D_LDA_PCA, L, k)
 
-    print("Error Rate For Gaussian Classifier: " + str((1 - gcAcc / L.size)*100))
-    print("Error Rate For log Gaussian Classifier: " + str((1 - gclAcc / L.size) * 100))
-    print("Error Rate For Naive Bayes Gaussian: " + str((1 - nbgcAcc / L.size) * 100))
-    print("Error Rate For Tied Covariance Gaussian: " + str((1 - tcgcAcc / L.size) * 100))
-    print("Error Rate For Tied Naive Bayes:" + str((1 - tnbcAcc / L.size) * 100))
-
-    print("-------")
-
-    print("Error Rate For Gaussian Classifier with PCA: " + str((1 - gcAcc_PCA / L.size)*100))
-    print("Error Rate For log Gaussian Classifier with PCA: " + str((1 - gclAcc_PCA / L.size) * 100))
-    print("Error Rate For Naive Bayes Gaussian with PCA: " + str((1 - nbgcAcc_PCA / L.size) * 100))
-    print("Error Rate For Tied Covariance Gaussian with PCA: " + str((1 - tcgcAcc_PCA / L.size) * 100))
-    print("Error Rate For Tied Naive Bayes with PCA: " + str((1 - tnbcAcc_PCA / L.size) * 100))
+    print("Error Rate For Gaussian Classifier: " + str((1 - gcAcc / L.size)*100) + ", Accuracy = " + str((gcAcc/L.size)*100))
+    print("Error Rate For log Gaussian Classifier: " + str((1 - gclAcc / L.size) * 100) + ", Accuracy = " + str((gclAcc/L.size)*100))
+    print("Error Rate For Naive Bayes Gaussian: " + str((1 - nbgcAcc / L.size) * 100) + ", Accuracy = " + str((nbgcAcc/L.size)*100))
+    print("Error Rate For Tied Covariance Gaussian: " + str((1 - tcgcAcc / L.size) * 100) + ", Accuracy = " + str((tcgcAcc/L.size)*100))
+    print("Error Rate For Tied Naive Bayes:" + str((1 - tnbcAcc / L.size) * 100) + ", Accuracy = " + str((tnbcAcc/L.size)*100))
+    print("Error Rate For Logistic Regression:" + str((1 - lrAcc / L.size) * 100) + ", Accuracy = " + str((lrAcc / L.size) * 100))
 
     print("-------")
 
-    print("Error Rate For Gaussian Classifier with PCA and LDA: " + str((1 - gcAcc_PCA_LDA / L.size)*100))
-    print("Error Rate For log Gaussian Classifier with PCA and LDA: " + str((1 - gclAcc_PCA_LDA / L.size) * 100))
-    print("Error Rate For Naive Bayes Gaussian with PCA and LDA: " + str((1 - nbgcAcc_PCA_LDA / L.size) * 100))
-    print("Error Rate For Tied Covariance Gaussian with PCA and LDA: " + str((1 - tcgcAcc_PCA_LDA / L.size) * 100))
-    print("Error Rate For Tied Naive Bayes with PCA and LDA: " + str((1 - tnbcAcc_PCA_LDA / L.size) * 100))
+    print("Error Rate For Gaussian Classifier with PCA: " + str((1 - gcAcc_PCA / L.size)*100) + ", Accuracy = " + str((gcAcc_PCA/L.size)*100))
+    print("Error Rate For log Gaussian Classifier with PCA: " + str((1 - gclAcc_PCA / L.size) * 100) + ", Accuracy = " + str((gclAcc_PCA/L.size)*100))
+    print("Error Rate For Naive Bayes Gaussian with PCA: " + str((1 - nbgcAcc_PCA / L.size) * 100) + ", Accuracy = " + str((nbgcAcc_PCA/L.size)*100))
+    print("Error Rate For Tied Covariance Gaussian with PCA: " + str((1 - tcgcAcc_PCA / L.size) * 100) + ", Accuracy = " + str((tcgcAcc_PCA/L.size)*100))
+    print("Error Rate For Tied Naive Bayes with PCA: " + str((1 - tnbcAcc_PCA / L.size) * 100) + ", Accuracy = " + str((tnbcAcc_PCA/L.size)*100))
+    print("Error Rate For Logistic Regression with PCA: " + str((1 - lrAcc_PCA / L.size) * 100) + ", Accuracy = " + str((lrAcc_PCA / L.size) * 100))
 
+    print("-------")
+
+    print("Error Rate For Gaussian Classifier with PCA and LDA: " + str((1 - gcAcc_PCA_LDA / L.size)*100) + ", Accuracy = " + str((gcAcc_PCA_LDA/L.size)*100))
+    print("Error Rate For log Gaussian Classifier with PCA and LDA: " + str((1 - gclAcc_PCA_LDA / L.size) * 100) + ", Accuracy = " + str((gclAcc_PCA_LDA/L.size)*100))
+    print("Error Rate For Naive Bayes Gaussian with PCA and LDA: " + str((1 - nbgcAcc_PCA_LDA / L.size) * 100) + ", Accuracy = " + str((nbgcAcc_PCA_LDA/L.size)*100))
+    print("Error Rate For Tied Covariance Gaussian with PCA and LDA: " + str((1 - tcgcAcc_PCA_LDA / L.size) * 100) + ", Accuracy = " + str((tcgcAcc_PCA_LDA/L.size)*100))
+    print("Error Rate For Tied Naive Bayes with PCA and LDA: " + str((1 - tnbcAcc_PCA_LDA / L.size) * 100) + ", Accuracy = " + str((tnbcAcc_PCA_LDA/L.size)*100))
+    print("Error Rate For Logistic Regression with PCA and LDA: " + str((1 - lrAcc_PCA_LDA / L.size) * 100) + ", Accuracy = " + str((lrAcc_PCA_LDA/L.size)*100))
+
+def split_db_2to1_AllTests(D, L):
+    (DTR, LTR), (DTE, LTE) = split_db_2to1(D, L)
+    acc = Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Gaussian_classify_log(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Naive_Bayes_Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Tied_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = lr_binary(1, DTR, LTR, DTE, LTE)
+    print(acc)
+
+    print("------")
+
+    P = PCA_LDA.PCA(D, 5)
+    D1 = (numpy.dot(P.T, D))
+    (DTR, LTR), (DTE, LTE) = split_db_2to1(D1, L)
+    acc = Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Gaussian_classify_log(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Naive_Bayes_Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Tied_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = lr_binary(1, DTR, LTR, DTE, LTE)
+    print(acc)
+
+    print("-----")
+
+    P2 = PCA_LDA.LDA1(D1, L, 5)
+    D2 = (numpy.dot(P2.T, D1))
+    (DTR, LTR), (DTE, LTE) = split_db_2to1(D2, L)
+    acc = Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Gaussian_classify_log(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Naive_Bayes_Gaussian_classify(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Tied_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    print(acc)
+    acc = lr_binary(1, DTR, LTR, DTE, LTE)
+    print(acc)
 
 
 

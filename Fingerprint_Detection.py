@@ -31,54 +31,25 @@ def load(fname):
 
 if __name__ == '__main__':
     D, L = load('Data/Train.txt')
+    Dt, Lt = load('Data/Test.txt')
 
-    (DTR, LTR), (DTE, LTE) = Generative_models.split_db_2to1(D, L)
-    acc = Generative_models.Gaussian_classify(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Gaussian_classify_log(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Naive_Bayes_Gaussian_classify(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Tied_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
+    hyp = Generative_models.Gaussian_classify_prova(D, L)  # usa tutti i dati di train
+    acc = Generative_models.Test(hyp, Dt, Lt)
     print(acc)
 
-    print("------")
+    # sta roba cra 10 modelli, uno con un hyperparameter del PCA diverso per capire quale è il migliore usando l'evaluation test
+    # evaluation test = ultimo 1/3 del train set
+    #TODO provare con la kfold anzichè con lo spit --> con essa si usano tutti i sample per capire l'hyperparameter
+    for i in range(10):
+        P = PCA_LDA.PCA(D, i)
+        D_PCA = (numpy.dot(P.T, D))
+        (DTR, LTR), (DTE, LTE) = Generative_models.split_db_2to1(D_PCA, L)
+        hyp = Generative_models.Gaussian_classify_prova(DTR, LTR)
+        acc = Generative_models.Test(hyp, DTE, LTE)
+        print(acc, i)
 
-    P = PCA_LDA.PCA(D, 5)
-    D1 = (numpy.dot(P.T, D))
-    (DTR, LTR), (DTE, LTE) = Generative_models.split_db_2to1(D1, L)
-    acc = Generative_models.Gaussian_classify(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Gaussian_classify_log(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Naive_Bayes_Gaussian_classify(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Tied_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
-    print(acc)
-
-    print("-----")
-
-    P2 = PCA_LDA.LDA1(D1, L, 5)
-    D2 = (numpy.dot(P2.T, D1))
-    (DTR, LTR), (DTE, LTE) = Generative_models.split_db_2to1(D2, L)
-    acc = Generative_models.Gaussian_classify(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Gaussian_classify_log(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Naive_Bayes_Gaussian_classify(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Tied_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
-    print(acc)
-    acc = Generative_models.Tied_Naive_Covariance_Gaussian_classifier(DTR, LTR, DTE, LTE)
-    print(acc)
-
-    print("-----")
-
-    Generative_models.kFold_AllTests(D, L, D.shape[1])
+    #Generative_models.split_db_2to1_AllTests(D, L)
+    #Generative_models.kFold_AllTests(D, L, D.shape[1])
 
 
 

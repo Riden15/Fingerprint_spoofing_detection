@@ -4,6 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 # mette tutti i dati in una colonna
+
 def mcol(v):
     return v.reshape((v.size, 1))
 
