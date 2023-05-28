@@ -2,6 +2,7 @@ import numpy
 import scipy.linalg
 import matplotlib
 import matplotlib.pyplot as plt
+import Generative_models
 
 # mette tutti i dati in una colonna
 

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 import Generative_models
 import PCA_LDA
+import Tests
 
 def mcol(v):
     return v.reshape((v.size, 1))
@@ -29,27 +30,28 @@ def load(fname):
                 pass            
     return numpy.hstack(DList), numpy.array(labelsList, dtype=numpy.int32)
 
+
 if __name__ == '__main__':
     D, L = load('Data/Train.txt')
     Dt, Lt = load('Data/Test.txt')
 
-    hyp = Generative_models.Gaussian_classify_prova(D, L)  # usa tutti i dati di train
-    acc = Generative_models.Test(hyp, Dt, Lt)
+    print(Tests.split_db_and_try_models(D, L))
+
+    print("---------------------------------------------------------------")
+
+    Tests.Test_split_with_optimal_number_of_PC(D, L)
+
+    print("---------------------------------------------------------------")
+
+    Tests.Test_kFold_with_optimal_number_of_PC(D, L, D.shape[1])
+
+    P = PCA_LDA.PCA(D, 8)
+    D_PCA = (numpy.dot(P.T, D))
+    P = PCA_LDA.PCA(Dt, 8)
+    Dt_PCA = (numpy.dot(P.T, Dt))
+    hyp = Generative_models.Gaussian_classify_prova(D_PCA, L)  # usa tutti i dati di train
+    acc = Generative_models.Test(hyp, Dt_PCA, Lt)
     print(acc)
-
-    # sta roba cra 10 modelli, uno con un hyperparameter del PCA diverso per capire quale è il migliore usando l'evaluation test
-    # evaluation test = ultimo 1/3 del train set
-    #TODO provare con la kfold anzichè con lo spit --> con essa si usano tutti i sample per capire l'hyperparameter
-    for i in range(10):
-        P = PCA_LDA.PCA(D, i)
-        D_PCA = (numpy.dot(P.T, D))
-        (DTR, LTR), (DTE, LTE) = Generative_models.split_db_2to1(D_PCA, L)
-        hyp = Generative_models.Gaussian_classify_prova(DTR, LTR)
-        acc = Generative_models.Test(hyp, DTE, LTE)
-        print(acc, i)
-
-    #Generative_models.split_db_2to1_AllTests(D, L)
-    #Generative_models.kFold_AllTests(D, L, D.shape[1])
 
 
 
