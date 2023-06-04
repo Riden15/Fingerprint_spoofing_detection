@@ -1,8 +1,5 @@
 import numpy
-import scipy.linalg
-import matplotlib
-import matplotlib.pyplot as plt
-import Generative_models
+from Models import Generative_models
 import PCA_LDA
 
 def mcol(v):
@@ -36,7 +33,7 @@ def kFold(D, L, k):
 
         #acc ritorna 1 se ha azzeccato e 0 se ha sbagliato.
         #mvgAcc in questo caso è 146 --> di 150 sample ha sbagliato a predirne 4
-        acc = Generative_models.Gaussian_classify(DTR,LTR,DTE,LTE)
+        acc = Generative_models.Gaussian_classify(DTR, LTR, DTE, LTE)
         accArray[0]+=acc
         acc = Generative_models.Gaussian_classify_log(DTR, LTR, DTE, LTE)
         accArray[1]+=acc

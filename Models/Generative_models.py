@@ -80,33 +80,7 @@ def split_db_2to1(D, L, seed=0):
 
 ## CLASSIFIERS ##
 
-def Gaussian_classify_prova(DTR,LTR):
-    hCLs = {}
-    for lab in [0,1]:
-        DCLS = DTR[:, LTR==lab]
-        hCLs[lab] = mean_cov_estimate(DCLS)
-    return hCLs
-
-def Test(hCLs, DTV, LTV):
-    prior = mcol(numpy.ones(2) / 2.0)
-    S = []
-    for hyp in [0, 1]:
-        mu, C = hCLs[hyp]
-        fcond = numpy.exp(logpdf_GAU_ND_fast(DTV, mu, C))
-        S.append(vrow(fcond))
-    S = numpy.vstack(S)
-    S = S * prior
-    P = S / vrow(S.sum(0))
-
-    # CALCOLO ACCURACY
-    max = numpy.argmax(P, axis=0)
-    prediction = [max == LTV]
-    prediction = numpy.vstack(prediction)
-    numPrediction = prediction.sum(0).sum(0)
-    accuracy = numPrediction / LTV.shape[0]
-    return accuracy
-
-def Gaussian_classify(DTR,LTR,DTV,LTV):
+def MVG(DTR,LTR,DTE):
     hCLs = {}
     for lab in [0,1]:
         DCLS = DTR[:, LTR==lab]
@@ -117,46 +91,15 @@ def Gaussian_classify(DTR,LTR,DTV,LTV):
     S = []
     for hyp in [0,1]:
         mu, C = hCLs[hyp]
-        fcond = numpy.exp(logpdf_GAU_ND_fast(DTV, mu, C))
+        fcond = numpy.exp(logpdf_GAU_ND_fast(DTE, mu, C))
         S.append(vrow(fcond))
+    ll = numpy.vstack(S)
     S = numpy.vstack(S)
     S = S * prior
     P = S / vrow(S.sum(0))
+    return numpy.log(ll[1]/ll[0])
     
-    # CALCOLO ACCURACY
-    max = numpy.argmax(P, axis=0)
-    prediction = [max==LTV]
-    prediction = numpy.vstack(prediction)
-    numPrediction = prediction.sum(0).sum(0)
-    accuracy = numPrediction/LTV.shape[0]
-    return accuracy
-
-def Gaussian_classify_log(DTR,LTR,DTV,LTV):
-    hCls = {}
-    for lab in [0,1]:
-        DCLS = DTR[:, LTR==lab]
-        hCls[lab] = mean_cov_estimate(DCLS)
-
-    # CLASSIFICATION
-    logprior = numpy.log(mcol(numpy.ones(2)/2.0))
-    S = []
-    for hyp in [0,1]:
-        mu, C = hCls[hyp]
-        fcond = logpdf_GAU_ND_fast(DTV, mu, C)
-        S.append(vrow(fcond))
-    S = numpy.vstack(S)
-    S = S + logprior
-    logP = S - vrow(scipy.special.logsumexp(S, 0))
-    P = numpy.exp(logP)
-
-    max = numpy.argmax(P, axis=0)
-    prediction = [max==LTV] 
-    prediction = numpy.vstack(prediction)
-    numPrediction = prediction.sum(0).sum(0)
-    accuracy = numPrediction/LTV.shape[0]
-    return accuracy
-    
-def Naive_Bayes_Gaussian_classify(DTR,LTR,DTV,LTV):
+def Naive_Bayes_Gaussian_classify(DTR,LTR,DTE):
     hCLs = {}
     for lab in [0,1]:
         DCLS = DTR[:, LTR==lab]
@@ -167,20 +110,15 @@ def Naive_Bayes_Gaussian_classify(DTR,LTR,DTV,LTV):
     S = []
     for hyp in [0,1]:
         mu, C = hCLs[hyp] 
-        fcond = numpy.exp(logpdf_GAU_ND_fast(DTV, mu, C)) 
+        fcond = numpy.exp(logpdf_GAU_ND_fast(DTE, mu, C))
         S.append(vrow(fcond)) 
-
+    ll = numpy.vstack(S)
     S = numpy.vstack(S)
     S = S * prior
     P = S / vrow(S.sum(0))
-    max = numpy.argmax(P, axis=0)
-    prediction = [max==LTV]  
-    prediction = numpy.vstack(prediction)
-    numPrediction = prediction.sum(0).sum(0)
-    accuracy = numPrediction/LTV.shape[0]
-    return accuracy
+    return numpy.log(ll[1]/ll[0])
 
-def Tied_Covariance_Gaussian_classifier(DTR,LTR,DTV,LTV):
+def Tied_Covariance_Gaussian_classifier(DTR,LTR,DTE):
     hCLs = {}
     for lab in [0,1]:
         DCLS = DTR[:, LTR==lab]
@@ -191,20 +129,16 @@ def Tied_Covariance_Gaussian_classifier(DTR,LTR,DTV,LTV):
     S = []
     for hyp in [0,1]:
         mu, C = hCLs[hyp] 
-        fcond = numpy.exp(logpdf_GAU_ND_fast(DTV, mu, C)) 
+        fcond = numpy.exp(logpdf_GAU_ND_fast(DTE, mu, C))
         S.append(vrow(fcond)) 
-    
+
+    ll = numpy.vstack(S)
     S = numpy.vstack(S)
     S = S * prior
     P = S / vrow(S.sum(0))
-    max = numpy.argmax(P, axis=0)
-    prediction = [max==LTV]  
-    prediction = numpy.vstack(prediction)
-    numPrediction = prediction.sum(0).sum(0)
-    accuracy = numPrediction/LTV.shape[0]
-    return accuracy
+    return numpy.log(ll[1]/ll[0])
 
-def Tied_Naive_Covariance_Gaussian_classifier(DTR,LTR,DTV,LTV):
+def Tied_Naive_Covariance_Gaussian_classifier(DTR,LTR,DTE):
     hCLs = {}
     for lab in [0,1]:
         DCLS = DTR[:, LTR==lab]
@@ -215,51 +149,15 @@ def Tied_Naive_Covariance_Gaussian_classifier(DTR,LTR,DTV,LTV):
     S = []
     for hyp in [0,1]:
         mu, C = hCLs[hyp] 
-        fcond = numpy.exp(logpdf_GAU_ND_fast(DTV, mu, C)) 
+        fcond = numpy.exp(logpdf_GAU_ND_fast(DTE, mu, C))
         S.append(vrow(fcond)) 
-    
+
+    ll = numpy.vstack(S)
     S = numpy.vstack(S)
     S = S * prior
     P = S / vrow(S.sum(0))
-    max = numpy.argmax(P, axis=0)
-    prediction = [max==LTV]  
-    prediction = numpy.vstack(prediction)
-    numPrediction = prediction.sum(0).sum(0)
-    accuracy = numPrediction/LTV.shape[0]
-    return accuracy
+    return numpy.log(ll[1]/ll[0])
 
 
-def logreg_obj(v, DTR, LTR, l):
-    w = v[0:-1]
-    b = v[-1]
-    first = l / 2 * numpy.power(numpy.linalg.norm(w), 2)
-    second = 1 / DTR.shape[1]
-    add = 0
-    for i in range(DTR.shape[1]):
-        z = 2 * LTR[i] - 1
-        add += numpy.logaddexp(0, -z * (numpy.dot(w.T, DTR[:, i]) + b))
-    return first + second * add
-
-def lr_binary(l, DTR, LTR, DTE, LTE):
-    param = numpy.zeros(DTR.shape[0] + 1)
-
-    logreg_obj(param, DTR, LTR, l)
-    x, d, f = scipy.optimize.fmin_l_bfgs_b(logreg_obj, param, approx_grad=True, args=(DTR, LTR, l))
-
-    w = x[0:-1]  # tutti tranne l'ultimo
-    b = x[-1]  # ultimo valore di x
-    S = numpy.dot(w.T, DTE) + b
-    predicted_label = numpy.zeros(S.size, dtype=int)
-    for i in range(S.size):
-        if S[i] > 0:
-            predicted_label.put(i, 1)
-        else:
-            predicted_label.put(i, 0)
-
-    equal = predicted_label == LTE
-    correct = sum(equal)
-    accuracy = correct / LTE.size
-    #error_rate = 1 - accuracy
-    return accuracy
 
 
