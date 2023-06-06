@@ -29,12 +29,13 @@ def load(fname):
 
 def validation(DTR, LTR):
     print("############    MVG    ##############")
-    validation_MVG(DTR,LTR,155)
+    # validation_MVG(DTR,LTR,155, "MVG, ")
     # con k = 5 i risultati fanno schifo
 
     print("###########      LR      ##############")
-    #L = [0.0001, 0.00001, 1.0, 0.001]
-    #validation_LR(DTR,LTR, L , 'LR ')
+    L = [0.00001]
+    validation_LR(DTR,LTR, L , 'LR, ', 15)
+
 
 if __name__ == '__main__':
     D, L = load('Data/Train.txt')

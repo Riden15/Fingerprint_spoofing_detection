@@ -2,6 +2,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{geometry}
+\usepackage{hyperref}
  \geometry{
  a4paper,
  total={170mm,257mm},
@@ -10,7 +11,7 @@
  }
 
 \title{
-    \leavevmode{\includegraphics[width=1\textwidth]{resources/img/polito_logo_2021_blu}\newline\newline}\\
+    \leavevmode{\includegraphics[width=1\textwidth]{../resources/img/polito_logo_2021_blu}\newline\newline}\\
      Fingerprint spoofing detection \\
 
 }
@@ -34,8 +35,8 @@
     Naive Gaussian      & 0.47      & 0.815     & 0.146    \\
     Tied Gaussian       & 0.484     & 0.722     & 0.185    \\
     Naive Tied Gaussian & 0.564     & 0.794     & 0.203    \\ \hline
-    \end{tabular}
-    \end{table}
+    \end{tabular}\label{tab:table}
+\end{table}
 
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
@@ -49,8 +50,8 @@
     Naive Gaussian      & 0.446    & 0.912    & 0.122    & 0.402      & 0.732      & 0.13      \\
     Tied Gaussian       & 0.501    & 0.685    & 0.192    & 0.501      & 0.685      & 0.192     \\
     Naive Tied Gaussian & 0.681    & 0.905    & 0.218    & 0.501      & 0.685      & 0.192     \\ \bottomrule
-    \end{tabular}
-    \end{table}
+    \end{tabular}\label{tab:table2}
+\end{table}
 
     \begin{table}[]
         \centering
@@ -62,7 +63,7 @@
         Naive Gaussian      & 0.43     & 0.869    & 0.118    & 0.405      & 0.669      & 0.145     \\
         Tied Gaussian       & 0.484    & 0.711    & 0.183    & 0.484      & 0.711      & 0.183     \\
         Naive Tied Gaussian & 0.671    & 0.912    & 0.213    & 0.484      & 0.711      & 0.183     \\ \hline
-        \end{tabular}
-        \end{table}
+        \end{tabular}\label{tab:table3}
+    \end{table}
 
 \end{document}

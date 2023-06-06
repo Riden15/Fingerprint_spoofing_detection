@@ -3,11 +3,12 @@ import numpy as np
 
 sys.path.append('../')
 from Models.Generative_models import *
-from Validators import *
+from Utility_functions.plot_functions import *
+from Utility_functions.Validators import *
 from prettytable import PrettyTable
 from PCA_LDA import *
 
-def validation_MVG(DTR, LTR, k):
+def validation_MVG(DTR, LTR, k, appendToTitle):
     FoldedData_List = np.split(DTR, k, axis=1) #lista di fold
     FoldedLabel_List = np.split(LTR, k)
 
@@ -109,39 +110,39 @@ def validation_MVG(DTR, LTR, k):
                                                                                                          PCA_LDA_m8_mvg_nt)
 
     # π = 0.5 (our application prior), RAW DATA
-    evaluation("minDCF: π=0.5", 0.5, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.5", 0.5, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
     # π = 0.1
-    evaluation("minDCF: π=0.1", 0.1, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.1", 0.1, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
     # π = 0.9
-    evaluation("minDCF: π=0.9", 0.9, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.9", 0.9, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
 
 
     # π = 0.5 (our application prior), PCA m=5
-    evaluation("minDCF: π=0.5, PCA m=5", 0.5, PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.5, PCA m=5", 0.5, PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt, MVG_labels)
     # π = 0.1, PCA m=5
-    evaluation("minDCF: π=0.1, PCA m=5", 0.1, PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.1, PCA m=5", 0.1, PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt, MVG_labels)
     # π = 0.9 , PCA m=5
-    evaluation("minDCF: π=0.9, PCA m=5", 0.9, PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.9, PCA m=5", 0.9, PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt, MVG_labels)
     # π = 0.5 (our application prior), PCA, LDA m=5
-    evaluation("minDCF: π=0.5, PCA, LDA m=5", 0.5, PCA_LDA_m5_mvg, PCA_LDA_m5_mvg_naive, PCA_LDA_m5_mvg_tied, PCA_LDA_m5_mvg_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.5, PCA, LDA m=5", 0.5, PCA_LDA_m5_mvg, PCA_LDA_m5_mvg_naive, PCA_LDA_m5_mvg_tied, PCA_LDA_m5_mvg_nt, MVG_labels)
     # π = 0.1, PCA, LDA m=5
-    evaluation("minDCF: π=0.1, PCA, LDA m=5", 0.1, PCA_LDA_m5_mvg, PCA_LDA_m5_mvg_naive, PCA_LDA_m5_mvg_tied, PCA_LDA_m5_mvg_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.1, PCA, LDA m=5", 0.1, PCA_LDA_m5_mvg, PCA_LDA_m5_mvg_naive, PCA_LDA_m5_mvg_tied, PCA_LDA_m5_mvg_nt, MVG_labels)
     # π = 0.9 , PCA, LDA  m=5
-    evaluation("minDCF: π=0.9, PCA, LDA m=5", 0.9, PCA_LDA_m5_mvg, PCA_LDA_m5_mvg_naive, PCA_LDA_m5_mvg_tied, PCA_LDA_m5_mvg_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.9, PCA, LDA m=5", 0.9, PCA_LDA_m5_mvg, PCA_LDA_m5_mvg_naive, PCA_LDA_m5_mvg_tied, PCA_LDA_m5_mvg_nt, MVG_labels)
 
 
     # π = 0.5 (our application prior), PCA m=8
-    evaluation("minDCF: π=0.5, PCA m=8", 0.5, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.5, PCA m=8", 0.5, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
     # π = 0.1 , PCA m=8
-    evaluation("minDCF: π=0.1, PCA m=8", 0.1, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.1, PCA m=8", 0.1, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
     # π = 0.9 , PCA m=8
-    evaluation("minDCF: π=0.9, PCA m=8", 0.9, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.9, PCA m=8", 0.9, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
     # π = 0.5 (our application prior), PCA, LDA m=8
-    evaluation("minDCF: π=0.5, PCA, LDA m=8", 0.5, PCA_LDA_m8_mvg, PCA_LDA_m8_mvg_naive, PCA_LDA_m8_mvg_tied, PCA_LDA_m8_mvg_nt,MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.5, PCA, LDA m=8", 0.5, PCA_LDA_m8_mvg, PCA_LDA_m8_mvg_naive, PCA_LDA_m8_mvg_tied, PCA_LDA_m8_mvg_nt,MVG_labels)
     # π = 0.1, PCA, LDA m=8
-    evaluation("minDCF: π=0.1, PCA, LDA m=8", 0.1, PCA_LDA_m8_mvg, PCA_LDA_m8_mvg_naive, PCA_LDA_m8_mvg_tied, PCA_LDA_m8_mvg_nt,MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.1, PCA, LDA m=8", 0.1, PCA_LDA_m8_mvg, PCA_LDA_m8_mvg_naive, PCA_LDA_m8_mvg_tied, PCA_LDA_m8_mvg_nt,MVG_labels)
     # π = 0.9 , PCA, LDA  m=8
-    evaluation("minDCF: π=0.9, PCA, LDA m=8", 0.9, PCA_LDA_m8_mvg, PCA_LDA_m8_mvg_naive, PCA_LDA_m8_mvg_tied, PCA_LDA_m8_mvg_nt,MVG_labels)
+    evaluation(appendToTitle + "minDCF: π=0.9, PCA, LDA m=8", 0.9, PCA_LDA_m8_mvg, PCA_LDA_m8_mvg_naive, PCA_LDA_m8_mvg_tied, PCA_LDA_m8_mvg_nt,MVG_labels)
 
 
 # Dte è il fold selezionato, Dtr è tutto il resto
@@ -174,10 +175,6 @@ def evaluation(title, pi, MVG_res, MVG_naive, MVG_t, MVG_nt, MVG_labels):
     llrst_tot = compute_dcf_min(pi, C, MVG_t, MVG_labels)
     llrsnt_tot = compute_dcf_min(pi, C, MVG_nt, MVG_labels)
 
-    #llrs_tot = compute_min_DCF(MVG_res, MVG_labels, pi, 1, 10)
-    #llrsn_tot = compute_min_DCF(MVG_naive, MVG_labels, pi, 1, 10)
-    #llrst_tot = compute_min_DCF(MVG_t, MVG_labels, pi, 1, 10)
-    #llrsnt_tot = compute_min_DCF(MVG_nt, MVG_labels, pi, 1, 10)
 
     t = PrettyTable(["Type", "minDCF"])
     t.title = title
