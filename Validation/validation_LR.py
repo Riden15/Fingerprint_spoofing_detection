@@ -2,9 +2,11 @@
 
 import numpy as np
 
-from Validators import *
+from Utility_functions.Validators import *
+from Utility_functions.plot_functions import *
 from Models.Logistic_Regression import *
 from prettytable import PrettyTable
+from PCA_LDA import *
 
 def evaluation(scores, LR_labels, appendToTitle, l, C, pi):
     scores_append = np.hstack(scores)
@@ -12,40 +14,21 @@ def evaluation(scores, LR_labels, appendToTitle, l, C, pi):
 
     #Roc_curve(scores_append, LR_labels, appendToTitle + 'LR, lambda=' + str(l))
 
-    t = PrettyTable(["Type", "minDCF"])
-    t.title = appendToTitle + "minDCF: π=0.5"
-    t.add_row(['LR, lambda=' + str(l), round(scores_tot, 3)])
-    print(t)
-
-    ###############################
-
-    # π = 0.1
-    scores_tot = compute_dcf_min(0.1,C,scores_append, LR_labels)
-
-    t = PrettyTable(["Type", "minDCF"])
-    t.title = appendToTitle + "minDCF: π=0.1"
-    t.add_row(['LR, lambda=' + str(l), round(scores_tot, 3)])
-
-    print(t)
-
-    ###############################
-
-    # π = 0.9
-    scores_tot = compute_dcf_min(0.9,C,scores_append, LR_labels)
-
-    t = PrettyTable(["Type", "minDCF"])
-    t.title = appendToTitle + "minDCF: π=0.9"
-    t.add_row(['LR, lambda=' + str(l), round(scores_tot, 3)])
-
+    t = PrettyTable(["lamda", "minDCF"])
+    t.title = appendToTitle + "π=" + str(pi)
+    t.add_row([str(l), round(scores_tot, 3)])
     print(t)
 
 
-def kfold_LR(DTR, LTR, l, appendToTitle, C):
-    k = 5
-    Dtr = numpy.split(DTR, k, axis=1)
-    Ltr = numpy.split(LTR, k)
+def kFold_LR(DTR, LTR, l, appendToTitle, C, k):
+    FoldedData_List = numpy.split(DTR, k, axis=1)
+    FoldedLabel_List = numpy.split(LTR, k)
 
     scores_append = []
+    PCA_5_scores = []
+    PCA_LDA_5_scores = []
+    PCA_8_scores = []
+    PCA_LDA_8_scores = []
 
     LR_labels = []
 
@@ -67,8 +50,9 @@ def kfold_LR(DTR, LTR, l, appendToTitle, C):
         Dtr = np.hstack(Dtr)
         Ltr = np.hstack(Ltr)
 
-        Dte = Dtr[i]
-        Lte = Ltr[i]
+
+        Dte = FoldedData_List[i]
+        Lte = FoldedLabel_List[i]
 
         # Calcolo scores con RAW data
         scores_append.append(lr_binary(Dtr, Ltr, Dte, l))
@@ -106,6 +90,33 @@ def kfold_LR(DTR, LTR, l, appendToTitle, C):
     evaluation(scores_append, LR_labels, appendToTitle + "RAW data ", l, C, 0.5)
     '''RAW data pi=0.9'''
     evaluation(scores_append, LR_labels, appendToTitle + "RAW data ", l, C, 0.9)
+
+    '''PCA with m = 5, pi=0.1'''
+    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, C, 0.1)
+    '''PCA with m  = 5, pi=0.5'''
+    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, C, 0.5)
+    '''PCA with m  = 5, pi=0.9'''
+    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, C, 0.9)
+    '''PCA and LDA with m = 5, pi=0.1'''
+    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, C, 0.1)
+    '''PCA and LDA with m  = 5, pi=0.5'''
+    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, C, 0.5)
+    '''PCA and LDA with m  = 5, pi=0.9'''
+    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, C, 0.9)
+
+    '''PCA with m  = 8, pi=0.1'''
+    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, C, 0.1)
+    '''PCA with m  = 8 pi=0.5'''
+    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, C, 0.5)
+    '''PCA with m  = 8 pi=0.9'''
+    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, C, 0.9)
+    '''PCA and LDA with m  = 8, pi=0.1'''
+    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, C, 0.1)
+    '''PCA and LDA with m  = 8 pi=0.5'''
+    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, C, 0.5)
+    '''PCA and LDA with m  = 8 pi=0.9'''
+    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, C, 0.9)
+
 
 
 def kFold_LR_calibration(DTR, LTR, l, k):
