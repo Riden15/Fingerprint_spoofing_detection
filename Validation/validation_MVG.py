@@ -72,7 +72,7 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
         MVG_res, MVG_naive, MVG_tied, MVG_nt = compute_MVG_score(Dtr, Ltr, Dte, MVG_res, MVG_naive, MVG_tied, MVG_nt)
 
         ''' SCORE PCA WITH 5 DIMENSIONS '''
-        P = PCA(Dtr, m=5)
+        s, P = PCA(Dtr, m=5)
         DTR_PCA = numpy.dot(P.T, Dtr)
         DTE_PCA = numpy.dot(P.T, Dte)
         PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt = compute_MVG_score(DTR_PCA, Ltr, DTE_PCA,
@@ -91,7 +91,7 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
                                                                                                          PCA_LDA_m5_mvg_nt)
 
         ''' SCORE PCA WITH 8 DIMENSIONS '''
-        P = PCA(Dtr, m=8)
+        s, P = PCA(Dtr, m=8)
         DTR_PCA = numpy.dot(P.T, Dtr)
         DTE_PCA = numpy.dot(P.T, Dte)
         PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt = compute_MVG_score(DTR_PCA, Ltr, DTE_PCA,

@@ -28,13 +28,16 @@ def load(fname):
     return numpy.hstack(DList), numpy.array(labelsList, dtype=numpy.int32)
 
 def validation(DTR, LTR):
+    egnValues, egnVector = PCA(DTR, 10)
+    plot_explained_variance(egnValues)
+
     print("############    MVG    ##############")
     # validation_MVG(DTR,LTR,155, "MVG, ")
     # con k = 5 i risultati fanno schifo
 
     print("###########      LR      ##############")
     L = [0.00001]
-    validation_LR(DTR,LTR, L , 'LR, ', 15)
+    #validation_LR(DTR,LTR, L , 'LR, ', 15)
 
 
 if __name__ == '__main__':
@@ -42,25 +45,5 @@ if __name__ == '__main__':
     Dt, Lt = load('Data/Test.txt')
     validation(D, L)
 
-
-'''
-    print(Tests.split_db_and_try_models(D, L))
-
-    print("---------------------------------------------------------------")
-
-    Tests.Test_split_with_optimal_number_of_PC(D, L)
-
-    print("---------------------------------------------------------------")
-
-    Tests.Test_kFold_with_optimal_number_of_PC(D, L, D.shape[1])
-
-    P = PCA_LDA.PCA(D, 5)
-    D_PCA = (numpy.dot(P.T, D))
-    P = PCA_LDA.PCA(Dt, 5)
-    Dt_PCA = (numpy.dot(P.T, Dt))
-    hyp = Generative_models.Gaussian_classify_prova(D_PCA, L)  # usa tutti i dati di train
-    acc = Generative_models.Test(hyp, Dt_PCA, Lt)
-    print(acc)
-'''
 
 

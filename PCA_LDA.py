@@ -13,7 +13,7 @@ def PCA(D, m):
     s,U = numpy.linalg.eigh(C)
     U = U[:, ::-1]
     P = U[:, 0:m]
-    return P
+    return s, P
 
 def SbSw(D, L):
     SB = 0  # between-class variability, variabilità tra le classi

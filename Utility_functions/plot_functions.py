@@ -67,6 +67,20 @@ def plot_DCF(x, y, xlabel, title, base=10):
     plt.legend([ "min DCF prior=0.5", "min DCF prior=0.9", "min DCF prior=0.1"])
     plt.xlabel(xlabel)
     plt.ylabel("min DCF")
-    plt.savefig('images/DCF_' + title+ '.svg')
+    plt.savefig('images/DCF_' + title+ '.png')
     plt.show()
     return
+
+def plot_explained_variance(egnValues):
+    total_egnValues = sum(egnValues)
+    var_exp = [(i / total_egnValues) for i in egnValues]
+
+    cum_sum_exp = numpy.cumsum(var_exp)
+    x = numpy.linspace(0, 9, 10)
+    plt.plot(x, cum_sum_exp, label='Cumulative explained variance')
+    plt.xticks(x, numpy.arange(x.min(), x.max(), 1))
+    plt.yticks(cum_sum_exp, numpy.arange(cum_sum_exp.min(), cum_sum_exp.max(), 0.1))
+    plt.ylabel('Explained variance ratio')
+    plt.xlabel('Principal component index')
+    plt.grid()
+    plt.show()
