@@ -3,6 +3,9 @@ import numpy
 import matplotlib
 import matplotlib.pyplot as plt
 from Utility_functions.Validators import *
+import seaborn as sns
+import scipy.linalg
+from Utility_functions.General_functions import *
 
 def Roc_curve(C, predictions, labelsEval):
     CostMatrix = compute_CostMatrix(predictions, C)
@@ -31,21 +34,17 @@ def Roc_curve(C, predictions, labelsEval):
     plt.ylabel('TPR')
     plt.show()
 
-def Bayes_error_plot(pi,scores,labels):
-    #pi = 1.0 / (1.0 + numpy.exp(-pi))
-    C = numpy.array([[0, 1], [10, 0]])
-    mindcf = compute_dcf_min(pi, C, scores, labels)
-    return mindcf
 
 # serve per plottare, vedere le differenze tra il DCF
-def Bayes_error_plot2(C, predictions, labelsEval, confuse_matrix):
+def Bayes_error_plot2(predictions, labelsEval, confuse_matrix):
+    C = numpy.array([[0, 1], [1, 0]])
     effPriorLogOdds = numpy.linspace(-3, 3, 21)
     dcf_array = [0] * effPriorLogOdds.size
     mindcf_array = [0] * effPriorLogOdds.size
     for i in range(effPriorLogOdds.size):
         effective_prior = 1 / (1 + numpy.exp(-effPriorLogOdds[i]))
         dcf_array[i] = compute_bayes_risk_DCF_Binary(effective_prior, C, confuse_matrix)
-        mindcf_array[i] = compute_dcf_min(effective_prior, C, predictions, labelsEval)
+        mindcf_array[i] = compute_dcf_min(effective_prior, predictions, labelsEval)
 
     plt.figure()
     plt.plot(effPriorLogOdds, dcf_array, label='DCF', color='r')
@@ -73,14 +72,16 @@ def plot_DCF(x, y, xlabel, title, base=10):
 
 def plot_explained_variance(egnValues):
     total_egnValues = sum(egnValues)
-    var_exp = [(i / total_egnValues) for i in egnValues]
+    var_exp = [(i / total_egnValues) for i in sorted(egnValues, reverse=True)]
 
     cum_sum_exp = numpy.cumsum(var_exp)
-    x = numpy.linspace(0, 9, 10)
-    plt.plot(x, cum_sum_exp, label='Cumulative explained variance')
-    plt.xticks(x, numpy.arange(x.min(), x.max(), 1))
-    plt.yticks(cum_sum_exp, numpy.arange(cum_sum_exp.min(), cum_sum_exp.max(), 0.1))
+    # todo migliorare il grafico
+    plt.plot(range(0, len(cum_sum_exp)), cum_sum_exp, label='Cumulative explained variance')
     plt.ylabel('Explained variance ratio')
     plt.xlabel('Principal component index')
     plt.grid()
+    plt.savefig('images/PCA_explainedVariance.png')
     plt.show()
+
+
+

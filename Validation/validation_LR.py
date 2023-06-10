@@ -3,14 +3,14 @@
 import numpy as np
 
 from Utility_functions.Validators import *
-from Utility_functions.plot_functions import *
+from Utility_functions.plot_validators import *
 from Models.Logistic_Regression import *
 from prettytable import PrettyTable
 from PCA_LDA import *
 
-def evaluation(scores, LR_labels, appendToTitle, l, C, pi):
+def evaluation(scores, LR_labels, appendToTitle, l, pi):
     scores_append = np.hstack(scores)
-    scores_tot = compute_dcf_min(pi,C,scores_append, LR_labels)
+    scores_tot = compute_dcf_min_effPrior(pi, scores_append, LR_labels)
 
     #Roc_curve(scores_append, LR_labels, appendToTitle + 'LR, lambda=' + str(l))
 
@@ -20,7 +20,7 @@ def evaluation(scores, LR_labels, appendToTitle, l, C, pi):
     print(t)
 
 
-def kFold_LR(DTR, LTR, l, appendToTitle, C, k):
+def kFold_LR(DTR, LTR, l, appendToTitle, k):
     FoldedData_List = numpy.split(DTR, k, axis=1)
     FoldedLabel_List = numpy.split(LTR, k)
 
@@ -85,37 +85,37 @@ def kFold_LR(DTR, LTR, l, appendToTitle, C, k):
         LR_labels = np.hstack(LR_labels)
 
     '''RAW data pi=0.1'''
-    evaluation(scores_append, LR_labels, appendToTitle + "RAW data ", l,C, 0.1)
+    evaluation(scores_append, LR_labels, appendToTitle + "RAW data ", l, 0.1)
     '''RAW data pi=0.5'''
-    evaluation(scores_append, LR_labels, appendToTitle + "RAW data ", l, C, 0.5)
+    evaluation(scores_append, LR_labels, appendToTitle + "RAW data ", l, 0.5)
     '''RAW data pi=0.9'''
-    evaluation(scores_append, LR_labels, appendToTitle + "RAW data ", l, C, 0.9)
+    evaluation(scores_append, LR_labels, appendToTitle + "RAW data ", l, 0.9)
 
     '''PCA with m = 5, pi=0.1'''
-    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, C, 0.1)
+    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, 0.1)
     '''PCA with m  = 5, pi=0.5'''
-    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, C, 0.5)
+    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, 0.5)
     '''PCA with m  = 5, pi=0.9'''
-    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, C, 0.9)
+    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, 0.9)
     '''PCA and LDA with m = 5, pi=0.1'''
-    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, C, 0.1)
+    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, 0.1)
     '''PCA and LDA with m  = 5, pi=0.5'''
-    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, C, 0.5)
+    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, 0.5)
     '''PCA and LDA with m  = 5, pi=0.9'''
-    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, C, 0.9)
+    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, 0.9)
 
     '''PCA with m  = 8, pi=0.1'''
-    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, C, 0.1)
+    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, 0.1)
     '''PCA with m  = 8 pi=0.5'''
-    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, C, 0.5)
+    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, 0.5)
     '''PCA with m  = 8 pi=0.9'''
-    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, C, 0.9)
+    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, 0.9)
     '''PCA and LDA with m  = 8, pi=0.1'''
-    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, C, 0.1)
+    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, 0.1)
     '''PCA and LDA with m  = 8 pi=0.5'''
-    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, C, 0.5)
+    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, 0.5)
     '''PCA and LDA with m  = 8 pi=0.9'''
-    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, C, 0.9)
+    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, 0.9)
 
 
 
@@ -157,9 +157,8 @@ def kFold_LR_calibration(DTR, LTR, l, k):
 
 
 def validation_LR(DTR, LTR, L, appendToTitle, k):
-    C = np.array([[0, 1], [10, 0]])  # costi Cfp = 10, Cfn = 1
     for l in L:
-        kFold_LR(DTR, LTR, l, appendToTitle, C, k)
+        kFold_LR(DTR, LTR, l, appendToTitle, k)
 
 
 '''

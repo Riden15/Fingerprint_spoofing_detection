@@ -3,14 +3,8 @@ import scipy
 import matplotlib
 import matplotlib.pyplot as plt
 import PCA_LDA
+from Utility_functions.General_functions import *
 
-# mette tutti i dati in una colonna
-def mcol(v):
-    return v.reshape((v.size, 1))
-
-# mette tutti i dati in una riga
-def vrow(v):
-    return v.reshape((1, v.size))
 
 #calcolo log likelihood
 def logpdf_GAU_ND_fast(X, mu, C):

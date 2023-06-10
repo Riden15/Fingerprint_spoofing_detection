@@ -1,11 +1,9 @@
 import numpy
 import scipy.linalg
-
+from Utility_functions.General_functions import *
 
 # mette tutti i dati in una colonna
 
-def mcol(v):
-    return v.reshape((v.size, 1))
 
 def PCA(D, m):
     mu = mcol(D.mean(1))

@@ -16,6 +16,9 @@ def confusion_matrix_binary(pred_label, labelsEval):
     C[1, 1] = ((pred_label == 1) * (labelsEval == 1)).sum()
     return C
 
+def compute_effPrior(pi, C):
+    return (pi * C[0, 1]) / ((pi * C[0, 1]) + ((1 - pi) * C[1, 0]))
+
 def compute_CostMatrix(Predictions, C):
     CostMatrix = numpy.zeros((Predictions.shape[0], Predictions.shape[1]))
     for i in range(Predictions.shape[1]):
@@ -61,10 +64,10 @@ def compute_optimal_Bayes_decision_Binary_withT(piT, C, predictions, labelsEval)
 
 
 def compute_bayes_risk_DCFu_Binary(piT, C, confuse_matrix):
-    FNR = confuse_matrix[0][1] / (confuse_matrix[0][1] + confuse_matrix[1][1])  # false negative rate
+    FNR = confuse_matrix[0,1] / (confuse_matrix[0,1] + confuse_matrix[1,1])  # false negative rate
     # FNR è la prima riga della colonna di destra (quelli classificati come
     # 0 ma appartenenti alla classe 1)diviso la somma dell'intera colonna
-    FPR = confuse_matrix[1][0] / (confuse_matrix[1][0] + confuse_matrix[0][0])  # false positive rate
+    FPR = confuse_matrix[1,0] / (confuse_matrix[1,0] + confuse_matrix[0,0])  # false positive rate
     # FPR è la stessa cosa ma dell'altra colonna
 
     # C[0,1] = Costo dei falsi negativi
@@ -78,12 +81,19 @@ def compute_bayes_risk_DCF_Binary(piT, C, confuse_matrix):
     dfc = dfcu / min  # dfc è dfcu diviso il minimo tra piT*Cfn e (1-piT)*Cfp
     return dfc
 
-def compute_dcf_min(piT, C, llr, labelsEval):
+def compute_dcf_min_effPrior(pi, scores, labels):
+    C = numpy.array([[0, 1], [10, 0]])
+    effPi = compute_effPrior(pi, C)
+    mindcf = compute_dcf_min(effPi, scores, labels)
+    return mindcf
+
+def compute_dcf_min(effPi, llr, labelsEval):
+    C = numpy.array([[0, 1], [1, 0]])
     thresholdList = numpy.array(llr)
     thresholdList.sort()
     dcfList = []
     for threshold in thresholdList:
         pred_label = numpy.int32(llr > threshold)
         conf_matrix = confusion_matrix_binary(pred_label, labelsEval)
-        dcfList.append(compute_bayes_risk_DCF_Binary(piT, C, conf_matrix))
+        dcfList.append(compute_bayes_risk_DCF_Binary(effPi, C, conf_matrix))
     return numpy.array(dcfList).min()

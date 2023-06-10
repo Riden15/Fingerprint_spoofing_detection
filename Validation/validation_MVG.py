@@ -3,7 +3,7 @@ import numpy as np
 
 sys.path.append('../')
 from Models.Generative_models import *
-from Utility_functions.plot_functions import *
+from Utility_functions.plot_validators import *
 from Utility_functions.Validators import *
 from prettytable import PrettyTable
 from PCA_LDA import *
@@ -79,6 +79,8 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
                                                                                          PCA_m5_mvg, PCA_m5_mvg_naive,
                                                                                          PCA_m5_mvg_tied, PCA_m5_mvg_nt)
 
+
+
         ''' SCORE PCA_LDA WITH 5 DIMENSIONS'''
         P = PCA_LDA.LDA1(DTR_PCA, Ltr, 5)
         DTR_PCA_LDA = numpy.dot(P.T, DTR_PCA)
@@ -89,6 +91,7 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
                                                                                                          PCA_LDA_m5_mvg_naive,
                                                                                                          PCA_LDA_m5_mvg_tied,
                                                                                                          PCA_LDA_m5_mvg_nt)
+
 
         ''' SCORE PCA WITH 8 DIMENSIONS '''
         s, P = PCA(Dtr, m=8)
@@ -162,26 +165,24 @@ def compute_MVG_score(Dtr, Ltr, Dte, MVG_res, MVG_naive, MVG_t, MVG_nt):
     return MVG_res, MVG_naive, MVG_t, MVG_nt
 
 
-def evaluation(title, pi, MVG_res, MVG_naive, MVG_t, MVG_nt, MVG_labels):
+def evaluation(title, pi, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels):
     MVG_res = np.hstack(MVG_res)
     MVG_naive = np.hstack(MVG_naive)
-    MVG_t = np.hstack(MVG_t)
+    MVG_tied = np.hstack(MVG_tied)
     MVG_nt = np.hstack(MVG_nt)
 
-    C = np.array([[0, 1], [10, 0]])  # costi Cfp = 10, Cfn = 1
-
-    llrs_tot = compute_dcf_min(pi, C, MVG_res, MVG_labels)
-    llrsn_tot = compute_dcf_min(pi, C, MVG_naive, MVG_labels)
-    llrst_tot = compute_dcf_min(pi, C, MVG_t, MVG_labels)
-    llrsnt_tot = compute_dcf_min(pi, C, MVG_nt, MVG_labels)
+    llrs_tot = compute_dcf_min_effPrior(pi, MVG_res, MVG_labels)
+    llrs_naive_tot = compute_dcf_min_effPrior(pi, MVG_naive, MVG_labels)
+    llrs_tied_tot = compute_dcf_min_effPrior(pi, MVG_tied, MVG_labels)
+    llrs_nt_tot = compute_dcf_min_effPrior(pi, MVG_nt, MVG_labels)
 
 
     t = PrettyTable(["Type", "minDCF"])
     t.title = title
     t.add_row(["MVG", round(llrs_tot, 3)])
-    t.add_row(["MVG naive", round(llrsn_tot, 3)])
-    t.add_row(["MVG tied", round(llrst_tot, 3)])
-    t.add_row(["MVG naive + tied", round(llrsnt_tot, 3)])
+    t.add_row(["MVG naive", round(llrs_naive_tot, 3)])
+    t.add_row(["MVG tied", round(llrs_tied_tot, 3)])
+    t.add_row(["MVG naive + tied", round(llrs_nt_tot, 3)])
     print(t)
 
     # plot_ROC(MVG_res, MVG_labels, appendToTitle + 'MVG')
