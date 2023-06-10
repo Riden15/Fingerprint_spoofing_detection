@@ -37,7 +37,7 @@ def plot_correlations(DTR, title, cmap="Greys"):
     sns.set()
     heatmap = sns.heatmap(numpy.abs(corr), linewidth=0.2, cmap=cmap, square=True, cbar=False)
     fig = heatmap.get_figure()
-    fig.savefig("./images/" + title + ".svg")
+    fig.savefig("./images/" + title + ".png")
 
 #todo fare un po di refactor a ste funzioni
 def plot_features_histograms(DTR, LTR, _title):
@@ -55,7 +55,7 @@ def plot_features_histograms(DTR, LTR, _title):
         plt.hist(y, bins=60, density=True, alpha=0.4, linewidth=1.0, color='blue', edgecolor='black',
                  label=labels[1])
         plt.legend()
-        plt.savefig('./images/hist_' + title + '.svg')
+        plt.savefig('./images/hist_' + title + '.png')
         plt.show()
 
 
