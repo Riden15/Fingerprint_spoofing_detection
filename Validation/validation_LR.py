@@ -25,9 +25,9 @@ def kFold_LR(DTR, LTR, l, appendToTitle, k):
     FoldedLabel_List = numpy.split(LTR, k)
 
     scores_append = []
-    PCA_5_scores = []
+    PCA_m9_scores = []
     PCA_LDA_5_scores = []
-    PCA_8_scores = []
+    PCA_m8_scores = []
     PCA_LDA_8_scores = []
 
     LR_labels = []
@@ -57,29 +57,17 @@ def kFold_LR(DTR, LTR, l, appendToTitle, k):
         # Calcolo scores con RAW data
         scores_append.append(lr_binary(Dtr, Ltr, Dte, l))
 
-        ''' calcolo scores con PCA with m = 5'''
-        s, P = PCA(Dtr, 5)
+        ''' calcolo scores con PCA with m = 9'''
+        s, P = PCA(Dtr, 9)
         DTR_PCA = numpy.dot(P.T,Dtr)
         DTE_PCA = numpy.dot(P.T,Dte)
-        PCA_5_scores.append(lr_binary(DTR_PCA,Ltr,DTE_PCA,l))
-
-        ''' calcolo scores PCA and LDA with m = 5'''
-        P = LDA1(DTR_PCA, Ltr, 5)
-        DTR_PCA_LDA = numpy.dot(P.T, DTR_PCA)
-        DTE_PCA_LDA = numpy.dot(P.T, DTE_PCA)
-        PCA_LDA_5_scores.append(lr_binary(DTR_PCA_LDA, Ltr, DTE_PCA_LDA, l))
+        PCA_m9_scores.append(lr_binary(DTR_PCA,Ltr,DTE_PCA,l))
 
         ''' calcolo scores PCA with m = 8'''
         s, P = PCA(Dtr, 8)
         DTR_PCA = numpy.dot(P.T,Dtr)
         DTE_PCA = numpy.dot(P.T,Dte)
-        PCA_8_scores.append(lr_binary(DTR_PCA, Ltr, DTE_PCA, l))
-
-        ''' calcolo scores PCA and LDA with m = 8'''
-        P = LDA1(DTR_PCA, Ltr, 8)
-        DTR_PCA_LDA = numpy.dot(P.T, DTR_PCA)
-        DTE_PCA_LDA = numpy.dot(P.T, DTE_PCA)
-        PCA_LDA_8_scores.append(lr_binary(DTR_PCA_LDA, Ltr, DTE_PCA_LDA, l))
+        PCA_m8_scores.append(lr_binary(DTR_PCA, Ltr, DTE_PCA, l))
 
         LR_labels = np.append(LR_labels, Lte, axis=0)
         LR_labels = np.hstack(LR_labels)
@@ -91,31 +79,19 @@ def kFold_LR(DTR, LTR, l, appendToTitle, k):
     '''RAW data pi=0.9'''
     evaluation(scores_append, LR_labels, appendToTitle + "RAW data ", l, 0.9)
 
-    '''PCA with m = 5, pi=0.1'''
-    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, 0.1)
-    '''PCA with m  = 5, pi=0.5'''
-    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, 0.5)
-    '''PCA with m  = 5, pi=0.9'''
-    evaluation(PCA_5_scores, LR_labels, appendToTitle + "PCA m=5, ", l, 0.9)
-    '''PCA and LDA with m = 5, pi=0.1'''
-    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, 0.1)
-    '''PCA and LDA with m  = 5, pi=0.5'''
-    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, 0.5)
-    '''PCA and LDA with m  = 5, pi=0.9'''
-    evaluation(PCA_LDA_5_scores, LR_labels, appendToTitle + "PCA LDA m=5, ", l, 0.9)
+    '''PCA with m = 9, pi=0.1'''
+    evaluation(PCA_m9_scores, LR_labels, appendToTitle + "PCA m=5, ", l, 0.1)
+    '''PCA with m  = 9, pi=0.5'''
+    evaluation(PCA_m9_scores, LR_labels, appendToTitle + "PCA m=5, ", l, 0.5)
+    '''PCA with m  = 9, pi=0.9'''
+    evaluation(PCA_m9_scores, LR_labels, appendToTitle + "PCA m=5, ", l, 0.9)
 
     '''PCA with m  = 8, pi=0.1'''
-    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, 0.1)
+    evaluation(PCA_m8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, 0.1)
     '''PCA with m  = 8 pi=0.5'''
-    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, 0.5)
+    evaluation(PCA_m8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, 0.5)
     '''PCA with m  = 8 pi=0.9'''
-    evaluation(PCA_8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, 0.9)
-    '''PCA and LDA with m  = 8, pi=0.1'''
-    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, 0.1)
-    '''PCA and LDA with m  = 8 pi=0.5'''
-    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, 0.5)
-    '''PCA and LDA with m  = 8 pi=0.9'''
-    evaluation(PCA_LDA_8_scores, LR_labels, appendToTitle + "PCA LDA m=8, ", l, 0.9)
+    evaluation(PCA_m8_scores, LR_labels, appendToTitle + "PCA m=8, ", l, 0.9)
 
 
 
@@ -161,8 +137,7 @@ def validation_LR(DTR, LTR, L, appendToTitle, k):
         kFold_LR(DTR, LTR, l, appendToTitle, k)
 
 
-'''
- algoritmo che serve per trovare il miglior hyper parameter L
+ #algoritmo che serve per trovare il miglior hyper parameter L
 
     x = numpy.logspace(-5, 1, 20) 
     y = numpy.array([])
@@ -172,13 +147,13 @@ def validation_LR(DTR, LTR, L, appendToTitle, k):
 
     for xi in x:
         scores, labels = kFold_LR_calibration(DTR, LTR, xi, k)
-        y_05 = numpy.hstack((y_05, compute_dcf_min(0.5, C, scores, labels)))
-        y_09 = numpy.hstack((y_09, compute_dcf_min(0.9, C, scores, labels)))
-        y_01 = numpy.hstack((y_01, compute_dcf_min(0.1, C, scores, labels)))
+        y_05 = numpy.hstack((y_05, compute_dcf_min_effPrior(0.5, scores, labels)))
+        y_09 = numpy.hstack((y_09, compute_dcf_min_effPrior(0.9, scores, labels)))
+        y_01 = numpy.hstack((y_01, compute_dcf_min_effPrior(0.1, scores, labels)))
 
     y = numpy.hstack((y, y_05))
     y = numpy.vstack((y, y_09))
     y = numpy.vstack((y, y_01))
 
     plot_DCF(x, y, 'lambda', appendToTitle + 'LR_minDCF_comparison')
-'''
+

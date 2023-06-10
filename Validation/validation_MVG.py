@@ -20,16 +20,10 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
     MVG_labels = []
 
     # PCA con m = 5
-    PCA_m5_mvg = []
-    PCA_m5_mvg_naive = []
-    PCA_m5_mvg_tied = []
-    PCA_m5_mvg_nt = []
-
-    # PCA, LDA con m=5
-    PCA_LDA_m5_mvg = []
-    PCA_LDA_m5_mvg_naive = []
-    PCA_LDA_m5_mvg_tied = []
-    PCA_LDA_m5_mvg_nt = []
+    PCA_m9_mvg = []
+    PCA_m9_mvg_naive = []
+    PCA_m9_mvg_tied = []
+    PCA_m9_mvg_nt = []
 
     # PCA con m = 8
     PCA_m8_mvg = []
@@ -37,11 +31,6 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
     PCA_m8_mvg_tied = []
     PCA_m8_mvg_nt = []
 
-    # PCA, LDA con m=8
-    PCA_LDA_m8_mvg = []
-    PCA_LDA_m8_mvg_naive = []
-    PCA_LDA_m8_mvg_tied = []
-    PCA_LDA_m8_mvg_nt = []
 
     for i in range(k):
         Dtr = []
@@ -71,26 +60,14 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
         ''' RAW DATA '''
         MVG_res, MVG_naive, MVG_tied, MVG_nt = compute_MVG_score(Dtr, Ltr, Dte, MVG_res, MVG_naive, MVG_tied, MVG_nt)
 
-        ''' SCORE PCA WITH 5 DIMENSIONS '''
-        s, P = PCA(Dtr, m=5)
+        ''' SCORE PCA WITH 9 DIMENSIONS '''
+        s, P = PCA(Dtr, m=9)
         DTR_PCA = numpy.dot(P.T, Dtr)
         DTE_PCA = numpy.dot(P.T, Dte)
-        PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt = compute_MVG_score(DTR_PCA, Ltr, DTE_PCA,
-                                                                                         PCA_m5_mvg, PCA_m5_mvg_naive,
-                                                                                         PCA_m5_mvg_tied, PCA_m5_mvg_nt)
+        PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt = compute_MVG_score(DTR_PCA, Ltr, DTE_PCA,
+                                                                                         PCA_m9_mvg, PCA_m9_mvg_naive,
+                                                                                         PCA_m9_mvg_tied, PCA_m9_mvg_nt)
 
-
-
-        ''' SCORE PCA_LDA WITH 5 DIMENSIONS'''
-        P = PCA_LDA.LDA1(DTR_PCA, Ltr, 5)
-        DTR_PCA_LDA = numpy.dot(P.T, DTR_PCA)
-        DTE_PCA_LDA = numpy.dot(P.T, DTE_PCA)
-        PCA_LDA_m5_mvg, PCA_LDA_m5_mvg_naive, PCA_LDA_m5_mvg_tied, PCA_LDA_m5_mvg_nt = compute_MVG_score(DTR_PCA_LDA, Ltr,
-                                                                                                         DTE_PCA_LDA,
-                                                                                                         PCA_LDA_m5_mvg,
-                                                                                                         PCA_LDA_m5_mvg_naive,
-                                                                                                         PCA_LDA_m5_mvg_tied,
-                                                                                                         PCA_LDA_m5_mvg_nt)
 
 
         ''' SCORE PCA WITH 8 DIMENSIONS '''
@@ -101,17 +78,6 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
                                                                                          PCA_m8_mvg, PCA_m8_mvg_naive,
                                                                                          PCA_m8_mvg_tied, PCA_m8_mvg_nt)
 
-        ''' SCORE PCA_LDA WITH 8 DIMENSIONS'''
-        P = PCA_LDA.LDA1(DTR_PCA, Ltr, 8)
-        DTR_PCA_LDA = numpy.dot(P.T, DTR_PCA)
-        DTE_PCA_LDA = numpy.dot(P.T, DTE_PCA)
-        PCA_LDA_m8_mvg, PCA_LDA_m8_mvg_naive, PCA_LDA_m8_mvg_tied, PCA_LDA_m8_mvg_nt = compute_MVG_score(DTR_PCA_LDA, Ltr,
-                                                                                                         DTE_PCA_LDA,
-                                                                                                         PCA_LDA_m8_mvg,
-                                                                                                         PCA_LDA_m8_mvg_naive,
-                                                                                                         PCA_LDA_m8_mvg_tied,
-                                                                                                         PCA_LDA_m8_mvg_nt)
-
     # π = 0.5 (our application prior), RAW DATA
     evaluation(appendToTitle + "minDCF: π=0.5", 0.5, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
     # π = 0.1
@@ -120,19 +86,12 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
     evaluation(appendToTitle + "minDCF: π=0.9", 0.9, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
 
 
-    # π = 0.5 (our application prior), PCA m=5
-    evaluation(appendToTitle + "minDCF: π=0.5, PCA m=5", 0.5, PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt, MVG_labels)
-    # π = 0.1, PCA m=5
-    evaluation(appendToTitle + "minDCF: π=0.1, PCA m=5", 0.1, PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt, MVG_labels)
-    # π = 0.9 , PCA m=5
-    evaluation(appendToTitle + "minDCF: π=0.9, PCA m=5", 0.9, PCA_m5_mvg, PCA_m5_mvg_naive, PCA_m5_mvg_tied, PCA_m5_mvg_nt, MVG_labels)
-    # π = 0.5 (our application prior), PCA, LDA m=5
-    evaluation(appendToTitle + "minDCF: π=0.5, PCA, LDA m=5", 0.5, PCA_LDA_m5_mvg, PCA_LDA_m5_mvg_naive, PCA_LDA_m5_mvg_tied, PCA_LDA_m5_mvg_nt, MVG_labels)
-    # π = 0.1, PCA, LDA m=5
-    evaluation(appendToTitle + "minDCF: π=0.1, PCA, LDA m=5", 0.1, PCA_LDA_m5_mvg, PCA_LDA_m5_mvg_naive, PCA_LDA_m5_mvg_tied, PCA_LDA_m5_mvg_nt, MVG_labels)
-    # π = 0.9 , PCA, LDA  m=5
-    evaluation(appendToTitle + "minDCF: π=0.9, PCA, LDA m=5", 0.9, PCA_LDA_m5_mvg, PCA_LDA_m5_mvg_naive, PCA_LDA_m5_mvg_tied, PCA_LDA_m5_mvg_nt, MVG_labels)
-
+    # π = 0.5 (our application prior), PCA m=9
+    evaluation(appendToTitle + "minDCF: π=0.5, PCA m=5", 0.5, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
+    # π = 0.1, PCA m=9
+    evaluation(appendToTitle + "minDCF: π=0.1, PCA m=5", 0.1, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
+    # π = 0.9 , PCA m=9
+    evaluation(appendToTitle + "minDCF: π=0.9, PCA m=5", 0.9, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
 
     # π = 0.5 (our application prior), PCA m=8
     evaluation(appendToTitle + "minDCF: π=0.5, PCA m=8", 0.5, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
@@ -140,12 +99,7 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
     evaluation(appendToTitle + "minDCF: π=0.1, PCA m=8", 0.1, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
     # π = 0.9 , PCA m=8
     evaluation(appendToTitle + "minDCF: π=0.9, PCA m=8", 0.9, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
-    # π = 0.5 (our application prior), PCA, LDA m=8
-    evaluation(appendToTitle + "minDCF: π=0.5, PCA, LDA m=8", 0.5, PCA_LDA_m8_mvg, PCA_LDA_m8_mvg_naive, PCA_LDA_m8_mvg_tied, PCA_LDA_m8_mvg_nt,MVG_labels)
-    # π = 0.1, PCA, LDA m=8
-    evaluation(appendToTitle + "minDCF: π=0.1, PCA, LDA m=8", 0.1, PCA_LDA_m8_mvg, PCA_LDA_m8_mvg_naive, PCA_LDA_m8_mvg_tied, PCA_LDA_m8_mvg_nt,MVG_labels)
-    # π = 0.9 , PCA, LDA  m=8
-    evaluation(appendToTitle + "minDCF: π=0.9, PCA, LDA m=8", 0.9, PCA_LDA_m8_mvg, PCA_LDA_m8_mvg_naive, PCA_LDA_m8_mvg_tied, PCA_LDA_m8_mvg_nt,MVG_labels)
+
 
 
 # Dte è il fold selezionato, Dtr è tutto il resto
