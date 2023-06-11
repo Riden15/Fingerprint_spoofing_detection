@@ -8,7 +8,7 @@ from Utility_functions.Validators import *
 from prettytable import PrettyTable
 from PCA_LDA import *
 
-def validation_MVG(DTR, LTR, k, appendToTitle):
+def validation_MVG(DTR, LTR, k):
     FoldedData_List = np.split(DTR, k, axis=1) #lista di fold
     FoldedLabel_List = np.split(LTR, k)
 
@@ -79,26 +79,26 @@ def validation_MVG(DTR, LTR, k, appendToTitle):
                                                                                          PCA_m8_mvg_tied, PCA_m8_mvg_nt)
 
     # π = 0.5 (our application prior), RAW DATA
-    evaluation(appendToTitle + "minDCF: π=0.5", 0.5, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
+    evaluation("RAW data, π=0.5", 0.5, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
     # π = 0.1
-    evaluation(appendToTitle + "minDCF: π=0.1", 0.1, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
+    evaluation("RAW data, π=0.1", 0.1, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
     # π = 0.9
-    evaluation(appendToTitle + "minDCF: π=0.9", 0.9, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
+    evaluation("RAW data, π=0.9", 0.9, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
 
 
     # π = 0.5 (our application prior), PCA m=9
-    evaluation(appendToTitle + "minDCF: π=0.5, PCA m=5", 0.5, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
+    evaluation("PCA m=9, π=0.5", 0.5, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
     # π = 0.1, PCA m=9
-    evaluation(appendToTitle + "minDCF: π=0.1, PCA m=5", 0.1, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
+    evaluation("PCA m=9, π=0.1", 0.1, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
     # π = 0.9 , PCA m=9
-    evaluation(appendToTitle + "minDCF: π=0.9, PCA m=5", 0.9, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
+    evaluation("PCA m=9, π=0.9", 0.9, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
 
     # π = 0.5 (our application prior), PCA m=8
-    evaluation(appendToTitle + "minDCF: π=0.5, PCA m=8", 0.5, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
+    evaluation("PCA m=8, π=0.5", 0.5, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
     # π = 0.1 , PCA m=8
-    evaluation(appendToTitle + "minDCF: π=0.1, PCA m=8", 0.1, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
+    evaluation("PCA m=8, π=0.1", 0.1, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
     # π = 0.9 , PCA m=8
-    evaluation(appendToTitle + "minDCF: π=0.9, PCA m=8", 0.9, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
+    evaluation("PCA m=8, π=0.9", 0.9, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
 
 
 
@@ -129,7 +129,6 @@ def evaluation(title, pi, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels):
     llrs_naive_tot = compute_dcf_min_effPrior(pi, MVG_naive, MVG_labels)
     llrs_tied_tot = compute_dcf_min_effPrior(pi, MVG_tied, MVG_labels)
     llrs_nt_tot = compute_dcf_min_effPrior(pi, MVG_nt, MVG_labels)
-
 
     t = PrettyTable(["Type", "minDCF"])
     t.title = title

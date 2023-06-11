@@ -9,18 +9,15 @@ from Utility_functions.General_functions import *
 from Validation.validation_SVM_polynomial import *
 
 def validation(DTR, LTR):
-    #egnValues, egnVector = PCA_plot(DTR, 10)
-    #plot_explained_variance(egnValues)
-
     print("############    MVG    ##############")
-    validation_MVG(DTR,LTR, 5, "MVG, ")
-    # con k = 5 i risultati fanno schifo
+    #validation_MVG(DTR,LTR, 5) #FINITO
 
     print("###########      LR      ##############")
-    L = [0.00001]
-    validation_LR(DTR,LTR, L , '', 5)
+    L = [0.4] # da provare anche per LR normale
+    #validation_LR(DTR,LTR, L , 5) # FINITO
+
     print("############    Quadratic Logistic Regression    ##############")
-    #validation_quad_LR(DTR, LTR, L, "",5)
+    validation_quad_LR(DTR, LTR, L,5) # FINITO
 
     print("############    Support Vector Machine - Linear    ##############")
     K_arr = [0.1, 1.0, 10.0]
@@ -37,7 +34,7 @@ if __name__ == '__main__':
     DTR, LTR = randomize(D, L)
     DTE, LTE = randomize(Dt, Lt)
     #plot_features(DTR, LTR)
-    validation(D, L)
+    validation(DTR, LTR)
 
 
 

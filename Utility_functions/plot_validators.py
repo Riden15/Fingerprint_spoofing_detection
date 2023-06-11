@@ -70,18 +70,22 @@ def plot_DCF(x, y, xlabel, title, base=10):
     plt.show()
     return
 
-def plot_explained_variance(egnValues):
-    total_egnValues = sum(egnValues)
-    var_exp = [(i / total_egnValues) for i in sorted(egnValues, reverse=True)]
-
-    cum_sum_exp = numpy.cumsum(var_exp)
-    # todo migliorare il grafico
-    plt.plot(range(0, len(cum_sum_exp)), cum_sum_exp, label='Cumulative explained variance')
-    plt.ylabel('Explained variance ratio')
-    plt.xlabel('Principal component index')
-    plt.grid()
-    plt.savefig('images/PCA_explainedVariance.png')
+def plot_DCF_PCA(x, y, xlabel, title, base=10):
+    plt.figure()
+    plt.plot(x, y[0], label= 'min DCF prior=0.9', color='g')
+    plt.plot(x, y[1], label= 'min DCF prior=0.5', color='b')
+    plt.plot(x, y[2], label= 'min DCF prior=0.1', color='r')
+    plt.plot(x, y[3], label='min DCF prior=0.9 (PCA=9)', color='g', linestyle='dashed')
+    plt.plot(x, y[4], label='min DCF prior=0.5 (PCA=9)', color='b', linestyle='dashed')
+    plt.plot(x, y[5], label='min DCF prior=0.1 (PCA=9)', color='r', linestyle='dashed')
+    plt.xlim([min(x), max(x)])
+    plt.xscale("log", base=base)
+    plt.legend([ "min DCF prior=0.9", "min DCF prior=0.5", "min DCF prior=0.1", "min DCF prior=0.9 (PCA=9)", "min DCF prior=0.5 (PCA=9)", "min DCF prior=0.1 (PCA=9)"])
+    plt.xlabel(xlabel)
+    plt.ylabel("min DCF")
+    plt.savefig('images/' + title+ '.png')
     plt.show()
+    return
 
 
 

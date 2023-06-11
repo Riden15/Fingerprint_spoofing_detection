@@ -24,6 +24,19 @@ def compute_correlation(X, Y):
     corr = numerator / denominator
     return corr
 
+def plot_features(DTR, LTR, m=2, appendToTitle=''):
+    plot_explained_variance(DTR)
+    plot_features_histograms(DTR, LTR, appendToTitle + "feature_")
+    plot_correlations(DTR, "heatmap_" + appendToTitle)
+    plot_correlations(DTR[:, LTR == 0], "heatmap_spoofedFingerprint_" + appendToTitle, cmap="Reds")
+    plot_correlations(DTR[:, LTR == 1], "heatmap_fingerprint_" + appendToTitle, cmap="Blues")
+    matplotlib.rcParams.update(matplotlib.rcParamsDefault)
+
+    plot_PCA(DTR, LTR, m, appendToTitle)
+    plot_PCA(DTR, LTR, m, appendToTitle)
+
+    plot_PCA_LDA(DTR, LTR, m, appendToTitle)
+    plot_PCA_LDA(DTR, LTR, m, appendToTitle)
 
 def plot_correlations(DTR, title, cmap="Greys"):
     corr = numpy.zeros((10, 10))
@@ -37,9 +50,9 @@ def plot_correlations(DTR, title, cmap="Greys"):
     sns.set()
     heatmap = sns.heatmap(numpy.abs(corr), linewidth=0.2, cmap=cmap, square=True, cbar=False)
     fig = heatmap.get_figure()
-    fig.savefig("./images/" + title + ".png")
+    fig.savefig("./images/feature_plot/" + title + ".png")
 
-#todo fare un po di refactor a ste funzioni
+#todo fare un po di refactor a ste funzioni: togliere il PCA e LDA del tipo da qua e sa
 def plot_features_histograms(DTR, LTR, _title):
     matplotlib.rcParams.update(matplotlib.rcParamsDefault)
     for i in range(10):
@@ -55,7 +68,7 @@ def plot_features_histograms(DTR, LTR, _title):
         plt.hist(y, bins=60, density=True, alpha=0.4, linewidth=1.0, color='blue', edgecolor='black',
                  label=labels[1])
         plt.legend()
-        plt.savefig('./images/hist_' + title + '.png')
+        plt.savefig('./images/feature_plot/hist_' + title + '.png')
         plt.show()
 
 
@@ -71,18 +84,6 @@ def plot_PCA_LDA(DTR, LTR, m, appendToTitle=''):
     DTR = numpy.dot(W.T, DTR)
     plot_histogram(DTR, LTR, ['spoofed fingerprint', 'fingerprint'], 'PCA_m=' + str(m) + ' + LDA')
 
-def plot_features(DTR, LTR, m=2, appendToTitle=''):
-    plot_features_histograms(DTR, LTR, appendToTitle + "feature_")
-    plot_correlations(DTR, "heatmap_" + appendToTitle)
-    plot_correlations(DTR[:, LTR == 0], "heatmap_spoofedFingerprint_" + appendToTitle, cmap="Reds")
-    plot_correlations(DTR[:, LTR == 1], "heatmap_fingerprint_" + appendToTitle, cmap="Blues")
-    matplotlib.rcParams.update(matplotlib.rcParamsDefault)
-
-    plot_PCA(DTR, LTR, m, appendToTitle)
-    plot_PCA(DTR, LTR, m, appendToTitle)
-
-    plot_PCA_LDA(DTR, LTR, m, appendToTitle)
-    plot_PCA_LDA(DTR, LTR, m, appendToTitle)
 
 def empirical_mean(D):
     return mcol(D.mean(1))
@@ -115,7 +116,7 @@ def plot_PCA_result(P, D, L, m, filename, LDA_flag):
             plt.quiver(W[0] * -5, W[1] * -5, W[0] * 40, W[1] * 40, units='xy', scale=1, color='g')
             plt.xlim(-65, 65)
             plt.ylim(-25, 25)
-        plt.savefig('./images/' + filename + '.png')
+        plt.savefig('./images/feature_plot/' + filename + '.png')
         plt.show()
     if m == 3:
         fig = plt.figure(figsize=(6, 6))
@@ -140,8 +141,22 @@ def plot_PCA_result(P, D, L, m, filename, LDA_flag):
             ax.plot3D(x, y, z)
             ax.view_init(270, 270)
 
-        plt.savefig('./images/' + filename + '.png')
+        plt.savefig('./images/feature_plot' + filename + '.png')
         plt.show()
+
+def plot_explained_variance(DTR):
+    egnValues, egnVector = PCA(DTR, 10)
+    total_egnValues = sum(egnValues)
+    var_exp = [(i / total_egnValues) for i in sorted(egnValues, reverse=True)]
+
+    cum_sum_exp = numpy.cumsum(var_exp)
+    # todo migliorare il grafico
+    plt.plot(range(0, len(cum_sum_exp)), cum_sum_exp, label='Cumulative explained variance')
+    plt.ylabel('Explained variance ratio')
+    plt.xlabel('Principal component index')
+    plt.grid()
+    plt.savefig('images/feature_plot/PCA_explainedVariance.png')
+    plt.show()
 
 
 def PCA_plot(D, L, m=2, filename=None, LDA_flag=False):
@@ -199,5 +214,5 @@ def plot_histogram(D, L, labels, title):
     y = D[:, L == 1]
     matplotlib.pyplot.hist(y[0], bins=60, density=True, alpha=0.4, label=labels[1])
     matplotlib.pyplot.legend()
-    plt.savefig('./images/hist' + title + '.png')
+    plt.savefig('./images/feature_plot/hist' + title + '.png')
     matplotlib.pyplot.show()

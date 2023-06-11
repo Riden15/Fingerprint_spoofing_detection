@@ -24,6 +24,9 @@ def lr_binary(DTR, LTR, DTE, l):
     S = numpy.dot(w.T, DTE) + b
     return S
 
+
+
+''' QUADRATIC LOGISTIC REGRESSION'''
 def quad_logreg_obj(DTR, LTR, l, pi):
     M = DTR.shape[0]
     Z = LTR * 2.0 - 1.0
