@@ -101,7 +101,6 @@ def validation_MVG(DTR, LTR, k):
     evaluation("PCA m=8, π=0.9", 0.9, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
 
 
-
 # Dte è il fold selezionato, Dtr è tutto il resto
 def compute_MVG_score(Dtr, Ltr, Dte, MVG_res, MVG_naive, MVG_t, MVG_nt):
     llrs_MVG = MVG(Dtr, Ltr, Dte)

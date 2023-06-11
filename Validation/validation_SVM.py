@@ -8,164 +8,158 @@ from Utility_functions.Validators import *
 from prettytable import PrettyTable
 from PCA_LDA import *
 
-
-def validation_SVM(DTR, LTR, K_arr, C_arr, appendToTitle, PCA_Flag=True, gauss_Flag=False, zscore_Flag=False):
+def validation_SVM(DTR, LTR, K_arr, C_arr, k):
     for K in K_arr:
         for C in C_arr:
-            kfold_SVM(DTR, LTR, K, C, appendToTitle, PCA_Flag, gauss_Flag, zscore_Flag)
+            kfold_SVM(DTR, LTR, K, C, k)
 
     x = numpy.logspace(-3, 2, 12)
     y = numpy.array([])
     y_05 = numpy.array([])
     y_09 = numpy.array([])
     y_01 = numpy.array([])
+    y_05_PCA = numpy.array([])
+    y_09_PCA = numpy.array([])
+    y_01_PCA = numpy.array([])
     for xi in x:
-        scores, labels = kfold_SVM_calibration(DTR, LTR, 1.0, xi, PCA_Flag, gauss_Flag, zscore_Flag)
-        y_05 = numpy.hstack((y_05, compute_dcf_min_effPrior(0.5, scores, labels)))
+        scores, scoresPCA, labels = kfold_SVM_calibration(DTR, LTR, 1.0, xi, k)
         y_09 = numpy.hstack((y_09, compute_dcf_min_effPrior(0.9, scores, labels)))
+        y_05 = numpy.hstack((y_05, compute_dcf_min_effPrior(0.5, scores, labels)))
         y_01 = numpy.hstack((y_01, compute_dcf_min_effPrior(0.1, scores, labels)))
+        y_09_PCA = numpy.hstack((y_09_PCA, compute_dcf_min_effPrior(0.9, scoresPCA, labels)))
+        y_05_PCA = numpy.hstack((y_05_PCA, compute_dcf_min_effPrior(0.5, scoresPCA, labels)))
+        y_01_PCA = numpy.hstack((y_01_PCA, compute_dcf_min_effPrior(0.1, scoresPCA, labels)))
 
-    y = numpy.hstack((y, y_05))
-    y = numpy.vstack((y, y_09))
+    y = numpy.hstack((y, y_09))
+    y = numpy.vstack((y, y_05))
     y = numpy.vstack((y, y_01))
+    y = numpy.vstack((y, y_09_PCA))
+    y = numpy.vstack((y, y_05_PCA))
+    y = numpy.vstack((y, y_01_PCA))
 
-    plot_DCF(x, y, 'C', appendToTitle + 'SVM_minDCF_comparison')
+    plot_DCF_PCA(x, y, 'C', 'SVM_minDCF_comparison')
 
 
-def kfold_SVM(DTR, LTR, K, C, appendToTitle, PCA_Flag=True, gauss_Flag=False, zscore_Flag=False):
-    k = 5
-    Dtr = numpy.split(DTR, k, axis=1)
-    Ltr = numpy.split(LTR, k)
+def kfold_SVM(DTR, LTR, K, C, k):
+    FoldedData_List = numpy.split(DTR, k, axis=1)
+    FoldedLabel_List = numpy.split(LTR, k)
 
     scores_append = []
-    PCA_SVM_scores_append = []
-    PCA2_SVM_scores_append = []
+    PCA_m9_scores = []
     SVM_labels = []
 
     for i in range(k):
-        D = []
-        L = []
+        Dtr = []
+        Ltr = []
         if i == 0:
-            D.append(np.hstack(Dtr[i + 1:]))
-            L.append(np.hstack(Ltr[i + 1:]))
+            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
+            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
         elif i == k - 1:
-            D.append(np.hstack(Dtr[:i]))
-            L.append(np.hstack(Ltr[:i]))
+            Dtr.append(np.hstack(FoldedData_List[:i]))
+            Ltr.append(np.hstack(FoldedLabel_List[:i]))
         else:
-            D.append(np.hstack(Dtr[:i]))
-            D.append(np.hstack(Dtr[i + 1:]))
-            L.append(np.hstack(Ltr[:i]))
-            L.append(np.hstack(Ltr[i + 1:]))
+            Dtr.append(np.hstack(FoldedData_List[:i]))
+            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
+            Ltr.append(np.hstack(FoldedLabel_List[:i]))
+            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
 
-        D = np.hstack(D)
-        L = np.hstack(L)
+        Dtr = np.hstack(Dtr)
+        Ltr = np.hstack(Ltr)
 
-        Dte = Dtr[i]
-        Lte = Ltr[i]
+        Dte = FoldedData_List[i]
+        Lte = FoldedLabel_List[i]
 
-        wStar, primal = train_SVM_linear(D, L, C=C, K=K)
+        wStar, primal = train_SVM_linear(Dtr, Ltr, C=C, K=K)
         DTEEXT = numpy.vstack([Dte, K * numpy.ones((1, Dte.shape[1]))])
 
         scores = numpy.dot(wStar.T, DTEEXT).ravel()
         scores_append.append(scores)
 
+        # PCA m=9
+        s, P = PCA(Dtr, m=9)
+        DTR_PCA = numpy.dot(P.T, Dtr)
+        DTE_PCA = numpy.dot(P.T, Dte)
+
+        wStar, primal = train_SVM_linear(DTR_PCA, Ltr, C=C, K=K)
+        DTEEXT = numpy.vstack([DTE_PCA, K * numpy.ones((1, Dte.shape[1]))])
+        PCA2_SVM_scores = numpy.dot(wStar.T, DTEEXT).ravel()
+        PCA_m9_scores.append(PCA2_SVM_scores)
+
         SVM_labels = np.append(SVM_labels, Lte, axis=0)
         SVM_labels = np.hstack(SVM_labels)
 
-        if PCA_Flag is True:
-            # PCA m=10
-            s, P = PCA(D, m=10)
-            DTR_PCA = numpy.dot(P.T, D)
-            DTE_PCA = numpy.dot(P.T, Dte)
+    '''RAW data pi=0.1'''
+    evaluation(scores_append, SVM_labels, "SVM, RAW data, ", C, K, 0.1)
+    '''RAW data pi=0.5'''
+    evaluation(scores_append, SVM_labels, "SVM, RAW data, ", C, K, 0.5)
+    '''RAW data pi=0.9'''
+    evaluation(scores_append, SVM_labels, "SVM, RAW data, ", C, K, 0.9)
 
-            wStar, primal = train_SVM_linear(DTR_PCA, L, C=C, K=K)
-            DTEEXT = numpy.vstack([DTE_PCA, K * numpy.ones((1, Dte.shape[1]))])
-            PCA_SVM_scores = numpy.dot(wStar.T, DTEEXT).ravel()
-            PCA_SVM_scores_append.append(PCA_SVM_scores)
+    '''PCA with m = 9, pi=0.1'''
+    evaluation(PCA_m9_scores, SVM_labels, "SVM, PCA m=9, ", C, K, 0.1)
+    '''PCA with m = 9, pi=0.5'''
+    evaluation(PCA_m9_scores, SVM_labels, "SVM, PCA m=9, ", C, K, 0.5)
+    '''PCA with m = 9, pi=0.9'''
+    evaluation(PCA_m9_scores, SVM_labels, "SVM, PCA m=9, ", C, K, 0.9)
 
-            # PCA m=9
-            s, P = PCA(D, m=9)
-            DTR_PCA = numpy.dot(P.T, D)
-            DTE_PCA = numpy.dot(P.T, Dte)
-
-            wStar, primal = train_SVM_linear(DTR_PCA, L, C=C, K=K)
-            DTEEXT = numpy.vstack([DTE_PCA, K * numpy.ones((1, Dte.shape[1]))])
-            PCA2_SVM_scores = numpy.dot(wStar.T, DTEEXT).ravel()
-            PCA2_SVM_scores_append.append(PCA2_SVM_scores)
-
-
-    scores_append = np.hstack(scores_append)
-    scores_tot = compute_dcf_min_effPrior(0.5, scores_append, SVM_labels)
-
+def evaluation(scores, LR_labels, appendToTitle, C, K, pi):
+    scores_append = np.hstack(scores)
+    scores_tot = compute_dcf_min_effPrior(pi, scores_append, LR_labels)
     # plot_ROC(scores_append, SVM_labels, appendToTitle + 'SVM, K=' + str(K) + ', C=' + str(C))
 
     # Cfn and Ctp are set to 1
     #bayes_error_min_act_plot(scores_append, SVM_labels, appendToTitle + 'SVM, K=' + str(K) + ', C=' + str(C), 0.4)
 
     t = PrettyTable(["Type", "minDCF"])
-    t.title = "minDCF: π=0.5"
+    t.title = appendToTitle + "π=" + str(pi)
     t.add_row(['SVM, K=' + str(K) + ', C=' + str(C), round(scores_tot, 3)])
     print(t)
 
-    ###############################
 
-    # π = 0.1
-    scores_tot = compute_dcf_min_effPrior(0.1, scores_append, SVM_labels)
+def kfold_SVM_calibration(DTR, LTR, K, C, k):
+    FoldedData_List = numpy.split(DTR, k, axis=1)
+    FoldedLabel_List = numpy.split(LTR, k)
 
-    t = PrettyTable(["Type", "minDCF"])
-    t.title = "minDCF: π=0.1"
-    t.add_row(['SVM, K=' + str(K) + ', C=' + str(C), round(scores_tot, 3)])
-
-    print(t)
-
-    ###############################
-
-    # π = 0.9
-    scores_tot = compute_dcf_min_effPrior(0.9, scores_append, SVM_labels)
-
-    t = PrettyTable(["Type", "minDCF"])
-    t.title = "minDCF: π=0.9"
-    t.add_row(['SVM, K=' + str(K) + ', C=' + str(C), round(scores_tot, 3)])
-
-    print(t)
-
-def kfold_SVM_calibration(DTR, LTR, K, C, PCA_Flag=True, gauss_Flag=False, zscore_Flag=False):
-    k = 5
-    Dtr = numpy.split(DTR, k, axis=1)
-    Ltr = numpy.split(LTR, k)
-
+    PCA_m9_scores = []
     scores_append = []
     LR_labels = []
 
     for i in range(k):
-        D = []
-        L = []
+        Dtr = []
+        Ltr = []
         if i == 0:
-            D.append(np.hstack(Dtr[i + 1:]))
-            L.append(np.hstack(Ltr[i + 1:]))
+            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
+            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
         elif i == k - 1:
-            D.append(np.hstack(Dtr[:i]))
-            L.append(np.hstack(Ltr[:i]))
+            Dtr.append(np.hstack(FoldedData_List[:i]))
+            Ltr.append(np.hstack(FoldedLabel_List[:i]))
         else:
-            D.append(np.hstack(Dtr[:i]))
-            D.append(np.hstack(Dtr[i + 1:]))
-            L.append(np.hstack(Ltr[:i]))
-            L.append(np.hstack(Ltr[i + 1:]))
+            Dtr.append(np.hstack(FoldedData_List[:i]))
+            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
+            Ltr.append(np.hstack(FoldedLabel_List[:i]))
+            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
 
-        D = np.hstack(D)
-        L = np.hstack(L)
+        Dtr = np.hstack(Dtr)
+        Ltr = np.hstack(Ltr)
 
-        Dte = Dtr[i]
-        Lte = Ltr[i]
+        Dte = FoldedData_List[i]
+        Lte = FoldedLabel_List[i]
 
-
-        wStar, primal = train_SVM_linear(D, L, C=C, K=K)
+        wStar, primal = train_SVM_linear(Dtr, Ltr, C=C, K=K)
         DTEEXT = numpy.vstack([Dte, K * numpy.ones((1, Dte.shape[1]))])
 
-        scores = numpy.dot(wStar.T, DTEEXT).ravel()
-        scores_append.append(scores)
+        scores_append.append(numpy.dot(wStar.T, DTEEXT).ravel())
+
+        # PCA m=9
+        s, P = PCA(Dtr, m=9)
+        DTR_PCA = numpy.dot(P.T, Dtr)
+        DTE_PCA = numpy.dot(P.T, Dte)
+
+        wStar, primal = train_SVM_linear(DTR_PCA, Ltr, C=C, K=K)
+        DTEEXT = numpy.vstack([DTE_PCA, K * numpy.ones((1, Dte.shape[1]))])
+        PCA_m9_scores.append(numpy.dot(wStar.T, DTEEXT).ravel())
 
         LR_labels = np.append(LR_labels, Lte, axis=0)
         LR_labels = np.hstack(LR_labels)
 
-    return np.hstack(scores_append), LR_labels
+    return np.hstack(scores_append), np.hstack(PCA_m9_scores), LR_labels

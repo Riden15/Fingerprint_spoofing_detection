@@ -17,12 +17,12 @@ def validation(DTR, LTR):
     #validation_LR(DTR,LTR, L , 5) # FINITO
 
     print("############    Quadratic Logistic Regression    ##############")
-    validation_quad_LR(DTR, LTR, L,5) # FINITO
+    #validation_quad_LR(DTR, LTR, L,5) # FINITO
 
     print("############    Support Vector Machine - Linear    ##############")
     K_arr = [0.1, 1.0, 10.0]
     C_arr = [0.01, 0.1, 1.0, 10.0]
-    #validation_SVM(DTR, LTR, K_arr, C_arr, 'RAW')
+    validation_SVM(DTR, LTR, K_arr, C_arr, 5)
 
     print("############    Support Vector Machine - Quadratic    ##############")
     K_arr = [1., 10.]
