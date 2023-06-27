@@ -9,6 +9,7 @@ from prettytable import PrettyTable
 from PCA_LDA import *
 
 def validation_MVG(DTR, LTR, k):
+
     FoldedData_List = np.split(DTR, k, axis=1) #lista di fold
     FoldedLabel_List = np.split(LTR, k)
 

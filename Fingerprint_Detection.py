@@ -17,20 +17,23 @@ def validation(DTR, LTR):
     #validation_LR(DTR,LTR, L , 5) # FINITO
 
     print("############    Quadratic Logistic Regression    ##############")
-    #validation_quad_LR(DTR, LTR, L,5) # FINITO
+    #validation_quad_LR(DTR, LTR, L,5) # DA TOGLIERE, NON ANDAVA FATTO
 
     print("############    Support Vector Machine - Linear    ##############")
-    K_arr = [0.1, 1.0, 10.0]
-    C_arr = [0.01, 0.1, 1.0, 10.0]
-    validation_SVM(DTR, LTR, K_arr, C_arr, 5)
+    K_arr = [1.0, 10.0]
+    C_arr = [0.1, 1.0, 10.0]
+    #validation_SVM(DTR, LTR, K_arr, C_arr, 5) # FINITO
 
     print("############    Support Vector Machine - Quadratic    ##############")
-    K_arr = [1., 10.]
-    #validation_SVM_polynomial(DTR, LTR, K_arr, 1.0, 'RAW_', [1000])
+    K_arr = [1, 10]
+    C_arr = [0.1, 0.01]
+    constant = [0, 1]
+    validation_SVM_polynomial(DTR, LTR, K_arr, C_arr, constant, 5)
 
 if __name__ == '__main__':
     D, L = load('Data/Train.txt')
     Dt, Lt = load('Data/Test.txt')
+
     DTR, LTR = randomize(D, L)
     DTE, LTE = randomize(Dt, Lt)
     #plot_features(DTR, LTR)

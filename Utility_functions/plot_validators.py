@@ -58,15 +58,15 @@ def Bayes_error_plot2(predictions, labelsEval, confuse_matrix):
 
 def plot_DCF(x, y, xlabel, title, base=10):
     plt.figure()
-    plt.plot(x, y[0], label= 'min DCF prior=0.5', color='b')
-    plt.plot(x, y[1], label= 'min DCF prior=0.9', color='g')
+    plt.plot(x, y[0], label= 'min DCF prior=0.9', color='g')
+    plt.plot(x, y[1], label= 'min DCF prior=0.5', color='b')
     plt.plot(x, y[2], label= 'min DCF prior=0.1', color='r')
     plt.xlim([min(x), max(x)])
     plt.xscale("log", base=base)
-    plt.legend([ "min DCF prior=0.5", "min DCF prior=0.9", "min DCF prior=0.1"])
+    plt.legend([ "min DCF prior=0.9", "min DCF prior=0.5", "min DCF prior=0.1"])
     plt.xlabel(xlabel)
     plt.ylabel("min DCF")
-    plt.savefig('images/DCF_' + title+ '.png')
+    plt.savefig('images/' + title+ '.png')
     plt.show()
     return
 

@@ -13,7 +13,9 @@ def validation_SVM(DTR, LTR, K_arr, C_arr, k):
         for C in C_arr:
             kfold_SVM(DTR, LTR, K, C, k)
 
-    x = numpy.logspace(-3, 2, 12)
+'''
+    #algoritmo che serve per trovare il miglior hyper parameter C dato k fissato a 1
+    x = numpy.logspace(-3, 2, 15)
     y = numpy.array([])
     y_05 = numpy.array([])
     y_09 = numpy.array([])
@@ -36,9 +38,26 @@ def validation_SVM(DTR, LTR, K_arr, C_arr, k):
     y = numpy.vstack((y, y_09_PCA))
     y = numpy.vstack((y, y_05_PCA))
     y = numpy.vstack((y, y_01_PCA))
+    plot_DCF_PCA(x, y, 'C', 'SVM_minDCF_comparison_K=1')
 
-    plot_DCF_PCA(x, y, 'C', 'SVM_minDCF_comparison')
+    x = numpy.logspace(-3, 2, 15)
+    for xi in x:
+        scores, scoresPCA, labels = kfold_SVM_calibration(DTR, LTR, xi, 1.0, k)
+        y_09 = numpy.hstack((y_09, compute_dcf_min_effPrior(0.9, scores, labels)))
+        y_05 = numpy.hstack((y_05, compute_dcf_min_effPrior(0.5, scores, labels)))
+        y_01 = numpy.hstack((y_01, compute_dcf_min_effPrior(0.1, scores, labels)))
+        y_09_PCA = numpy.hstack((y_09_PCA, compute_dcf_min_effPrior(0.9, scoresPCA, labels)))
+        y_05_PCA = numpy.hstack((y_05_PCA, compute_dcf_min_effPrior(0.5, scoresPCA, labels)))
+        y_01_PCA = numpy.hstack((y_01_PCA, compute_dcf_min_effPrior(0.1, scoresPCA, labels)))
 
+    y = numpy.hstack((y, y_09))
+    y = numpy.vstack((y, y_05))
+    y = numpy.vstack((y, y_01))
+    y = numpy.vstack((y, y_09_PCA))
+    y = numpy.vstack((y, y_05_PCA))
+    y = numpy.vstack((y, y_01_PCA))
+    plot_DCF_PCA(x, y, 'K', 'SVM_minDCF_comparison_C=1')
+'''
 
 def kfold_SVM(DTR, LTR, K, C, k):
     FoldedData_List = numpy.split(DTR, k, axis=1)
@@ -71,7 +90,6 @@ def kfold_SVM(DTR, LTR, K, C, k):
 
         wStar, primal = train_SVM_linear(Dtr, Ltr, C=C, K=K)
         DTEEXT = numpy.vstack([Dte, K * numpy.ones((1, Dte.shape[1]))])
-
         scores = numpy.dot(wStar.T, DTEEXT).ravel()
         scores_append.append(scores)
 

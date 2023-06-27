@@ -43,21 +43,19 @@ def train_SVM_linear(DTR, LTR, K, C):
     wStar = numpy.dot(DTREXT, mcol(alphaStar) * mcol(Z))
     return wStar, JPrimal(wStar)
 
-def single_F_POLY(DTR, LTR, DTE, LTE, L, C, K, costant=1.0, degree=2):
+def single_F_POLY(DTR, LTR, DTE, C, constant, K, degree):
 
     Z = numpy.zeros(LTR.shape)
     Z[LTR == 1] = 1
     Z[LTR == 0] = -1
 
-    aStar, loss = train_SVM_polynomial(DTR, LTR, C=1.0, constant=costant, degree=degree, K=K)
-    kernel = (numpy.dot(DTR.T, DTE) + costant) ** degree + K * K
+    aStar, loss = train_SVM_polynomial(DTR, LTR, C, constant, K, degree)
+    kernel = (numpy.dot(DTR.T, DTE) + constant) ** degree + K * K
     score = numpy.sum(numpy.dot(aStar * vrow(Z), kernel), axis=0)
-
-    errorRate = (1 - numpy.sum((score > 0) == LTE) / len(LTE)) * 100
-    print("K = %d, costant = %d, loss = %e, error =  %.1f" % (K, costant, loss, errorRate))
+    return score
 
 
-def train_SVM_polynomial(DTR, LTR, C, K, constant, degree):
+def train_SVM_polynomial(DTR, LTR, C, constant, K, degree):
     Z = numpy.zeros(LTR.shape)
     Z[LTR == 1] = 1
     Z[LTR == 0] = -1
