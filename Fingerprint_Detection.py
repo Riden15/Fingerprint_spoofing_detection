@@ -6,6 +6,7 @@ from Validation.Validation_LR_quad import *
 from Validation.validation_SVM import *
 from Utility_functions.plot_features import *
 from Utility_functions.General_functions import *
+from Validation.validation_SVM_RBF import validation_SVM_RBF
 from Validation.validation_SVM_polynomial import *
 
 def validation(DTR, LTR):
@@ -20,15 +21,21 @@ def validation(DTR, LTR):
     #validation_quad_LR(DTR, LTR, L,5) # DA TOGLIERE, NON ANDAVA FATTO
 
     print("############    Support Vector Machine - Linear    ##############")
-    K_arr = [1.0, 10.0]
-    C_arr = [0.1, 1.0, 10.0]
+    K_arr = [0.1, 1.0, 10.0]
+    C_arr = [0.01, 0.1, 1.0, 10.0]
     #validation_SVM(DTR, LTR, K_arr, C_arr, 5) # FINITO
 
     print("############    Support Vector Machine - Quadratic    ##############")
-    K_arr = [1, 10]
-    C_arr = [0.1, 0.01]
+    K_arr = [0.1, 1, 10]
+    C_arr = [0.01, 0.1, 1.0, 10]
     constant = [0, 1]
-    validation_SVM_polynomial(DTR, LTR, K_arr, C_arr, constant, 5)
+    #validation_SVM_polynomial(DTR, LTR, K_arr, C_arr, constant, 5)
+
+    print("############    Support Vector Machine - RBF    ##############")
+    K_arr = [0.1, 1, 10]
+    C_arr = [1, 10, 100]
+    gamma_arr=[0.0001, 0.001]
+    #validation_SVM_RBF(DTR, LTR, K_arr, gamma_arr, C_arr, 5)
 
 if __name__ == '__main__':
     D, L = load('Data/Train.txt')

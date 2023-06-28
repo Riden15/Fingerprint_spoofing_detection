@@ -87,5 +87,21 @@ def plot_DCF_PCA(x, y, xlabel, title, base=10):
     plt.show()
     return
 
+def plot_DCF_for_SVM_RBF_calibration(x, y, xlabel, title, base=10):
+    plt.figure()
+    plt.plot(x, y[0], label= 'logγ=-4', color='b')
+    plt.plot(x, y[1], label= 'logγ=-3', color='g')
+    plt.plot(x, y[2], label= 'logγ=-2', color='r')
+    plt.plot(x, y[3], label= 'logγ=-1', color='y')
+    plt.xlim([min(x), max(x)])
+    plt.ylim([0.0, 1.0])
+    plt.xscale("log", base=base)
+    plt.legend([ "logγ=-4", "logγ=-3", "logγ=-2", "logγ=-1"])
+    plt.xlabel(xlabel)
+    plt.ylabel("minDCF")
+    plt.savefig('images/' + title+ '.svg')
+    plt.show()
+    return
+
 
 

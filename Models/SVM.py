@@ -43,7 +43,7 @@ def train_SVM_linear(DTR, LTR, K, C):
     wStar = numpy.dot(DTREXT, mcol(alphaStar) * mcol(Z))
     return wStar, JPrimal(wStar)
 
-def single_F_POLY(DTR, LTR, DTE, C, constant, K, degree):
+def Poly_KernelFunction(DTR, LTR, DTE, C, constant, K, degree):
 
     Z = numpy.zeros(LTR.shape)
     Z[LTR == 1] = 1
@@ -53,7 +53,6 @@ def single_F_POLY(DTR, LTR, DTE, C, constant, K, degree):
     kernel = (numpy.dot(DTR.T, DTE) + constant) ** degree + K * K
     score = numpy.sum(numpy.dot(aStar * vrow(Z), kernel), axis=0)
     return score
-
 
 def train_SVM_polynomial(DTR, LTR, C, constant, K, degree):
     Z = numpy.zeros(LTR.shape)
@@ -65,6 +64,36 @@ def train_SVM_polynomial(DTR, LTR, C, constant, K, degree):
     # H = numpy.exp(-Dist)
     H = mcol(Z) * vrow(Z) * H
 
+    alphaStar, JDual, LDual = calculate_lbgf(H, DTR, C)
+
+    return alphaStar, JDual(alphaStar)[0]
+
+def RBF_KernelFunction(DTR, LTR, DTE, C, K, gamma):
+    Z = numpy.zeros(LTR.shape)
+    Z[LTR == 1] = 1
+    Z[LTR == 0] = -1
+
+    aStar, loss = train_SVM_RBF(DTR, LTR, C, K, gamma)
+
+    kern = numpy.zeros((DTR.shape[1], DTE.shape[1]))
+    for i in range(DTR.shape[1]):
+        for j in range(DTE.shape[1]):
+            kern[i, j] = numpy.exp(-gamma * (numpy.linalg.norm(DTR[:, i] - DTE[:, j]) ** 2)) + K * K
+
+    score = numpy.sum(numpy.dot(aStar * vrow(Z), kern), axis=0)
+    return score
+
+def train_SVM_RBF(DTR, LTR, C, K=1, gamma=1.):
+    Z = numpy.zeros(LTR.shape)
+    Z[LTR == 1] = 1
+    Z[LTR == 0] = -1
+
+    # kernel function
+    kernel = numpy.zeros((DTR.shape[1], DTR.shape[1]))
+    for i in range(DTR.shape[1]):
+        for j in range(DTR.shape[1]):
+            kernel[i, j] = numpy.exp(-gamma * (numpy.linalg.norm(DTR[:, i] - DTR[:, j]) ** 2)) + K * K
+    H = mcol(Z) * vrow(Z) * kernel
     alphaStar, JDual, LDual = calculate_lbgf(H, DTR, C)
 
     return alphaStar, JDual(alphaStar)[0]

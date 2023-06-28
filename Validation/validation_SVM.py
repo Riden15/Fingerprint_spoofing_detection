@@ -140,7 +140,7 @@ def kfold_SVM_calibration(DTR, LTR, K, C, k):
 
     PCA_m9_scores = []
     scores_append = []
-    LR_labels = []
+    SVM_labels = []
 
     for i in range(k):
         Dtr = []
@@ -159,25 +159,22 @@ def kfold_SVM_calibration(DTR, LTR, K, C, k):
 
         Dtr = np.hstack(Dtr)
         Ltr = np.hstack(Ltr)
-
         Dte = FoldedData_List[i]
         Lte = FoldedLabel_List[i]
 
         wStar, primal = train_SVM_linear(Dtr, Ltr, C=C, K=K)
         DTEEXT = numpy.vstack([Dte, K * numpy.ones((1, Dte.shape[1]))])
-
         scores_append.append(numpy.dot(wStar.T, DTEEXT).ravel())
 
         # PCA m=9
         s, P = PCA(Dtr, m=9)
         DTR_PCA = numpy.dot(P.T, Dtr)
         DTE_PCA = numpy.dot(P.T, Dte)
-
         wStar, primal = train_SVM_linear(DTR_PCA, Ltr, C=C, K=K)
         DTEEXT = numpy.vstack([DTE_PCA, K * numpy.ones((1, Dte.shape[1]))])
         PCA_m9_scores.append(numpy.dot(wStar.T, DTEEXT).ravel())
 
-        LR_labels = np.append(LR_labels, Lte, axis=0)
-        LR_labels = np.hstack(LR_labels)
+        SVM_labels = np.append(SVM_labels, Lte, axis=0)
+        SVM_labels = np.hstack(SVM_labels)
 
-    return np.hstack(scores_append), np.hstack(PCA_m9_scores), LR_labels
+    return np.hstack(scores_append), np.hstack(PCA_m9_scores), SVM_labels

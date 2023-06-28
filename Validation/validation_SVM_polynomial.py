@@ -1,13 +1,11 @@
 import sys
-
 import numpy as np
 import scipy
 from prettytable import PrettyTable
 
-from Utility_functions.plot_validators import plot_DCF_PCA, plot_DCF
-
 sys.path.append('../')
 from Utility_functions.General_functions import *
+from Utility_functions.plot_validators import plot_DCF_PCA, plot_DCF
 from Utility_functions.Validators import *
 from Models.SVM import *
 from PCA_LDA import *
@@ -54,6 +52,7 @@ def kfold_SVM_polynomial(DTR, LTR, C, constant, K, degree, k):
 
     scores_append = []
     PCA_m9_scores = []
+    PCA_m8_scores = []
     SVM_labels = []
 
     for i in range(k):
@@ -76,15 +75,22 @@ def kfold_SVM_polynomial(DTR, LTR, C, constant, K, degree, k):
         Dte = FoldedData_List[i]
         Lte = FoldedLabel_List[i]
 
-        score = single_F_POLY(Dtr, Ltr, Dte, C, constant, K, degree)
+        score = Poly_KernelFunction(Dtr, Ltr, Dte, C, constant, K, degree)
         scores_append.append(score)
 
         # PCA m=9
         s, P = PCA(Dtr, m=9)
         DTR_PCA = numpy.dot(P.T, Dtr)
         DTE_PCA = numpy.dot(P.T, Dte)
-        score = single_F_POLY(DTR_PCA, Ltr, DTE_PCA, C, constant, K, degree)
+        score = Poly_KernelFunction(DTR_PCA, Ltr, DTE_PCA, C, constant, K, degree)
         PCA_m9_scores.append(score)
+
+        # PCA m=8
+        s, P = PCA(Dtr, m=8)
+        DTR_PCA = numpy.dot(P.T, Dtr)
+        DTE_PCA = numpy.dot(P.T, Dte)
+        score = Poly_KernelFunction(DTR_PCA, Ltr, DTE_PCA, C, constant, K, degree)
+        PCA_m8_scores.append(score)
 
         SVM_labels = np.append(SVM_labels, Lte, axis=0)
         SVM_labels = np.hstack(SVM_labels)
@@ -102,6 +108,13 @@ def kfold_SVM_polynomial(DTR, LTR, C, constant, K, degree, k):
     evaluation(PCA_m9_scores, SVM_labels, "SVM_POLY, PCA m=9, ", C, K, constant, degree, 0.5)
     '''PCA with m = 9, pi=0.9'''
     evaluation(PCA_m9_scores, SVM_labels, "SVM_POLY, PCA m=9, ", C, K, constant, degree, 0.9)
+
+    '''PCA with m = 8, pi=0.1'''
+    evaluation(PCA_m8_scores, SVM_labels, "SVM_POLY, PCA m=8, ", C, K, constant, degree, 0.1)
+    '''PCA with m = 8, pi=0.5'''
+    evaluation(PCA_m8_scores, SVM_labels, "SVM_POLY, PCA m=8, ", C, K, constant, degree, 0.5)
+    '''PCA with m = 8, pi=0.9'''
+    evaluation(PCA_m8_scores, SVM_labels, "SVM_POLY, PCA m=8, ", C, K, constant, degree, 0.9)
 
 def evaluation(scores, LR_labels, appendToTitle, C, K, constant, degree, pi):
 
@@ -145,14 +158,14 @@ def kfold_SVM_polynomial_calibration(DTR, LTR, C, constant, K, degree, k):
         Dte = FoldedData_List[i]
         Lte = FoldedLabel_List[i]
 
-        score = single_F_POLY(Dtr, Ltr, Dte, C, constant, K, degree)
+        score = Poly_KernelFunction(Dtr, Ltr, Dte, C, constant, K, degree)
         scores_append.append(score)
 
         # PCA m=9
         s, P = PCA(Dtr, m=9)
         DTR_PCA = numpy.dot(P.T, Dtr)
         DTE_PCA = numpy.dot(P.T, Dte)
-        score = single_F_POLY(DTR_PCA, Ltr, DTE_PCA, C, constant, K, degree)
+        score = Poly_KernelFunction(DTR_PCA, Ltr, DTE_PCA, C, constant, K, degree)
         PCA_m9_scores.append(score)
 
         SVM_labels = np.append(SVM_labels, Lte, axis=0)
