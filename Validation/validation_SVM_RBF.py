@@ -52,25 +52,8 @@ def kfold_SVM_RBF(DTR, LTR, C, K, gamma, k):
     PCA_m8_scores = []
     SVM_labels = []
 
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-
-        Dtr = np.hstack(Dtr)
-        Ltr = np.hstack(Ltr)
-        Dte = FoldedData_List[i]
-        Lte = FoldedLabel_List[i]
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         score = RBF_KernelFunction(Dtr, Ltr, Dte, C, K, gamma)
         scores_append.append(score)
@@ -135,26 +118,8 @@ def kfold_svm_rbf_calibration(DTR, LTR, C, K, gamma, k):
     scores_append = []
     SVM_labels = []
 
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-
-        Dtr = np.hstack(Dtr)
-        Ltr = np.hstack(Ltr)
-
-        Dte = FoldedData_List[i]
-        Lte = FoldedLabel_List[i]
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         score = RBF_KernelFunction(Dtr, Ltr, Dte, C, K, gamma)
         scores_append.append(score)

@@ -35,3 +35,24 @@ def load(fname):
             except:
                 pass
     return numpy.hstack(DList), numpy.array(labelsList, dtype=numpy.int32)
+
+def kfold(fold, k, FoldedData_List, FoldedLabel_List):
+    Dtr = []
+    Ltr = []
+    if fold == 0:
+        Dtr.append(numpy.hstack(FoldedData_List[fold + 1:]))
+        Ltr.append(numpy.hstack(FoldedLabel_List[fold + 1:]))
+    elif fold == k - 1:
+        Dtr.append(numpy.hstack(FoldedData_List[:fold]))
+        Ltr.append(numpy.hstack(FoldedLabel_List[:fold]))
+    else:
+        Dtr.append(numpy.hstack(FoldedData_List[:fold]))
+        Dtr.append(numpy.hstack(FoldedData_List[fold + 1:]))
+        Ltr.append(numpy.hstack(FoldedLabel_List[:fold]))
+        Ltr.append(numpy.hstack(FoldedLabel_List[fold + 1:]))
+
+    Dtr = numpy.hstack(Dtr)  # fold selezionati per training (dati)
+    Ltr = numpy.hstack(Ltr)  # fold selezionati per training (label)
+    Dte = FoldedData_List[fold]  # singolo fold selezionato per evaluation (dati)
+    Lte = FoldedLabel_List[fold]  # singolo fold selezionato per evaluation (label)
+    return Dtr, Ltr, Dte, Lte

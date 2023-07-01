@@ -50,30 +50,10 @@ def kFold_LR(DTR, LTR, l, k):
     scores_append = []
     PCA_m9_scores = []
     PCA_m8_scores = []
-
     LR_labels = []
 
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-
-        Dtr = np.hstack(Dtr)
-        Ltr = np.hstack(Ltr)
-
-
-        Dte = FoldedData_List[i]
-        Lte = FoldedLabel_List[i]
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         # Calcolo scores con RAW data
         scores_append.append(lr_binary(Dtr, Ltr, Dte, l))
@@ -132,26 +112,9 @@ def kFold_LR_calibration(DTR, LTR, l, k):
     scores_append = []
     LR_labels = []
     PCA_m9_scores = []
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
 
-        Dtr = np.hstack(Dtr)
-        Ltr = np.hstack(Ltr)
-
-        Dte = FoldedData_List[i]
-        Lte = FoldedLabel_List[i]
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         scores = lr_binary(Dtr, Ltr, Dte, l)
         scores_append.append(scores)

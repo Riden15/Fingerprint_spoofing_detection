@@ -55,25 +55,8 @@ def kfold_SVM_polynomial(DTR, LTR, C, constant, K, degree, k):
     PCA_m8_scores = []
     SVM_labels = []
 
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-
-        Dtr = np.hstack(Dtr)
-        Ltr = np.hstack(Ltr)
-        Dte = FoldedData_List[i]
-        Lte = FoldedLabel_List[i]
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         score = Poly_KernelFunction(Dtr, Ltr, Dte, C, constant, K, degree)
         scores_append.append(score)
@@ -138,25 +121,8 @@ def kfold_SVM_polynomial_calibration(DTR, LTR, C, constant, K, degree, k):
     PCA_m9_scores = []
     SVM_labels = []
 
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-
-        Dtr = np.hstack(Dtr)
-        Ltr = np.hstack(Ltr)
-        Dte = FoldedData_List[i]
-        Lte = FoldedLabel_List[i]
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         score = Poly_KernelFunction(Dtr, Ltr, Dte, C, constant, K, degree)
         scores_append.append(score)

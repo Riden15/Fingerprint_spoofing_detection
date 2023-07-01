@@ -50,31 +50,13 @@ def kfold_QUAD_LR(DTR, LTR, l, pi, k):
     PCA_m8_scores = []
     LR_labels = []
 
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         def vecxxT(x):
             x = x[:, None]
             xxT = x.dot(x.T).reshape(x.size ** 2, order='F')
             return xxT
-
-        Dtr = np.hstack(Dtr)
-        Ltr = np.hstack(Ltr)
-
-        Dte = FoldedData_List[i]
-        Lte = FoldedLabel_List[i]
 
         expanded_DTR = numpy.apply_along_axis(vecxxT, 0, Dtr)
         expanded_DTE = numpy.apply_along_axis(vecxxT, 0, Dte)
@@ -124,37 +106,19 @@ def validate_LR(scores, LR_labels, appendToTitle, l, pi):
 
 def kfold_QUAD_LR_calibration(DTR, LTR, l, k):
     FoldedData_List = numpy.split(DTR, k, axis=1)
-    FoldedData_Label = numpy.split(LTR, k)
+    FoldedLabel_List = numpy.split(LTR, k)
 
     scores_append = []
     PCA_m9_scores = []
     LR_labels = []
 
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedData_Label[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedData_Label[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedData_Label[:i]))
-            Ltr.append(np.hstack(FoldedData_Label[i + 1:]))
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         def vecxxT(x):
             x = x[:, None]
             xxT = x.dot(x.T).reshape(x.size ** 2, order='F')
             return xxT
-
-        Dtr = np.hstack(Dtr)
-        Ltr = np.hstack(Ltr)
-
-        Dte = FoldedData_List[i]
-        Lte = FoldedData_Label[i]
 
         expanded_DTR = numpy.apply_along_axis(vecxxT, 0, Dtr)
         expanded_DTE = numpy.apply_along_axis(vecxxT, 0, Dte)

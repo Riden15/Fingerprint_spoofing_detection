@@ -99,9 +99,21 @@ def plot_DCF_for_SVM_RBF_calibration(x, y, xlabel, title, base=10):
     plt.legend([ "logγ=-4", "logγ=-3", "logγ=-2", "logγ=-1"])
     plt.xlabel(xlabel)
     plt.ylabel("minDCF")
-    plt.savefig('images/' + title+ '.svg')
+    plt.savefig('images/' + title+ '.png')
     plt.show()
     return
 
 
+def plot_minDCF_GMM(score_raw, title, components):
+    labels = numpy.exp2(components).astype(int)
+
+    x = numpy.arange(len(labels))  # the label locations
+    width = 0.35  # the width of the bars
+    plt.bar(x, score_raw, width, label='minDCF (pi=0.5) - RAW')
+    plt.xticks(x, labels)
+    plt.ylabel("DCF")
+    plt.title(title)
+    plt.legend()
+    plt.savefig('./images/GMM_' + title + 'component_comparison.png')
+    plt.show()
 

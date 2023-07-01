@@ -33,26 +33,8 @@ def validation_MVG(DTR, LTR, k):
     PCA_m8_mvg_nt = []
 
 
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i])) #append da 0 a i-1 poi da i+1 fino alla fine, poi i lo uso come DTE
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-
-        Dtr = np.hstack(Dtr) # fold selezionati per training (dati)
-        Ltr = np.hstack(Ltr) # fold selezionati per training (label)
-
-        Dte = FoldedData_List[i]  # singolo fold selezionato per evaluation (dati)
-        Lte = FoldedLabel_List[i] # singolo fold selezionato per evaluation (label)
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         MVG_labels = np.append(MVG_labels, Lte, axis=0)
         MVG_labels = np.hstack(MVG_labels)
@@ -80,26 +62,26 @@ def validation_MVG(DTR, LTR, k):
                                                                                          PCA_m8_mvg_tied, PCA_m8_mvg_nt)
 
     # π = 0.5 (our application prior), RAW DATA
-    evaluation("RAW data, π=0.5", 0.5, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
+    evaluation("MVG, RAW data, π=0.5", 0.5, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
     # π = 0.1
-    evaluation("RAW data, π=0.1", 0.1, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
+    evaluation("MVG, RAW data, π=0.1", 0.1, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
     # π = 0.9
-    evaluation("RAW data, π=0.9", 0.9, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
+    evaluation("MVG, RAW data, π=0.9", 0.9, MVG_res, MVG_naive, MVG_tied, MVG_nt, MVG_labels)
 
 
     # π = 0.5 (our application prior), PCA m=9
-    evaluation("PCA m=9, π=0.5", 0.5, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
+    evaluation("MVG, PCA m=9, π=0.5", 0.5, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
     # π = 0.1, PCA m=9
-    evaluation("PCA m=9, π=0.1", 0.1, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
+    evaluation("MVG, PCA m=9, π=0.1", 0.1, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
     # π = 0.9 , PCA m=9
-    evaluation("PCA m=9, π=0.9", 0.9, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
+    evaluation("MVG, PCA m=9, π=0.9", 0.9, PCA_m9_mvg, PCA_m9_mvg_naive, PCA_m9_mvg_tied, PCA_m9_mvg_nt, MVG_labels)
 
     # π = 0.5 (our application prior), PCA m=8
-    evaluation("PCA m=8, π=0.5", 0.5, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
+    evaluation("MVG, PCA m=8, π=0.5", 0.5, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
     # π = 0.1 , PCA m=8
-    evaluation("PCA m=8, π=0.1", 0.1, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
+    evaluation("MVG, PCA m=8, π=0.1", 0.1, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
     # π = 0.9 , PCA m=8
-    evaluation("PCA m=8, π=0.9", 0.9, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
+    evaluation("MVG, PCA m=8, π=0.9", 0.9, PCA_m8_mvg, PCA_m8_mvg_naive, PCA_m8_mvg_tied, PCA_m8_mvg_nt, MVG_labels)
 
 
 # Dte è il fold selezionato, Dtr è tutto il resto
@@ -113,9 +95,6 @@ def compute_MVG_score(Dtr, Ltr, Dte, MVG_res, MVG_naive, MVG_t, MVG_nt):
     MVG_naive.append(llrs_naive)
     MVG_t.append(llrs_tied)
     MVG_nt.append(llrs_nt)
-    # MVG_labels.append(Lte)
-    # MVG_labels = np.append(MVG_labels, Lte, axis=0)
-    # MVG_labels = np.hstack(MVG_labels)
     return MVG_res, MVG_naive, MVG_t, MVG_nt
 
 

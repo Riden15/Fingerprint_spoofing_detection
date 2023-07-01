@@ -67,26 +67,8 @@ def kfold_SVM(DTR, LTR, K, C, k):
     PCA_m9_scores = []
     SVM_labels = []
 
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-
-        Dtr = np.hstack(Dtr)
-        Ltr = np.hstack(Ltr)
-
-        Dte = FoldedData_List[i]
-        Lte = FoldedLabel_List[i]
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         wStar, primal = train_SVM_linear(Dtr, Ltr, C=C, K=K)
         DTEEXT = numpy.vstack([Dte, K * numpy.ones((1, Dte.shape[1]))])
@@ -142,25 +124,8 @@ def kfold_SVM_calibration(DTR, LTR, K, C, k):
     scores_append = []
     SVM_labels = []
 
-    for i in range(k):
-        Dtr = []
-        Ltr = []
-        if i == 0:
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-        elif i == k - 1:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-        else:
-            Dtr.append(np.hstack(FoldedData_List[:i]))
-            Dtr.append(np.hstack(FoldedData_List[i + 1:]))
-            Ltr.append(np.hstack(FoldedLabel_List[:i]))
-            Ltr.append(np.hstack(FoldedLabel_List[i + 1:]))
-
-        Dtr = np.hstack(Dtr)
-        Ltr = np.hstack(Ltr)
-        Dte = FoldedData_List[i]
-        Lte = FoldedLabel_List[i]
+    for fold in range(k):
+        Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         wStar, primal = train_SVM_linear(Dtr, Ltr, C=C, K=K)
         DTEEXT = numpy.vstack([Dte, K * numpy.ones((1, Dte.shape[1]))])
