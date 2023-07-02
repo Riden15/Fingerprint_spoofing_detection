@@ -1,25 +1,15 @@
-
-import numpy 
+import numpy
 import scipy.special
 import scipy.stats as stats
 import pylab
 
 from Utility_functions.Validators import confusion_matrix_binary
-from Generative_models import *
+from Models.Generative_models import *
 
 #todo fare refactor di tutto il file
 
 #==============================================================================
 # ------ BASIC FUNCTIONS --------
-
-def empirical_mean(D):
-    return mcol(D.mean(1))
-
-def empirical_covariance(D, mu):
-    n = numpy.shape(D)[1]
-    DC = D - mcol(mu)
-    C = 1 / n * numpy.dot(DC, numpy.transpose(DC))
-    return C
 
 def plot_ROC(llrs, LTE, title):
     thresholds = numpy.array(llrs)
@@ -45,20 +35,12 @@ def logpdf_GMM(X, gmm):
     S = numpy.zeros((len(gmm), X.shape[1]))
     
     for g in range(len(gmm)):
-        #print (w,mu,C)
         (w, mu, C) = gmm[g]
-        S[g, :] = logpdf_GAU_ND(X, mu, C) + numpy.log(w)
+        S[g, :] = logpdf_GAU_ND_fast(X, mu, C) + numpy.log(w)
         
     logdens = scipy.special.logsumexp(S, axis=0)
     
     return S, logdens
-
-def logpdf_GAU_ND(X,mu,C) :
-    
-    res = -0.5*X.shape[0]*numpy.log(2*numpy.pi)
-    res += -0.5*numpy.linalg.slogdet(C)[1]
-    res += -0.5*((X-mu)*numpy.dot(numpy.linalg.inv(C), (X-mu))).sum(0) #1
-    return res
 
 #==============================================================================
 # -------------------------------- LBG ----------------------------------------
@@ -75,10 +57,11 @@ def split(GMM, alpha = 0.1):
 
 #
 def LBG( X,alpha,G,psi, typeOf='Full'):
-    U, s, _ = numpy.linalg.svd(empirical_covariance(X,empirical_mean(X)))
+    mu, C = mean_cov_estimate(X)
+    U, s, _ = numpy.linalg.svd(C)
     s[s<psi] = psi
     covNew = numpy.dot(U, mcol(s)*U.T)
-    GMM = [(1,empirical_mean(X), covNew)]
+    GMM = [(1,mu, covNew)]
 
     while len(GMM)<=G:
         #print('########################################## NEW ITER')
@@ -164,7 +147,7 @@ def GMM_EM_tiedDiag(X,gmm,psi= 0.01): #X -> ev
         llOld = llNew
         SJ = numpy.zeros((G, N))
         for g in range(G):
-            SJ[g, :] = logpdf_GAU_ND(
+            SJ[g, :] = logpdf_GAU_ND_fast(
                 X, gmm[g][1], gmm[g][2]) + numpy.log(gmm[g][0])
         SM = scipy.special.logsumexp(SJ, axis=0)
         llNew = SM.sum()/N

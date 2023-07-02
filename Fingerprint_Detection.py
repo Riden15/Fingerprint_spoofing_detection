@@ -1,6 +1,6 @@
 import numpy
 
-from Validation.validation_GMM import validation_GMM_tot
+from Validation.validation_GMM import *
 from Validation.validation_MVG import *
 from Validation.validation_LR import *
 from Validation.Validation_LR_quad import *
