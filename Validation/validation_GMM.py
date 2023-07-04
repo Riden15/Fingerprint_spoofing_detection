@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 import sys
 
-import numpy
 import numpy as np
-import matplotlib.pyplot as plt
-import scipy
-import scipy.stats as stats
 from prettytable import PrettyTable
 
 sys.path.append('../')
 from Models.GMM import *
 from Utility_functions.Validators import compute_dcf_min_effPrior
-from Utility_functions.plot_validators import plot_minDCF_GMM
-from PCA_LDA import *
+from Models.PCA_LDA import *
 
 
 def validation_GMM_tot(DTR, LTR, k):
@@ -20,6 +15,7 @@ def validation_GMM_tot(DTR, LTR, k):
     componentsToTry = [1, 2, 3, 4, 5, 6, 7]
     for comp in componentsToTry:
         kfold_GMM(DTR, LTR, comp, k)
+
 
 '''
     bars_full_cov = numpy.array([])
@@ -71,35 +67,38 @@ def kfold_GMM(DTR, LTR, comp, k):
         # diag-cov tied
         GMM_llr_dct = ll_GMM(Dtr, Ltr, Dte, GMM_llr_dct, 'tied_diag', comp)
 
-        #PCA m=9
+        # PCA m=9
         s, P = PCA(Dtr, m=9)
         DTR_PCA = numpy.dot(P.T, Dtr)
         DTE_PCA = numpy.dot(P.T, Dte)
         # full-cov
-        GMM_llr_fc_PCA = ll_GMM(Dtr, Ltr, Dte, GMM_llr_fc_PCA, 'full', comp)
+        GMM_llr_fc_PCA = ll_GMM(DTR_PCA, Ltr, DTE_PCA, GMM_llr_fc_PCA, 'full', comp)
         # diag-cov
-        GMM_llr_dc_PCA = ll_GMM(Dtr, Ltr, Dte, GMM_llr_dc_PCA, 'diag', comp)
+        GMM_llr_dc_PCA = ll_GMM(DTR_PCA, Ltr, DTE_PCA, GMM_llr_dc_PCA, 'diag', comp)
         # full-cov tied
-        GMM_llr_fct_PCA = ll_GMM(Dtr, Ltr, Dte, GMM_llr_fct_PCA, 'tied_full', comp)
+        GMM_llr_fct_PCA = ll_GMM(DTR_PCA, Ltr, DTE_PCA, GMM_llr_fct_PCA, 'tied_full', comp)
         # diag-cov tied
-        GMM_llr_dct_PCA = ll_GMM(Dtr, Ltr, Dte, GMM_llr_dct_PCA, 'tied_diag', comp)
+        GMM_llr_dct_PCA = ll_GMM(DTR_PCA, Ltr, DTE_PCA, GMM_llr_dct_PCA, 'tied_diag', comp)
 
     '''RAW data pi=0.1'''
-    validation_GMM("GMM, RAW data, π=0.1", 0.1, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
+    validation_GMM("GMM, RAW data, π=0.1", 0.1, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
     '''RAW data pi=0.5'''
-    validation_GMM("GMM, RAW data, π=0.5", 0.5, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
+    validation_GMM("GMM, RAW data, π=0.5", 0.5, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
     '''RAW data pi=0.9'''
-    validation_GMM("GMM, RAW data, π=0.9", 0.9, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
+    validation_GMM("GMM, RAW data, π=0.9", 0.9, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
 
     '''PCA with m = 9, pi=0.1'''
-    validation_GMM("GMM, PCA m=9, π=0.1", 0.1, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA, GMM_labels)
+    validation_GMM("GMM, PCA m=9, π=0.1", 0.1, comp, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA,
+                   GMM_labels)
     '''PCA with m = 9, pi=0.5'''
-    validation_GMM("GMM, PCA m=9, π=0.5", 0.5, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA, GMM_labels)
+    validation_GMM("GMM, PCA m=9, π=0.5", 0.5, comp, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA,
+                   GMM_labels)
     '''PCA with m = 9, pi=0.9'''
-    validation_GMM("GMM, PCA m=9, π=0.9", 0.9, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA, GMM_labels)
+    validation_GMM("GMM, PCA m=9, π=0.9", 0.9, comp, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA,
+                   GMM_labels)
 
 
-def validation_GMM(title, pi, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_Labels):
+def validation_GMM(title, pi, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_Labels):
     GMM_llr_fc = np.hstack(GMM_llr_fc)
     GMM_llr_dc = np.hstack(GMM_llr_dc)
     GMM_llr_fct = np.hstack(GMM_llr_fct)
@@ -111,18 +110,19 @@ def validation_GMM(title, pi, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, 
     llrs_dct_tot = compute_dcf_min_effPrior(pi, GMM_llr_dct, GMM_Labels)
 
     t = PrettyTable(["Type", "minDCF"])
-    t.title = title
+    t.title = title + ", comp=" + str(comp)
     t.add_row(["GMM Full-cov", round(llrs_fc_tot, 3)])
     t.add_row(["GMM Diag-cov", round(llrs_dc_tot, 3)])
     t.add_row(["GMM Full-cov + tied", round(llrs_fct_tot, 3)])
     t.add_row(["GMM Diag-cov + tied", round(llrs_dct_tot, 3)])
     print(t)
-    
-def ll_GMM(Dtr, Ltr, Dte, llr, typeOf, comp):
 
+
+def ll_GMM(Dtr, Ltr, Dte, llr, typeOf, comp):
     optimal_alpha = 0.1
     llr.extend(GMM_Full(Dtr, Dte, Ltr, optimal_alpha, 2 ** comp, typeOf).tolist())
     return llr
+
 
 def kfold_GMM_calibration(DTR, LTR, comp, k):
     FoldedData_List = np.split(DTR, k, axis=1)

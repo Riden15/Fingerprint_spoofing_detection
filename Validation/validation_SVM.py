@@ -3,10 +3,9 @@ import numpy as np
 
 sys.path.append('../')
 from Models.SVM import *
-from Utility_functions.plot_validators import *
 from Utility_functions.Validators import *
 from prettytable import PrettyTable
-from PCA_LDA import *
+from Models.PCA_LDA import *
 
 def validation_SVM(DTR, LTR, K_arr, C_arr, k):
     for K in K_arr:

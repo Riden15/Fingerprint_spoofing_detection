@@ -3,10 +3,9 @@ import numpy as np
 
 sys.path.append('../')
 from Models.Generative_models import *
-from Utility_functions.plot_validators import *
 from Utility_functions.Validators import *
 from prettytable import PrettyTable
-from PCA_LDA import *
+from Models.PCA_LDA import *
 
 def validation_MVG(DTR, LTR, k):
 

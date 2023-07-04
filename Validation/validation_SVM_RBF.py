@@ -1,14 +1,11 @@
 import sys
 import numpy as np
-import scipy
 from prettytable import PrettyTable
 
 sys.path.append('../')
-from Utility_functions.General_functions import *
-from Utility_functions.plot_validators import plot_DCF_PCA, plot_DCF, plot_DCF_for_SVM_RBF_calibration
 from Utility_functions.Validators import *
 from Models.SVM import *
-from PCA_LDA import *
+from Models.PCA_LDA import *
 
 def validation_SVM_RBF(DTR, LTR, K_arr, gamma_arr, C_arr, k):
     for C in C_arr:

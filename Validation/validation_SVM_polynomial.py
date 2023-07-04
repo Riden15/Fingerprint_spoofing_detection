@@ -1,14 +1,11 @@
 import sys
 import numpy as np
-import scipy
 from prettytable import PrettyTable
 
 sys.path.append('../')
-from Utility_functions.General_functions import *
-from Utility_functions.plot_validators import plot_DCF_PCA, plot_DCF
 from Utility_functions.Validators import *
 from Models.SVM import *
-from PCA_LDA import *
+from Models.PCA_LDA import *
 
 def validation_SVM_polynomial(DTR, LTR, K_arr, C_arr, CON_array, k):
     for C in C_arr:

@@ -1,10 +1,9 @@
 import numpy as np
 
-from Utility_functions.Validators import *
 from Utility_functions.plot_validators import *
 from Models.Logistic_Regression import *
 from prettytable import PrettyTable
-from PCA_LDA import *
+from Models.PCA_LDA import *
 
 def validation_quad_LR(DTR, LTR, L, k):
     for l in L:

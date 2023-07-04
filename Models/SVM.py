@@ -3,6 +3,7 @@ import scipy
 import sklearn
 from Utility_functions.General_functions import *
 
+
 def calculate_lbgf(H, DTR, C):
     def JDual(alpha):
         Ha = numpy.dot(H, mcol(alpha))
@@ -25,6 +26,7 @@ def calculate_lbgf(H, DTR, C):
 
     return alphaStar, JDual, LDual
 
+
 def train_SVM_linear(DTR, LTR, K, C):
     DTREXT = numpy.vstack([DTR, K * numpy.ones((1, DTR.shape[1]))])
     Z = numpy.zeros(LTR.shape)
@@ -43,8 +45,8 @@ def train_SVM_linear(DTR, LTR, K, C):
     wStar = numpy.dot(DTREXT, mcol(alphaStar) * mcol(Z))
     return wStar, JPrimal(wStar)
 
-def Poly_KernelFunction(DTR, LTR, DTE, C, constant, K, degree):
 
+def Poly_KernelFunction(DTR, LTR, DTE, C, constant, K, degree):
     Z = numpy.zeros(LTR.shape)
     Z[LTR == 1] = 1
     Z[LTR == 0] = -1
@@ -54,19 +56,19 @@ def Poly_KernelFunction(DTR, LTR, DTE, C, constant, K, degree):
     score = numpy.sum(numpy.dot(aStar * vrow(Z), kernel), axis=0)
     return score
 
+
 def train_SVM_polynomial(DTR, LTR, C, constant, K, degree):
     Z = numpy.zeros(LTR.shape)
     Z[LTR == 1] = 1
     Z[LTR == 0] = -1
 
     H = (numpy.dot(DTR.T, DTR) + constant) ** degree + K ** 2
-    # Dist = mcol((DTR**2).sum(0)) + mrow((DTR**2).sum(0)) - 2*numpy.dot(DTR.T, DTR)
-    # H = numpy.exp(-Dist)
     H = mcol(Z) * vrow(Z) * H
 
     alphaStar, JDual, LDual = calculate_lbgf(H, DTR, C)
 
     return alphaStar, JDual(alphaStar)[0]
+
 
 def RBF_KernelFunction(DTR, LTR, DTE, C, K, gamma):
     Z = numpy.zeros(LTR.shape)
@@ -82,6 +84,7 @@ def RBF_KernelFunction(DTR, LTR, DTE, C, K, gamma):
 
     score = numpy.sum(numpy.dot(aStar * vrow(Z), kern), axis=0)
     return score
+
 
 def train_SVM_RBF(DTR, LTR, C, K=1, gamma=1.):
     Z = numpy.zeros(LTR.shape)
