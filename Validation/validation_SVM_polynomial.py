@@ -7,12 +7,14 @@ from Utility_functions.Validators import *
 from Models.SVM import *
 from Models.PCA_LDA import *
 
+
 def validation_SVM_polynomial(DTR, LTR, K_arr, C_arr, CON_array, k):
     for C in C_arr:
         for K in K_arr:
-             for constant in CON_array:
+            for constant in CON_array:
                 for degree in [2]:
-                     kfold_SVM_polynomial(DTR, LTR, C, constant, K, degree, k)
+                    kfold_SVM_polynomial(DTR, LTR, C, constant, K, degree, k)
+
 
 '''
     x = numpy.logspace(-5, 1, 15)
@@ -42,6 +44,7 @@ def validation_SVM_polynomial(DTR, LTR, K_arr, C_arr, CON_array, k):
 
     plot_DCF_PCA(x, y, 'C', 'SVM_Poly_minDCF_comparison_K=1_c=1_d=3')
 '''
+
 
 def kfold_SVM_polynomial(DTR, LTR, C, constant, K, degree, k):
     FoldedData_List = numpy.split(DTR, k, axis=1)
@@ -96,8 +99,8 @@ def kfold_SVM_polynomial(DTR, LTR, C, constant, K, degree, k):
     '''PCA with m = 8, pi=0.9'''
     evaluation(PCA_m8_scores, SVM_labels, "SVM_POLY, PCA m=8, ", C, K, constant, degree, 0.9)
 
-def evaluation(scores, LR_labels, appendToTitle, C, K, constant, degree, pi):
 
+def evaluation(scores, LR_labels, appendToTitle, C, K, constant, degree, pi):
     scores_append = np.hstack(scores)
     scores_tot = compute_dcf_min_effPrior(pi, scores_append, LR_labels)
 
@@ -106,7 +109,8 @@ def evaluation(scores, LR_labels, appendToTitle, C, K, constant, degree, pi):
 
     t = PrettyTable(["Type", "minDCF"])
     t.title = appendToTitle + "π=" + str(pi)
-    t.add_row(['SVM_POLY, K=' + str(K) + ', C=' + str(C) + ', degree='+ str(degree) + ', constant='+ str(constant),  round(scores_tot, 3)])
+    t.add_row(['SVM_POLY, K=' + str(K) + ', C=' + str(C) + ', degree=' + str(degree) + ', constant=' + str(constant),
+               round(scores_tot, 3)])
     print(t)
 
 

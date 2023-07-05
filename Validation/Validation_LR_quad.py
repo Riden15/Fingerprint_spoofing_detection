@@ -5,7 +5,7 @@ from Models.Logistic_Regression import *
 from prettytable import PrettyTable
 from Models.PCA_LDA import *
 
-def validation_quad_LR(DTR, LTR, L, k):
+def validation_LR_quad(DTR, LTR, L, k):
     for l in L:
         for pi in [0.1, 0.5, 0.9]:
             kfold_QUAD_LR(DTR, LTR, l, pi, k)

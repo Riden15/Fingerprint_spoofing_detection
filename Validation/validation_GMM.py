@@ -10,7 +10,7 @@ from Utility_functions.Validators import compute_dcf_min_effPrior
 from Models.PCA_LDA import *
 
 
-def validation_GMM_tot(DTR, LTR, k):
+def validation_GMM(DTR, LTR, k):
     # We'll train from 1 to 2^7 components
     componentsToTry = [1, 2, 3, 4, 5, 6, 7]
     for comp in componentsToTry:
@@ -54,8 +54,6 @@ def kfold_GMM(DTR, LTR, comp, k):
 
     for fold in range(k):
         Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
-        GMM_labels = np.append(GMM_labels, Lte)
-        GMM_labels = np.hstack(GMM_labels)
 
         # RAW DATA
         # full-cov
@@ -80,25 +78,28 @@ def kfold_GMM(DTR, LTR, comp, k):
         # diag-cov tied
         GMM_llr_dct_PCA = ll_GMM(DTR_PCA, Ltr, DTE_PCA, GMM_llr_dct_PCA, 'tied_diag', comp)
 
+        GMM_labels = np.append(GMM_labels, Lte)
+        GMM_labels = np.hstack(GMM_labels)
+
     '''RAW data pi=0.1'''
-    validation_GMM("GMM, RAW data, π=0.1", 0.1, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
+    compute_GMM_score("GMM, RAW data, π=0.1", 0.1, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
     '''RAW data pi=0.5'''
-    validation_GMM("GMM, RAW data, π=0.5", 0.5, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
+    compute_GMM_score("GMM, RAW data, π=0.5", 0.5, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
     '''RAW data pi=0.9'''
-    validation_GMM("GMM, RAW data, π=0.9", 0.9, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
+    compute_GMM_score("GMM, RAW data, π=0.9", 0.9, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_labels)
 
     '''PCA with m = 9, pi=0.1'''
-    validation_GMM("GMM, PCA m=9, π=0.1", 0.1, comp, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA,
-                   GMM_labels)
+    compute_GMM_score("GMM, PCA m=9, π=0.1", 0.1, comp, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA,
+                      GMM_labels)
     '''PCA with m = 9, pi=0.5'''
-    validation_GMM("GMM, PCA m=9, π=0.5", 0.5, comp, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA,
-                   GMM_labels)
+    compute_GMM_score("GMM, PCA m=9, π=0.5", 0.5, comp, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA,
+                      GMM_labels)
     '''PCA with m = 9, pi=0.9'''
-    validation_GMM("GMM, PCA m=9, π=0.9", 0.9, comp, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA,
-                   GMM_labels)
+    compute_GMM_score("GMM, PCA m=9, π=0.9", 0.9, comp, GMM_llr_fc_PCA, GMM_llr_dc_PCA, GMM_llr_fct_PCA, GMM_llr_dct_PCA,
+                      GMM_labels)
 
 
-def validation_GMM(title, pi, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_Labels):
+def compute_GMM_score(title, pi, comp, GMM_llr_fc, GMM_llr_dc, GMM_llr_fct, GMM_llr_dct, GMM_Labels):
     GMM_llr_fc = np.hstack(GMM_llr_fc)
     GMM_llr_dc = np.hstack(GMM_llr_dc)
     GMM_llr_fct = np.hstack(GMM_llr_fct)
