@@ -7,11 +7,13 @@ from Utility_functions.Validators import *
 from Models.SVM import *
 from Models.PCA_LDA import *
 
+
 def validation_SVM_RBF(DTR, LTR, K_arr, gamma_arr, C_arr, k):
     for C in C_arr:
-       for K in K_arr:
-          for gamma in gamma_arr:
-             kfold_SVM_RBF(DTR, LTR, C, K, gamma, k)
+        for K in K_arr:
+            for gamma in gamma_arr:
+                kfold_SVM_RBF(DTR, LTR, C, K, gamma, k)
+
 
 '''
     x = numpy.logspace(-3, 3, 15)  # x contains different values of C
@@ -39,6 +41,7 @@ def validation_SVM_RBF(DTR, LTR, K_arr, gamma_arr, C_arr, k):
 
     plot_DCF_for_SVM_RBF_calibration(x, y, 'C', 'SVM_RBF_minDCF_comparison')
 '''
+
 
 def kfold_SVM_RBF(DTR, LTR, C, K, gamma, k):
     FoldedData_List = numpy.split(DTR, k, axis=1)
@@ -93,14 +96,14 @@ def kfold_SVM_RBF(DTR, LTR, C, K, gamma, k):
     '''PCA with m = 8, pi=0.9'''
     evaluation(PCA_m8_scores, SVM_labels, "SVM_RBF, PCA m=8, ", C, K, gamma, 0.9)
 
-def evaluation(scores, LR_labels, appendToTitle, C, K, gamma, pi):
 
+def evaluation(scores, LR_labels, appendToTitle, C, K, gamma, pi):
     scores_append = np.hstack(scores)
     scores_tot = compute_dcf_min_effPrior(pi, scores_append, LR_labels)
 
     # act_DCF_05 = compute_act_DCF(scores_append, SVM_labels, 0.5, 1, 1, )
     # plot_ROC(scores_append, SVM_labels, appendToTitle + 'SVM, K=' + str(K) + ', C=' + str(C))
-    #bayes_error_min_act_plot(scores_append, SVM_labels, appendToTitle + 'SVM_RFB, K=' + str(K) + ', C=' + str(C), 0.4)
+    # bayes_error_min_act_plot(scores_append, SVM_labels, appendToTitle + 'SVM_RFB, K=' + str(K) + ', C=' + str(C), 0.4)
 
     t = PrettyTable(["Type", "minDCF"])
     t.title = appendToTitle + "π=" + str(pi)
@@ -125,4 +128,3 @@ def kfold_svm_rbf_calibration(DTR, LTR, C, K, gamma, k):
         SVM_labels = np.hstack(SVM_labels)
 
     return np.hstack(scores_append), SVM_labels
-

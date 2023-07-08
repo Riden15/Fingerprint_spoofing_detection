@@ -31,7 +31,7 @@ def validation(DTR, LTR):
     print("############    Support Vector Machine - Linear    ##############")
     K_arr = [0.1, 1.0, 10.0]
     C_arr = [0.01, 0.1, 1.0, 10.0]
-    validation_SVM(DTR, LTR, K_arr, C_arr, 5) # FINITO
+    validation_SVM(DTR, LTR, K_arr, C_arr, 5)  # FINITO
 
     print("############    Support Vector Machine - Quadratic    ##############")
     K_arr = [0.1, 1, 10]
@@ -51,22 +51,22 @@ def validation(DTR, LTR):
     # validation_GMM_ncomp(DTR, LTR, 0.1, 2)
     # validation_GMM_ncomp(DTR, LTR, 0.9, 2)
 
-def evaluation(DTR, LTR, DTE, LTE):
 
-    #todo tutti queste run devono essere fatti con i migliori hyper parameter
-    #todo bisogna capire se fare un confronto tra eval e val come fa il tipo
+def evaluation(DTR, LTR, DTE, LTE):
+    # todo tutti queste run devono essere fatti con i migliori hyper parameter
+    # todo bisogna capire se fare un confronto tra eval e val come fa il tipo
 
     print("############    MVG    ##############")
-    evaluation_MVG(DTR, LTR, DTE, LTE) # FINITO
+    evaluation_MVG(DTR, LTR, DTE, LTE)  # FINITO
 
     print("###########      LR      ##############")
     L = 0.4
-    evaluation_LR(DTR,LTR, DTE, LTE, L) # FINITO
+    evaluation_LR(DTR, LTR, DTE, LTE, L)  # FINITO
 
     print("############    Support Vector Machine - Linear    ##############")
     K = [0.1, 1.0, 10.0]
     C = [0.01, 0.1, 1.0, 10.0]
-    evaluation_SVM(DTR, LTR, DTE, LTE, K, C) # FINITO
+    evaluation_SVM(DTR, LTR, DTE, LTE, K, C)  # FINITO
 
     print("############    Support Vector Machine - Quadratic    ##############")
     K = [0.1, 1, 10]
@@ -89,7 +89,6 @@ def evaluation(DTR, LTR, DTE, LTE):
     # validation_GMM_ncomp(DTR, LTR, 0.9, 2)
 
 
-
 if __name__ == '__main__':
     D, L = load('Data/Train.txt')
     Dt, Lt = load('Data/Test.txt')
@@ -97,5 +96,5 @@ if __name__ == '__main__':
     DTR, LTR = randomize(D, L)
     DTE, LTE = randomize(Dt, Lt)
     #plot_features(DTR, LTR)
-    #validation(DTR, LTR)
-    evaluation(DTR, LTR, DTE, LTE)
+    validation(DTR, LTR)
+    # evaluation(DTR, LTR, DTE, LTE)
