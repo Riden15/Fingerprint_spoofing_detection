@@ -390,8 +390,39 @@ This kind of model, with a Quadratic Kernel outperforms the MVG models, for our 
 
 \section{Support Vector Machine}
 
+In this section we are going to see how Linear SVM, Polynomial SVM and RBF SVM will handle our application
 
+$\newline$
 \textbf{SVM - Linear - Raw Feature}
+
+$\newline$
+\textbf{Linear SVM} can be obtained by the minimization of the primal problem:
+\[\hat{J}(\hat{w}) = \frac{1}{2}||\hat{w}||^2 + C\sum_{i=1}^{n}max_i(0,1-z_i(\hat{w}^T\hat{x_i}))\]
+where
+\[\hat{x_i} = \biggl[ \hat{x_i} K \biggr] , \hat{w_i} = \biggl[w b\biggr]\]
+and K is a regularization term.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale = 0.5]{../../images/SVM_minDCF_comparison_C=1.png}
+    \caption{Linear SVM with C=1}
+\end{figure}
+
+From Figure 2.3 we can see how K is affected (using C = 1). It can be seen that values of 
+K between $10^{-1}$ and $10^{1}$ have a low DCF. In our cases we are going to try 3 different 
+values of \(K = [0.1, 1, 10]\).
+
+\begin{figure}[h!]
+    \includegraphics[scale = 0.5]{../../images/SVM_minDCF_comparison_K=1.png}
+    \centering
+    \caption{Linear SVM with K=1}
+\end{figure}
+
+Figure 2.4 shows the different values of C while setting K = 1. Again, it can be seen that the 
+optiomal values of C are the ones between $10^{-1}$ and $10^{1}$. We are going to test 4 different 
+values of \(C = [0.01, 0.1, 1, 10]\). We also decided to test 0.01 even if the minDCF is "optimal" only
+for the $\pi$ = 0.1 
+
+Here the table containing the results:
 
 \begin{table}[H]
     \centering
@@ -408,8 +439,8 @@ This kind of model, with a Quadratic Kernel outperforms the MVG models, for our 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
                                 & C = 0.01   & 0.921 & 0.532 & 0.473   \\
                                 & C = 0.1    & 0.78 & 0.476 & 0.479  \\
-                                & C = 1.0    & 0.532 & 0.466 & 0.473    \\
-                                & C = 10.0   & 0.666 & 0.492 & 0.47  \\ \hline
+                                & C = 1.0    & $\color{red}0.532$ & $\color{red}0.466$ & 0.473    \\
+                                & C = 10.0   & 0.666 & 0.492 & $\color{red}0.47$  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.9} \\ \hline
                                 & C = 0.01   & 0.379 & 0.216 & 0.187  \\
@@ -421,6 +452,10 @@ This kind of model, with a Quadratic Kernel outperforms the MVG models, for our 
 \end{table}
 $\newline$
 \textbf{SVM - Linear - PCA with m = 9}
+
+$\newline$
+We also tried to apply PCA with m = 9 since from Figure 2.3 and Figure 2.4 we can see that
+we can achive also a good minDCF.
 
 \begin{table}[H]
     \centering
@@ -437,8 +472,8 @@ $\newline$
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
                                 & C = 0.01   & 0.973 & 0.538 & 0.496   \\
                                 & C = 0.1    & 0.776 & 0.493 & 0.492  \\
-                                & C = 1.0    & 0.54 & 0.494 & 0.489    \\
-                                & C = 10.0   & 0.518 & 0.491 & 0.492  \\ \hline
+                                & C = 1.0    & 0.54 & 0.494 & $\color{red}0.489$    \\
+                                & C = 10.0   & $\color{red}0.518$ & $\color{red}0.491$ & 0.492  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.9} \\ \hline
                                 & C = 0.01   & 0.382 & 0.216 & 0.187  \\
@@ -448,6 +483,9 @@ $\newline$
     \hline
     \end{tabular}
 \end{table}
+
+From this results we can conclude that using or not using PCA (with m = 9, so with almost all
+features) doesn't change that much.
 
 \newpage
 \textbf{SVM - Quadratic - Raw Feature with degree = 2}
