@@ -42,12 +42,12 @@
 
     The application we are going to build has $\pi$ =0.5 meaning that we have the same prior probability for both classes, but we have different 
     costs. The cost of False Negative \textit{C\textsubscript{fn}} is 1 but the cost of False Positive
-    \textit{C\textsubscript{fp}} is 10, so classifing a spoofed fingerprint as an authentic one 
+    \textit{C\textsubscript{fp}} is 10, so classifying a spoofed fingerprint as an authentic one
     has an higher cost due to security vulnerability.
 
 \section{Features Analisys}
 As we said, the Fingerprint Spoofing Detection task has 10 features. Here below we are going 
-to analize them.
+to analyze them.
 
 \begin{figure}[h!]
     \begin{subfigure}{0.3\textwidth}
@@ -222,7 +222,7 @@ We are going to analyze all the Gaussian Classifiers, using the Multivariate Gau
 \begin{itemize}
     \item Tied Covariance
     \item Naive Bayes
-    \item Tied Navie Bayes
+    \item Tied Naive Bayes
 \end{itemize}
 
 For all these 4 model we have 2 parameters: $\theta$ = ($\mu$, $\Sigma$). We can easily estimate them starting 
@@ -242,7 +242,7 @@ which solutions are
 \[\mu_{c,[j]}^* = \frac{1}{N_c}\sum_{i|c_i=c}x_{i,[j]}\] 
 \[\Sigma_{c,[j]}^* = \frac{1}{N_c}\sum_{i|c_i=c}(x_{i,[j]}-\mu_{c,[j]}^*)(x_{i,[j]}-\mu_{c,[j]}^*)^T\] 
 
-Finally the \textbf{Tied} model can be built in the same way (has a single covariance matrix for all classes)
+Finally, the \textbf{Tied} model can be built in the same way (has a single covariance matrix for all classes)
 \[ l (\theta) = \sum_{c}^{K}\sum_{i|c_i=c} log \mathcal{N} (x_i|\mu_c,\Sigma)\]
 which solutions are
 \[\mu_{c}^* = \frac{1}{N_c}\sum_{i|c_i=c}x_{i}\] 
@@ -291,10 +291,10 @@ There are also some computation of PCA with m=9 and m=8.
     \end{tabular}\label{tab:table3}
 \end{table}
 
-As we can see, the MVG model, that consider all the convariance matrices, is the best either with PCA or without. 
+As we can see, the MVG model, that consider all the covariance matrices, is the best either with PCA or without.
 PCA is usefull only in the Naive Gaussian model. Tied models perform worse.
 
-Overall the best candidate is the \textbf{MVG classifier} without PCA. However we will see that this kind of model is also
+Overall the best candidate is the \textbf{MVG classifier} without PCA. However, we will see that this kind of model is also
 useless for our imbalanced data.
 
 \clearpage
