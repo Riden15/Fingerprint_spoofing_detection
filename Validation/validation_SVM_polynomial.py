@@ -18,7 +18,30 @@ def validation_SVM_polynomial(DTR, LTR, K_arr, C_arr, CON_array, k):
 
 '''
     x = numpy.logspace(-5, 1, 15)
-    #x = numpy.linspace(-8, 12, 1000)
+    y = numpy.array([])
+    y_05 = numpy.array([])
+    y_09 = numpy.array([])
+    y_01 = numpy.array([])
+    y_05_PCA = numpy.array([])
+    y_09_PCA = numpy.array([])
+    y_01_PCA = numpy.array([])
+    for xi in x:                                                              # C   c  K
+        scores, scoresPCA, labels = kfold_SVM_polynomial_calibration(DTR, LTR, xi, 1, 1.0, 2, k)
+        y_09 = numpy.hstack((y_09, compute_dcf_min_effPrior(0.9, scores, labels)))
+        y_05 = numpy.hstack((y_05, compute_dcf_min_effPrior(0.5, scores, labels)))
+        y_01 = numpy.hstack((y_01, compute_dcf_min_effPrior(0.1, scores, labels)))
+        y_09_PCA = numpy.hstack((y_09_PCA, compute_dcf_min_effPrior(0.9, scoresPCA, labels)))
+        y_05_PCA = numpy.hstack((y_05_PCA, compute_dcf_min_effPrior(0.5, scoresPCA, labels)))
+        y_01_PCA = numpy.hstack((y_01_PCA, compute_dcf_min_effPrior(0.1, scoresPCA, labels)))
+
+    y = numpy.hstack((y, y_09))
+    y = numpy.vstack((y, y_05))
+    y = numpy.vstack((y, y_01))
+    y = numpy.vstack((y, y_09_PCA))
+    y = numpy.vstack((y, y_05_PCA))
+    y = numpy.vstack((y, y_01_PCA))
+    plot_DCF_PCA(x, y, 'C', 'SVM_Poly_minDCF_comparison_K=1_c=1_d=2', folder='validation/')
+    
     y = numpy.array([])
     y_05 = numpy.array([])
     y_09 = numpy.array([])
@@ -41,8 +64,7 @@ def validation_SVM_polynomial(DTR, LTR, K_arr, C_arr, CON_array, k):
     y = numpy.vstack((y, y_09_PCA))
     y = numpy.vstack((y, y_05_PCA))
     y = numpy.vstack((y, y_01_PCA))
-
-    plot_DCF_PCA(x, y, 'C', 'SVM_Poly_minDCF_comparison_K=1_c=1_d=3')
+    plot_DCF_PCA(x, y, 'C', 'SVM_Poly_minDCF_comparison_K=1_c=1_d=3', folder='validation/')
 '''
 
 

@@ -36,7 +36,7 @@ def validation_LR_quad(DTR, LTR, L, k):
     y = numpy.vstack((y, y_05_PCA))
     y = numpy.vstack((y, y_01_PCA))
 
-    plot_DCF_PCA(x, y, 'lambda', 'QUAD_LR_PCA_minDCF_comparison')
+    plot_DCF_PCA(x, y, 'lambda', 'QUAD_LR_PCA_minDCF_comparison', folder='validation/')
 '''
 
 

@@ -56,7 +56,7 @@ def Bayes_error_plot2(predictions, labelsEval, confuse_matrix):
     plt.legend()
     plt.show()
 
-def plot_DCF(x, y, xlabel, title, base=10):
+def plot_DCF(x, y, xlabel, title, base=10, folder=''):
     plt.figure()
     plt.plot(x, y[0], label= 'min DCF prior=0.9', color='g')
     plt.plot(x, y[1], label= 'min DCF prior=0.5', color='b')
@@ -66,11 +66,11 @@ def plot_DCF(x, y, xlabel, title, base=10):
     plt.legend([ "min DCF prior=0.9", "min DCF prior=0.5", "min DCF prior=0.1"])
     plt.xlabel(xlabel)
     plt.ylabel("min DCF")
-    plt.savefig('images/' + title+ '.png')
+    plt.savefig('images/' + folder + title+ '.png')
     plt.show()
     return
 
-def plot_DCF_PCA(x, y, xlabel, title, base=10):
+def plot_DCF_PCA(x, y, xlabel, title, base=10, folder=''):
     plt.figure()
     plt.plot(x, y[0], label= 'min DCF prior=0.9', color='g')
     plt.plot(x, y[1], label= 'min DCF prior=0.5', color='b')
@@ -83,11 +83,11 @@ def plot_DCF_PCA(x, y, xlabel, title, base=10):
     plt.legend([ "min DCF prior=0.9", "min DCF prior=0.5", "min DCF prior=0.1", "min DCF prior=0.9 (PCA=9)", "min DCF prior=0.5 (PCA=9)", "min DCF prior=0.1 (PCA=9)"])
     plt.xlabel(xlabel)
     plt.ylabel("min DCF")
-    plt.savefig('images/' + title+ '.png')
+    plt.savefig('images/' + folder + title + '.png')
     plt.show()
     return
 
-def plot_DCF_for_SVM_RBF_calibration(x, y, xlabel, title, base=10):
+def plot_DCF_for_SVM_RBF_calibration(x, y, xlabel, title, base=10, folder=''):
     plt.figure()
     plt.plot(x, y[0], label= 'logγ=-4', color='b')
     plt.plot(x, y[1], label= 'logγ=-3', color='g')
@@ -99,12 +99,12 @@ def plot_DCF_for_SVM_RBF_calibration(x, y, xlabel, title, base=10):
     plt.legend([ "logγ=-4", "logγ=-3", "logγ=-2", "logγ=-1"])
     plt.xlabel(xlabel)
     plt.ylabel("minDCF")
-    plt.savefig('images/' + title+ '.png')
+    plt.savefig('images/' + folder + title+ '.png')
     plt.show()
     return
 
 
-def plot_minDCF_GMM(score_raw, title, components):
+def plot_minDCF_GMM(score_raw, title, components, folder=''):
     labels = numpy.exp2(components).astype(int)
 
     x = numpy.arange(len(labels))  # the label locations
@@ -114,6 +114,6 @@ def plot_minDCF_GMM(score_raw, title, components):
     plt.ylabel("DCF")
     plt.title(title)
     plt.legend()
-    plt.savefig('./images/GMM_' + title + 'component_comparison.png')
+    plt.savefig('./images/' + folder + title + 'component_comparison.png')
     plt.show()
 

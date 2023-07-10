@@ -29,10 +29,10 @@ def validation_GMM(DTR, LTR, k):
         bars_tied_full_cov = numpy.hstack((bars_tied_full_cov, compute_dcf_min_effPrior(0.5, GMM_llr_fct, labels)))
         bars_tied_diag_cov = numpy.hstack((bars_tied_diag_cov, compute_dcf_min_effPrior(0.5, GMM_llr_dct, labels)))
 
-    plot_minDCF_GMM(bars_full_cov, 'full-cov', componentsToTry)
-    plot_minDCF_GMM(bars_diag_cov, 'diag-cov', componentsToTry)
-    plot_minDCF_GMM(bars_tied_full_cov, 'tied_full-cov', componentsToTry)
-    plot_minDCF_GMM(bars_tied_diag_cov, 'tied_diag-cov', componentsToTry)
+    plot_minDCF_GMM(bars_full_cov, 'GMM_full-cov_', componentsToTry, folder='validation/')
+    plot_minDCF_GMM(bars_diag_cov, 'GMM_diag-cov_', componentsToTry, folder='validation/')
+    plot_minDCF_GMM(bars_tied_full_cov, 'GMM_tied-full-cov_', componentsToTry, folder='validation/')
+    plot_minDCF_GMM(bars_tied_diag_cov, 'GMM_tied-diag-cov_', componentsToTry, folder='validation/')
 '''
 
 

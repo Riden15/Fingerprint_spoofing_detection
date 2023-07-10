@@ -39,7 +39,7 @@ def validation_SVM_RBF(DTR, LTR, K_arr, gamma_arr, C_arr, k):
     y = numpy.vstack((y, gamma_minus_2))
     y = numpy.vstack((y, gamma_minus_1))
 
-    plot_DCF_for_SVM_RBF_calibration(x, y, 'C', 'SVM_RBF_minDCF_comparison')
+    plot_DCF_for_SVM_RBF_calibration(x, y, 'C', 'SVM_RBF_minDCF_comparison', folder='validation/')
 '''
 
 

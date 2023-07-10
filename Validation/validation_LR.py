@@ -39,7 +39,7 @@ def validation_LR(DTR, LTR, L, k):
     y = numpy.vstack((y, y_05_PCA))
     y = numpy.vstack((y, y_01_PCA))
 
-    plot_DCF_PCA(x, y, 'lambda', 'LR_PCA_minDCF_comparison')
+    plot_DCF_PCA(x, y, 'lambda', 'LR_PCA_minDCF_comparison', folder='validation/')
 '''
 
 def kFold_LR(DTR, LTR, l, k):

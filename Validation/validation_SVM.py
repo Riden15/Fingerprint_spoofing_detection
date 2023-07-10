@@ -30,16 +30,22 @@ def validation_SVM(DTR, LTR, K_arr, C_arr, k):
         y_09_PCA = numpy.hstack((y_09_PCA, compute_dcf_min_effPrior(0.9, scoresPCA, labels)))
         y_05_PCA = numpy.hstack((y_05_PCA, compute_dcf_min_effPrior(0.5, scoresPCA, labels)))
         y_01_PCA = numpy.hstack((y_01_PCA, compute_dcf_min_effPrior(0.1, scoresPCA, labels)))
-
+    
     y = numpy.hstack((y, y_09))
     y = numpy.vstack((y, y_05))
     y = numpy.vstack((y, y_01))
     y = numpy.vstack((y, y_09_PCA))
     y = numpy.vstack((y, y_05_PCA))
     y = numpy.vstack((y, y_01_PCA))
-    plot_DCF_PCA(x, y, 'C', 'SVM_minDCF_comparison_K=1')
-
-    x = numpy.logspace(-3, 2, 15)
+    plot_DCF_PCA(x, y, 'C', 'SVM_minDCF_comparison_K=1', folder='validation/')
+    
+    y = numpy.array([])
+    y_05 = numpy.array([])
+    y_09 = numpy.array([])
+    y_01 = numpy.array([])
+    y_05_PCA = numpy.array([])
+    y_09_PCA = numpy.array([])
+    y_01_PCA = numpy.array([])
     for xi in x:
         scores, scoresPCA, labels = kfold_SVM_calibration(DTR, LTR, xi, 1.0, k)
         y_09 = numpy.hstack((y_09, compute_dcf_min_effPrior(0.9, scores, labels)))
@@ -55,7 +61,7 @@ def validation_SVM(DTR, LTR, K_arr, C_arr, k):
     y = numpy.vstack((y, y_09_PCA))
     y = numpy.vstack((y, y_05_PCA))
     y = numpy.vstack((y, y_01_PCA))
-    plot_DCF_PCA(x, y, 'K', 'SVM_minDCF_comparison_C=1')
+    plot_DCF_PCA(x, y, 'K', 'SVM_minDCF_comparison_C=1', folder='validation/')
 '''
 
 def kfold_SVM(DTR, LTR, K, C, k):
