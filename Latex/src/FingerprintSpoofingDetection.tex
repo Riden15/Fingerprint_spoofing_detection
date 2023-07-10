@@ -8,6 +8,8 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{colortbl}
+\usepackage{amsmath}
+\usepackage{amssymb}
 
  \geometry{
  a4paper,
@@ -39,10 +41,10 @@
     The last column is the class label which is \textbf{1} for the \textit{authentic fingerprint} and \textbf{0} for the \textit{spoofed fingerprint}.\newline
 
     The datasets are imbalanced, we have more spoofed fingerprint than the authentic fingerprint.
-    The Training set is composed of ... samples and the Test set is composed of ... samples. \newline
+    The Training set is composed of 2325 samples and the Test set is composed of 7704 samples. \newline
 
-    The application we are going to build has $\pi$ =0.5 meaning that we have the same prior probability for both classes, but we have different 
-    costs. The cost of False Negative \textit{C\textsubscript{fn}} is 1 but the cost of False Positive
+    The application we are going to build has $\pi$ =0.5 meaning that we have the same prior probability for both classes, but we have different costs.
+    The cost of False Negative \textit{C\textsubscript{fn}} is 1 but the cost of False Positive
     \textit{C\textsubscript{fp}} is 10, so classifying a spoofed fingerprint as an authentic one
     has an higher cost due to security vulnerability.
 
@@ -54,31 +56,30 @@ Here below we are going to analyze them.
     \begin{subfigure}{0.3\textwidth}
         \includegraphics[scale=0.3]{../../images/feature_plot/heatmap_}
         \caption{All classes}
-        
-        \label{fig:heatmap}
+
     \end{subfigure}
     \begin{subfigure}{0.3\textwidth}
         \includegraphics[scale=0.3]{../../images/feature_plot/heatmap_fingerprint_}
         \caption{Authentic Fingerprint}
-        
-        \label{fig:heatmap}
+
     \end{subfigure}
     \begin{subfigure}{0.3\textwidth}
         \includegraphics[scale=0.3]{../../images/feature_plot/heatmap_spoofedFingerprint_}
         \caption{Spoofed Fingerprint}
-        
-        \label{fig:heatmap}
+
     \end{subfigure}
     \centering
     \caption{Heatmap}
+    \label{fig:HeatMap}
 \end{figure}
 
-As we can see from the Figures above, the correlation between the features is very small. 
+As we can see from the Figure~\ref{fig:HeatMap}, the correlation between the features is very small.
 This lead us to think that using PCA for dimensionality reduction is useless (it could
 also remove some important information!), but we will try using it. \newline
 
-Now we are going to see the histograms for each of the 10 features. It's easy to see that
-each feature has a Gaussian distribution. \newline
+Now we are going to see the histograms for each of the 10 features.
+It's easy to see that each feature has a Gaussian distribution. \newline
+
 \begin{figure}[h!]
     \begin{subfigure}{0.3\textwidth}
         \includegraphics[scale=0.3]{../../images/feature_plot/hist_feature_0}
@@ -122,12 +123,11 @@ each feature has a Gaussian distribution. \newline
     \end{subfigure}
     \centering
     \caption{RAW Feature Histogram}
+    \label{fig:RawFeatureHistogram}
 \end{figure}
 
 
-
 \section{PCA Usage}
-
 
     PCA (Principal Component Analysis) is a Dimensionality Reduction technique that can be used to
     remove noise, simplify classification and data visualization.
@@ -146,12 +146,13 @@ each feature has a Gaussian distribution. \newline
     The solution are the \textit{m} eigen-vectors of U corresponding to the \textit{m}
     highest eigen-values of $\Sigma$.
 
-
     \begin{figure}[H]
         \includegraphics[scale=0.5]{../../images/feature_plot/PCA_explainedVariance}
         \centering
         \caption{PCA variance}
+        \label{fig:PCAvariance}
     \end{figure}
+
     As we can see, if we use 9 dimensions (Number 8 on the principal component index), we are going to
     reach a 96\% of explainance, then if we use 8 dimensions we will explain 91\% of the data variance.
     Starting from 7 to 1 dimensions, we are lower than 90\%. \newline
@@ -159,21 +160,21 @@ each feature has a Gaussian distribution. \newline
 
     \begin{figure}[H]
         \centering
-        
         \includegraphics[scale=0.5]{../../images/feature_plot/PCA_m=2}
         \caption{PCA}
+        \label{fig:PCA}
     \end{figure}
 
-    From this plot (Figure 1.4) we can see the distribution of the 2 main features.
+    From this plot (Figure~\ref{fig:PCA}) we can see the distribution of the 2 main features.
 
     \begin{figure}[H]
         \centering
-        
         \includegraphics[scale=0.5]{../../images/feature_plot/PCA_m=2 + LDA}
         \caption{LDA}
+        \label{fig:LDA}
     \end{figure}
 
-    From this plot (Figure 1.5) we can see the distribution of the 2 main features using both PCA and LDA
+    From this plot (Figure~\ref{fig:LDA}) we can see the distribution of the 2 main features using both PCA and LDA
 
 \section{Training}
     \begin{itemize}
@@ -230,21 +231,20 @@ For all these 4 models we have 2 parameters: $\theta$ = ($\mu$, $\Sigma$). We ca
 from the likelihood w.r.t. $\theta$ for the \textbf{M.V.G.}
 \[ \mathcal{L} (\theta) = \prod_{c}^{K}\prod_{i|c_i=c} \mathcal{N} (x_i|\mu_c,\Sigma_c)\]
 Then we can build the log-likelihood because it's easier to work with.
-\[ l (\theta) = \sum_{c}^{K}\sum_{i|c_i=c} log \mathcal{N} (x_i|\mu_c,\Sigma_c)\]
-Now we define \( l_c (\theta) = \sum_{i|c_i=c} log \mathcal{N} (x_i|\mu_c,\Sigma_c)\) and compute 
+\[ l (\theta) = \sum_{c}^{K}\sum_{i|c_i=c} \log \mathcal{N} (x_i|\mu_c,\Sigma_c)\]
+Now we define \( l_c (\theta) = \sum_{i|c_i=c} \log \mathcal{N} (x_i|\mu_c,\Sigma_c)\) and compute
 the $\nabla_\mu l_c(\mu_c,\Sigma_c) = 0$ and the $\nabla_\Sigma l_c(\mu_c,\Sigma_c) = 0$ 
 obtaining 
-\[\mu_c^* = \frac{1}{N_c}\sum_{i|c_i=c}x_i\] 
-\[\Sigma_c^* = \frac{1}{N_c}\sum_{i|c_i=c}(x_i-\mu_c^*)(x_i-\mu_c^*)^T\] 
-
+\[\mu_c^* = \frac{1}{N_c}\sum_{i|c_i=c}x_i\]
+\[\Sigma_c^* = \frac{1}{N_c}\sum_{i|c_i=c}(x_i-\mu_c^*)(x_i-\mu_c^*)^T\]
 We can do the same thing for the \textbf{Naive Bayes} model (that has diagonal covariance matrix)
-\[ l (\theta) = \sum_{c}^{K}\sum_{i|c_i=c}\sum_{j=1}^{D} log \mathcal{N} (x_{i,[j]}|\mu_{c,[j]},\Sigma_{c,[j]})\]
+\[ l (\theta) = \sum_{c}^{K}\sum_{i|c_i=c}\sum_{j=1}^{D} \log \mathcal{N} (x_{i,[j]}|\mu_{c,[j]},\Sigma_{c,[j]})\]
 which solutions are
 \[\mu_{c,[j]}^* = \frac{1}{N_c}\sum_{i|c_i=c}x_{i,[j]}\] 
 \[\Sigma_{c,[j]}^* = \frac{1}{N_c}\sum_{i|c_i=c}(x_{i,[j]}-\mu_{c,[j]}^*)(x_{i,[j]}-\mu_{c,[j]}^*)^T\] 
 
 Finally, the \textbf{Tied} model can be built in the same way (has a single covariance matrix for all classes)
-\[ l (\theta) = \sum_{c}^{K}\sum_{i|c_i=c} log \mathcal{N} (x_i|\mu_c,\Sigma)\]
+\[ l (\theta) = \sum_{c}^{K}\sum_{i|c_i=c} \log \mathcal{N} (x_i|\mu_c,\Sigma)\]
 which solutions are
 \[\mu_{c}^* = \frac{1}{N_c}\sum_{i|c_i=c}x_{i}\] 
 \[\Sigma^* = \frac{1}{N}\sum_{c}^{K}\sum_{i|c_i=c}(x_{i}-\mu_{c}^*)(x_{i}-\mu_{c}^*)^T\] 
@@ -263,7 +263,8 @@ There are also some computation of PCA with m=9 and m=8.
     Naive Gaussian      & 0.806     & 0.472     & 0.144    \\
     Tied Gaussian       & 0.706     & 0.486     & 0.184    \\
     Naive Tied Gaussian & 0.79      & 0.551     & 0.198    \\ \bottomrule
-    \end{tabular}\label{tab:table}
+    \end{tabular}
+    \label{tab:MVG_RAW_valid}
 \end{table}
 
 \begin{table}[H]
@@ -276,7 +277,8 @@ There are also some computation of PCA with m=9 and m=8.
     Naive Gaussian      & 0.74    & 0.369    & 0.113    \\
     Tied Gaussian       & 0.696    & 0.492    & 0.18    \\
     Naive Tied Gaussian & 0.772    & 0.543    & 0.202    \\ \bottomrule
-    \end{tabular}\label{tab:table2}
+    \end{tabular}
+    \label{tab:MVG_PCA9_valid}
 \end{table}
 
 \begin{table}[H]
@@ -289,7 +291,8 @@ There are also some computation of PCA with m=9 and m=8.
     Naive Gaussian      & 0.712     & 0.36    & 0.112    \\
     Tied Gaussian       & 0.686    & 0.485    & 0.181    \\
     Naive Tied Gaussian & 0.774    & 0.544    & 0.201    \\ \bottomrule
-    \end{tabular}\label{tab:table3}
+    \end{tabular}
+    \label{tab:MVG_PCA8_valid}
 \end{table}
 
 As we can see, the MVG model, that consider all the covariance matrices, is the best either with PCA or without.
@@ -318,10 +321,10 @@ They are exploited to calibrate $\lambda$, which is the regularization coefficie
     \centering
     \includegraphics[scale=0.5]{../../images/validation/LR_PCA_minDCF_comparison}
     \caption{DCF - Linear LogReg}
-    \label{DCF - Linear LogReg}
+    \label{fig:DCF_LinearLogReg_valid}
 \end{figure}
 
-The figure 2.1 shows that using a $\lambda$ = 10\textsuperscript{-5} or $\lambda$ = 10\textsuperscript{-1}
+The Figure~\ref{fig:DCF_LinearLogReg_valid} shows that using a $\lambda$ = 10\textsuperscript{-5} or $\lambda$ = 10\textsuperscript{-1}
 is more or less the same, the minDCF doesn't change that much.
 From $\lambda$ = 10\textsuperscript{-1} to +$\infty$ the minDCF will be too high.
 
@@ -329,18 +332,18 @@ For our main application, it's hard to see, but $\lambda$ = 0.4 is the best choi
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{lllllll}
-        \hline
-                                & pi=0.1 & pi=0.5 & pi=0.9 \\ \hline
+        \toprule
+                                & pi=0.1 & pi=0.5 & pi=0.9 \\ \midrule
                                 & \multicolumn{3}{c}{NO-PCA}  \\
-    Log Reg ($\lambda$ = 0.4)   & 0.715      & 0.485      & 0.189      \\
+    Log Reg ($\lambda$ = 0.4)   & 0.715      & 0.485      & 0.189  \\ \midrule
                                 & \multicolumn{3}{c}{PCA m=9}  \\
-    Log Reg ($\lambda$ = 0.4)   & 0.705      & 0.496       & 0.193       \\
+    Log Reg ($\lambda$ = 0.4)   & 0.705      & 0.496       & 0.193 \\ \midrule
                                 & \multicolumn{3}{c}{PCA m=8}  \\
-    Log Reg ($\lambda$ = 0.4)   & 0.689       & 0.483       & 0.188       \\
-    \hline
+    Log Reg ($\lambda$ = 0.4)   & 0.689       & 0.483       & 0.188 \\
+    \bottomrule
     \end{tabular}
+    \label{tab:LinearLogReg_valid}
 \end{table}
 
 Overall, the MVG without PCA has a \textbf{minDCF = 0.331} and this value is better than all
@@ -350,40 +353,40 @@ the Linear Logistic Regression values (for our main application)
 
 \subsection{Quadratic Logistic Regression}
 
-The figure 2.2 shows how minDCF is affected by different values of $\lambda$. Also in this case, for
-our main application, taking a $\lambda$=10\textsuperscript{-5} or $\lambda$=10\textsuperscript{-1}
+The Figure~\ref{fig:DCF_QuadLogReg_valid} shows how minDCF is affected by different values of $\lambda$.
+Also in this case, for our main application, taking a $\lambda$=10\textsuperscript{-5} or $\lambda$=10\textsuperscript{-1}
 doesn't change the minDCF that much.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{../../images/validation/QUAD_LR_PCA_minDCF_comparison}
-    \caption{DCF - Linear LogReg}
-    \label{DCF - Linear LogReg}
+    \caption{DCF - Quadratic LogReg}
+    \label{fig:DCF_QuadLogReg_valid}
 \end{figure}
 
 It is also easy to see that PCA is pretty useless for all applications.
-The minDCF it's always worse than the model without PCA.
+The minDCF it's always worse than the model without PCA\@.
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{lllllll}
-        \hline
-                                & pi=0.1 & pi=0.5 & pi=0.9 \\ \hline
+        \toprule
+                                & pi=0.1 & pi=0.5 & pi=0.9 \\ \midrule
                                 & \multicolumn{3}{c}{NO-PCA}  \\
     Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.1)   & 0.6      & 0.31      & 0.119      \\
     Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.5)   & 0.644      & 0.305      & 0.106       \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.707      & 0.335      & 0.105      \\
-                                & \multicolumn{3}{c}{PCA m=9}  \\ \hline
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.707      & 0.335      & 0.105      \\ \midrule
+                                & \multicolumn{3}{c}{PCA m=9}  \\
     Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.1)   & 0.691      & 0.489       & 0.189       \\
     Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.5)   & 0.7      & 0.497      & 0.191      \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.713      & 0.506      & 0.194      \\
-                                & \multicolumn{3}{c}{PCA m=8}  \\ \hline
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.713      & 0.506      & 0.194      \\ \midrule
+                                & \multicolumn{3}{c}{PCA m=8}  \\
     Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.1)   & 0.691       & 0.483       & 0.191       \\
     Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.5)   & 0.691      & 0.483      & 0.191      \\
     Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.691      & 0.483      & 0.191      \\
-    \hline
+    \bottomrule
     \end{tabular}
+    \label{tab:QuadLogReg_valid}
 \end{table}
 
 This kind of model, with a Quadratic Kernel outperforms the MVG models, for our main application.
@@ -407,28 +410,29 @@ and K is a regularization term.
     \centering
     \includegraphics[scale = 0.5]{../../images/validation/SVM_minDCF_comparison_C=1}
     \caption{Linear SVM with C=1}
+    \label{fig:LinearSVM_C1_valid}
 \end{figure}
 
-From Figure 2.3 we can see how K is affected (using C = 1). It can be seen that values of 
-K between $10^{-1}$ and $10^{1}$ have a low DCF. In our cases we are going to try 3 different 
+From Figure~\ref{fig:LinearSVM_C1_valid} we can see how K is affected (using C = 1).
+It can be seen that values of K between $10^{-1}$ and $10^{1}$ have a low DCF. In our cases we are going to try 3 different
 values of \(K = [0.1, 1, 10]\).
 
 \begin{figure}[h!]
     \includegraphics[scale = 0.5]{../../images/validation/SVM_minDCF_comparison_K=1}
     \centering
     \caption{Linear SVM with K=1}
+    \label{fig:LinearSVM_K1_valid}
 \end{figure}
 
-Figure 2.4 shows the different values of C while setting K = 1. Again, it can be seen that the 
-optiomal values of C are the ones between $10^{-1}$ and $10^{1}$. We are going to test 4 different 
-values of \(C = [0.01, 0.1, 1, 10]\). We also decided to test 0.01 even if the minDCF is "optimal" only
-for the $\pi$ = 0.1 
+Figure~\ref{fig:LinearSVM_K1_valid} shows the different values of C while setting K = 1.
+Again, it can be seen that the optimal values of C are the ones between $10^{-1}$ and $10^{1}$.
+We are going to test 4 different values of \(C = [0.01, 0.1, 1, 10]\).
+We also decided to test 0.01 even if the minDCF is \("\)optimal\("\) only for the $\pi$ = 0.1
 
 Here the table containing the results:
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 & &         K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -451,17 +455,17 @@ Here the table containing the results:
                                 & C = 10.0   & 0.263 & 0.197 & 0.187  \\ 
     \hline
     \end{tabular}
+    \label{tab:LinearSVM_valid}
 \end{table}
 $\newline$
 \textbf{SVM - Linear - PCA with m = 9}
 
 $\newline$
 We also tried to apply PCA with m = 9 since from Figure 2.3 and Figure 2.4 we can see that
-we can achieve also a good minDCF.
+we can achieve also a good minDCF\@.
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 & &         K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -484,6 +488,7 @@ we can achieve also a good minDCF.
                                 & C = 10.0   & 0.223 & 0.196 & 0.195  \\ 
     \hline
     \end{tabular}
+    \label{tab:LinearSVM_PCA9_valid}
 \end{table}
 
 From these results we can conclude that using or not using PCA (with m = 9, so with almost all
@@ -493,12 +498,13 @@ features) doesn't change that much.
 \textbf{SVM - Quadratic - Raw Feature with degree = 2}
 
 $\newline$
-We are going to apply a non-linear separation algorithm. We have seen two kind of non-linear separation.
+We are going to apply a non-linear separation algorithm.
+We have seen two kind of non-linear separation.
 In this section we are going to see the Quadratic one, in the next section there's the RBF. $\newline$
 
 The kernel is a function that allows the computation of a linear separation in the expanded feature
-space that corresponds to a non-linear separation in the original feature space. For the Quadratic
-kernel we have:
+space that corresponds to a non-linear separation in the original feature space.
+For the Quadratic kernel we have:
 \[k(x_1,x_2) = (x_1^Tx_2 + c)^d\]
 where d identifies the degree, in our case d = 2 and c is a Constant that in our case will take values
 1 and 0.
@@ -507,23 +513,24 @@ where d identifies the degree, in our case d = 2 and c is a Constant that in our
     \includegraphics[scale = 0.5]{../../images/validation/SVM_Poly_minDCF_comparison_K=1_c=1_d=2}
     \centering
     \caption{Poly K=1, c=1, d=2}
+    \label{fig:PolySVM_d2_valid}
 \end{figure}
 
-Figure 2.5 shows the different values of C with K=1, c=1 e d=2.
+Figure~\ref{fig:PolySVM_d2_valid} shows the different values of C with K=1, c=1 e d=2.
 We are going to try \(C = [0.01,0.1,1,10]\), but from the plot it's easy to see that C=1 and C=10 won't be good.
 
 \begin{figure}[h!]
     \includegraphics[scale = 0.5]{../../images/validation/SVM_Poly_minDCF_comparison_K=1_c=1_d=3}
     \centering
     \caption{Poly K=1, c=1, d=3}
+    \label{fig:PolySVM_d3_valid}
 \end{figure}
 
-Figure 2.6 shows the different values of C with K=1, c=1 but d=3.
+Figure~\ref{fig:PolySVM_d3_valid} shows the different values of C with K=1, c=1 but d=3.
 It's much worse than using d=2, so we decided to don't even show the results of this kernel.
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 &  $\textbf{Constant = 0}$       & K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -546,11 +553,11 @@ It's much worse than using d=2, so we decided to don't even show the results of 
                                 & C = 10.0   & 0.586 & 0.769 & 0.583  \\ 
     \hline
     \end{tabular}
+    \label{tab:PolySVM_c0_valid}
 \end{table}
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 & $\textbf{Constant = 1}$      & K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -573,19 +580,19 @@ It's much worse than using d=2, so we decided to don't even show the results of 
                                 & C = 10.0   & 0.656 & 0.647 & 0.569  \\ 
     \hline
     \end{tabular}
+    \label{tab:PolySVM_c1_valid}
 \end{table}
 
 $\newline$
 \textbf{SVM - Quadratic - PCA with m = 9 and degree = 2}
 
 $\newline$
-We also show the results of PCA with m = 9 (always with d=2). From Figure 2.5 we can see that
-using PCA = 9 or don't using it doesn't change that much. Just for $\pi$ = 0.1 there's a slight
-improvement.
+We also show the results of PCA with m = 9 (always with d=2).
+From Figure~\ref{fig:PolySVM_d2_valid} we can see that using PCA = 9 or don't use it doesn't change that much.
+Just for $\pi$ = 0.1 there's a slight improvement.
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 & $\textbf{Constant = 0}$  &         K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -608,11 +615,11 @@ improvement.
                                 & C = 10.0   & 0.605 & 0.66 & 0.527  \\ 
     \hline
     \end{tabular}
+    \label{tab:PolySVM_PCA9_c0_valid}
 \end{table}
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 & $\textbf{Constant = 1}$ &         K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -635,16 +642,16 @@ improvement.
                                 & C = 10.0   & 0.677 & 0.67 & 0.594  \\ 
     \hline
     \end{tabular}
+    \label{tab:PolySVM_PCA9_c1_valid}
 \end{table}
 
 $\newline$
 \textbf{SVM - Quadratic - PCA with m = 8 and degree = 2}
 $\newline$
-We also tried PCA with m = 8 beacuse it's even better for some cases.
+We also tried PCA with m = 8 because it's even better for some cases.
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 & \textbf{Constant = 0} &         K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -667,6 +674,7 @@ We also tried PCA with m = 8 beacuse it's even better for some cases.
                                 & C = 10.0   & 0.511 & 0.74 & 0.563  \\ 
     \hline
     \end{tabular}
+    \label{tab:PolySVM_PCA8_c0_valid}
 \end{table}
 
 \begin{table}[H]
@@ -694,6 +702,7 @@ We also tried PCA with m = 8 beacuse it's even better for some cases.
                                 & C = 10.0   & 0.697 & 0.743 & 0.647  \\
     \hline
     \end{tabular}
+    \label{tab:PolySVM_PCA8_c1_valid}
 \end{table}
 
 \newpage
@@ -702,18 +711,19 @@ $\newline$
 As we introduced in the Quadratic SVM section, there's another kernel function we are going to see.
 This one is called Gaussian Radial Basis Function or RBF:
 \[k(x_1,x_2) = e^{-\gamma||x_1-x_2||^2}\]
-where \(||x_1-x_2||^2\) rapresent the distance between $x_1$ and $x_2$ and the closer it is, the bigger is 
-the kernel, meanwhile $\gamma$ is an indicator of the width of the kernel. If $\gamma$ is low then the 
-kernel will be large, otherwise it will be small (if $\gamma$ $>>$ 0 then this will be equal to 1-NN).
+where \(||x_1-x_2||^2\) represent the distance between $x_1$ and $x_2$ and the closer it is, the bigger is
+the kernel, meanwhile $\gamma$ is an indicator of the width of the kernel.
+If $\gamma$ is low then the kernel will be large, otherwise it will be small (if $\gamma$ $\gg$ 0 then this will be equal to 1-NN).
 
 \begin{figure}[h!]
-    \includegraphics[scale = 0.5]{../../images/validation/SVM_RBF_minDCF_comparison.png}
+    \includegraphics[scale = 0.5]{../../images/validation/SVM_RBF_minDCF_comparison}
     \centering
     \caption{RBF}
+    \label{fig:RBF_valid}
 \end{figure}
 
-Figura 2.7 shows the different values of C with different values of $\gamma$. We are going to test
-\(C = [1, 10, 100]\) with a \(\gamma = [0.001, 0.0001]\), those are the best parameter we can get.
+Figure~\ref{fig:RBF_valid} shows the different values of C with different values of $\gamma$.
+We are going to test \(C = [1, 10, 100]\) with a \(\gamma = [0.001, 0.0001]\), those are the best parameter we can get.
 \begin{table}[H]
     \centering
     
@@ -736,6 +746,7 @@ Figura 2.7 shows the different values of C with different values of $\gamma$. We
                                 & C = 100.0   & 0.101 & 0.103 & 0.102  \\ 
     \hline
     \end{tabular}
+    \label{tab:RBF1_valid}
 \end{table}
 
 
@@ -761,6 +772,7 @@ Figura 2.7 shows the different values of C with different values of $\gamma$. We
                                 & C = 100.0   & 0.097 & 0.103 & 0.276  \\ 
     \hline
     \end{tabular}
+    \label{tab:RBF2_valid}
 \end{table}
 
 $\newline$
@@ -770,7 +782,6 @@ We also tried to use PCA both with m=9 and m=8.
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 & \textbf{$\gamma$ = 0.001} &         K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -790,12 +801,12 @@ We also tried to use PCA both with m=9 and m=8.
                                 & C = 100.0   & 0.107 & 0.108 & 0.285  \\ 
     \hline
     \end{tabular}
+    \label{tab:RBF1_PCA9_valid}
 \end{table}
 
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 & \textbf{$\gamma$ = 0.0001} &         K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -815,6 +826,7 @@ We also tried to use PCA both with m=9 and m=8.
                                 & C = 100.0   & 0.103 & 0.106 & 0.12  \\ 
     \hline
     \end{tabular}
+    \label{tab:RBF2_PCA9_valid}
 \end{table}
 
 With m=9 the results are more or less the same
@@ -826,7 +838,6 @@ $\newline$
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 & \textbf{$\gamma$ = 0.001} &         K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -846,12 +857,12 @@ $\newline$
                                 & C = 100.0   & 0.108 & 0.105 & 0.104  \\ 
     \hline
     \end{tabular}
+    \label{tab:RBF1_PCA8_valid}
 \end{table}
 
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllll}
         \hline
                                 & \textbf{$\gamma$ = 0.0001} &         K = 0.1 & K = 1.0 & K = 10 \\ \hline
@@ -871,6 +882,7 @@ $\newline$
                                 & C = 100.0   & 0.106 & 0.107 & 0.301  \\ 
     \hline
     \end{tabular}
+    \label{tab:RBF2_PCA8_valid}
 \end{table}
 Also with m=8 the results are more or less the same
 
@@ -884,7 +896,6 @@ $\newline$
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllllll}
         \hline
                                 & \textbf{Components} & $2^1$ & $2^2$ & $2^3$ & $2^4$ & $2^5$ & $2^6$ & $2^7$ \\ \hline
@@ -907,6 +918,7 @@ $\newline$
                                 & Diag-Cov-Tied     & 0.144 & 0.086 & 0.089 & 0.088 & 0.093 & 0.11 & 0.131  \\ \hline 
     \hline
     \end{tabular}
+    \label{tab:GMM_valid}
 \end{table}
 
 $\newline$
@@ -915,7 +927,6 @@ $\newline$
 
 \begin{table}[H]
     \centering
-    
     \begin{tabular}{ll|lllllll}
         \hline
                                 & \textbf{Components} & $2^1$ & $2^2$ & $2^3$ & $2^4$ & $2^5$ & $2^6$ & $2^7$ \\ \hline
@@ -938,6 +949,7 @@ $\newline$
                                 & Diag-Cov-Tied     & 0.114 & 0.087 & 0.095 & 0.09 & 0.093 & 0.101 &  0.12 \\ \hline 
     \hline
     \end{tabular}
+    \label{tab:GMM_PCA9_valid}
 \end{table}
 
 
