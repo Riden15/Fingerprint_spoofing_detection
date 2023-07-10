@@ -490,6 +490,35 @@ features) doesn't change that much.
 \newpage
 \textbf{SVM - Quadratic - Raw Feature with degree = 2}
 
+$\newline$
+We are going to apply a non-linear separation algorithm. We have seen two kind of non-linear separation.
+In this section we are going to see the Quadratic one, in the next section there's the RBF. $\newline$
+
+The kernel is a function that allows the computation of a linear separation in the expanded feature
+space that correspond to a non-linear separation in the original feature space. For the Quadratic
+kernel we have:
+\[k(x_1,x_2) = (x_1^Tx_2 + c)^d\]
+where d identifies the degree, in our case d = 2 and c is a Constant that in our case will take values
+1 and 0.
+
+\begin{figure}[h!]
+    \includegraphics[scale = 0.5]{../../images/validation/SVM_Poly_minDCF_comparison_K=1_c=1_d=2.png}
+    \centering
+    \caption{Poly K=1, c=1, d=2}
+\end{figure}
+
+Figure 2.5 shows the different values of C with K=1, c=1 e d=2. We are going to try 
+\(C = [0.01,0.1,1,10]\), but from the plot it's easy to see that C=1 and C=10 won't be good.
+
+\begin{figure}[h!]
+    \includegraphics[scale = 0.5]{../../images/validation/SVM_Poly_minDCF_comparison_K=1_c=1_d=3.png}
+    \centering
+    \caption{Poly K=1, c=1, d=3}
+\end{figure}
+
+Figure 2.6 show the different values of C with K=1, c=1 but d=3. It's much worse then using d=2, so 
+we decided to don't even show the results of this kernel.
+
 \begin{table}[H]
     \centering
     
@@ -503,8 +532,8 @@ features) doesn't change that much.
                                 & C = 10.0   & 0.982 & 0.994 & 0.975  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
-                                & C = 0.01   & 0.337 & 0.346 & 0.342   \\
-                                & C = 0.1    & 0.324 & 0.344 & 0.346  \\
+                                & C = 0.01   & 0.337 & 0.346 & \color{red}{0.342}   \\
+                                & C = 0.1    & \color{red}{0.324} & \color{red}{0.344} & 0.346  \\
                                 & C = 1.0    & 0.528 & 0.551 & 0.49    \\
                                 & C = 10.0   & 0.947 & 0.957 & 0.946  \\ \hline
 
@@ -530,7 +559,7 @@ features) doesn't change that much.
                                 & C = 10.0   & 0.996 & 1.0 & 1.0  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
-                                & C = 0.01   & 0.316 & 0.311 & 0.313   \\
+                                & C = 0.01   & \color{red}{0.316} & \color{red}{0.311} & \color{red}{0.313}   \\
                                 & C = 0.1    & 0.348 & 0.347 & 0.323  \\
                                 & C = 1.0    & 0.701 & 0.631 & 0.644    \\
                                 & C = 10.0   & 0.966 & 1.0 & 1.0  \\ \hline
@@ -547,6 +576,11 @@ features) doesn't change that much.
 $\newline$
 \textbf{SVM - Quadratic - PCA with m = 9 and degree = 2}
 
+$\newline$
+We also show the results of PCA with m = 9 (always with d=2). From Figure 2.5 we can see that
+using PCA = 9 or don't using it doesn't change that much. Just for $\pi$ = 0.1 there's a slight
+improvement.
+
 \begin{table}[H]
     \centering
     
@@ -560,7 +594,7 @@ $\newline$
                                 & C = 10.0   & 1.0 & 0.985 & 0.99  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
-                                & C = 0.01   & 0.331 & 0.344 & 0.354   \\
+                                & C = 0.01   & \color{red}{0.33} & \color{red}{0.344} & \color{red}{0.354}   \\
                                 & C = 0.1    & 0.345 & 0.345 & 0.391  \\
                                 & C = 1.0    & 0.449 & 0.575 & 0.574    \\
                                 & C = 10.0   & 1.0 & 0.975 & 0.951  \\ \hline
@@ -587,8 +621,8 @@ $\newline$
                                 & C = 10.0   & 0.998 & 1.0 & 0.982  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
-                                & C = 0.01   & 0.335 & 0.334 & 0.306   \\
-                                & C = 0.1    & 0.35 & 0.302 & 0.346  \\
+                                & C = 0.01   & \color{red}{0.335} & 0.334 & \color{red}{0.306}   \\
+                                & C = 0.1    & 0.35 & \color{red}{0.302} & 0.346  \\
                                 & C = 1.0    & 0.688 & 0.772 & 0.56    \\
                                 & C = 10.0   & 0.993 & 1.0 & 0.975  \\ \hline
 
@@ -603,6 +637,8 @@ $\newline$
 
 $\newline$
 \textbf{SVM - Quadratic - PCA with m = 8 and degree = 2}
+$\newline$
+We also tried PCA with m = 8 beacuse it's even better for some cases.
 
 \begin{table}[H]
     \centering
@@ -617,8 +653,8 @@ $\newline$
                                 & C = 10.0   & 0.981 & 0.999 & 0.97  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
-                                & C = 0.01   & 0.324 & 0.331 & 0.333   \\
-                                & C = 0.1    & 0.321 & 0.336 & 0.317  \\
+                                & C = 0.01   & 0.324 & \color{red}{0.331} & 0.333   \\
+                                & C = 0.1    & \color{red}{0.321} & 0.336 & \color{red}{0.317}  \\
                                 & C = 1.0    & 0.593 & 0.934 & 0.494    \\
                                 & C = 10.0   & 0.97 & 0.999 & 0.91  \\ \hline
 
@@ -644,8 +680,8 @@ $\newline$
                                 & C = 10.0   & 1.0 & 0.996 & 0..994  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
-                                & C = 0.01   & 0.323 & 0.32 & 0.308   \\
-                                & C = 0.1    & 0.349 & 0.316 & 0.336  \\
+                                & C = 0.01   & \color{red}{0.323} & 0.32 & \color{red}{0.308}   \\
+                                & C = 0.1    & 0.349 & \color{red}{0.316} & 0.336  \\
                                 & C = 1.0    & 0.657 & 0.649 & 0.7    \\
                                 & C = 10.0   & 1.0 & 0.985 & 0.989  \\ \hline
 
@@ -660,7 +696,22 @@ $\newline$
 
 \newpage
 \textbf{SVM - Radial Basis kernel Function - Raw Feature}
+$\newline$
+As we introduced in the Quadratic SVM section, there's another kernel function we are going to see.
+This one is called Gaussian Radial Basis Function or RBF:
+\[k(x_1,x_2) = e^{-\gamma||x_1-x_2||^2}\]
+where \(||x_1-x_2||^2\) rapresent the distance between $x_1$ and $x_2$ and the closer it is, the bigger is 
+the kernel, meanwhile $\gamma$ is an indicator of the width of the kernel. If $\gamma$ is low then the 
+kernel will be large, otherwise it will be small (if $\gamma$ $>>$ 0 then this will be equal to 1-NN).
 
+\begin{figure}[h!]
+    \includegraphics[scale = 0.5]{../../images/validation/SVM_RBF_minDCF_comparison.png}
+    \centering
+    \caption{RBF}
+\end{figure}
+
+Figura 2.7 shows the different values of C with different values of $\gamma$. We are going to test
+\(C = [1, 10, 100]\) with a \(\gamma = [0.001, 0.0001]\), those are the best parameter we can get.
 \begin{table}[H]
     \centering
     
@@ -673,8 +724,8 @@ $\newline$
                                 & C = 100.0   & 0.586 & 0.579 & 0.601  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
-                                & C = 1.0    & 0.302 & 0.3 & 0.301    \\
-                                & C = 10.0   & 0.293 & 0.298 & 0.302  \\
+                                & C = 1.0    & 0.302 & 0.3 & \color{red}{0.301}    \\
+                                & C = 10.0   & \color{red}{0.293} & \color{red}{0.298} & 0.302  \\
                                 & C = 100.0   & 0.332 & 0.331 & 0.335  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.9} \\ \hline
@@ -699,8 +750,8 @@ $\newline$
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
                                 & C = 1.0    & 0.473 & 0.42 & 0.419    \\
-                                & C = 10.0   & 0.406 & 0.381 & 0.354  \\
-                                & C = 100.0   & 0.289 & 0.306 & 0.472  \\ \hline
+                                & C = 10.0   & 0.406 & 0.381 & \color{red}{0.354}  \\
+                                & C = 100.0   & \color{red}{0.289} & \color{red}{0.306} & 0.472  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.9} \\ \hline
                                 & C = 1.0    & 0.163 & 0.159 & 0.158    \\
@@ -712,7 +763,8 @@ $\newline$
 
 $\newline$
 \textbf{SVM - Radial Basis kernel Function - PCA with m=9}
-
+$\newline$
+We also tried to use PCA both with m=9 and m=8.
 
 \begin{table}[H]
     \centering
@@ -726,7 +778,7 @@ $\newline$
                                 & C = 100.0   & 0.678 & 0.671 & 0.906  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
-                                & C = 1.0    & 0.295 & 0.294 & 0.298    \\
+                                & C = 1.0    & \color{red}{0.295} & \color{red}{0.294} & \color{red}{0.298}    \\
                                 & C = 10.0   & 0.297 & 0.301 & 0.299  \\
                                 & C = 100.0   & 0.328 & 0.333 & 0.895  \\ \hline
 
@@ -753,7 +805,7 @@ $\newline$
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
                                 & C = 1.0    & 0.439 & 0.433 & 0.42    \\
                                 & C = 10.0   & 0.407 & 0.391 & 0.376  \\
-                                & C = 100.0   & 0.301 & 0.302 & 0.317  \\ \hline
+                                & C = 100.0  & \color{red}{ 0.301} & \color{red}{0.302} & \color{red}{0.317}  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.9} \\ \hline
                                 & C = 1.0    & 0.165 & 0.159 & 0.16    \\
@@ -762,6 +814,9 @@ $\newline$
     \hline
     \end{tabular}
 \end{table}
+
+With m=9 the results are more or less the same
+
 
 $\newline$
 \textbf{SVM - Radial Basis kernel Function - PCA with m=8}
@@ -780,7 +835,7 @@ $\newline$
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
                                 & C = 1.0    & 0.297 & 0.297 & 0.296    \\
-                                & C = 10.0   & 0.281 & 0.29 & 0.294  \\
+                                & C = 10.0   & \color{red}{0.281} & \color{red}{0.29} & \color{red}{0.294}  \\
                                 & C = 100.0   & 0.318 & 0.315 & 0.305  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.9} \\ \hline
@@ -805,8 +860,8 @@ $\newline$
 
                                 & & \multicolumn{3}{c}{$\pi$=0.5} \\ \hline
                                 & C = 1.0    & 0.439 & 0.433 & 0.43    \\
-                                & C = 10.0   & 0.397 & 0.389 & 0.387  \\
-                                & C = 100.0   & 0.306 & 0.29 & 0.686  \\ \hline
+                                & C = 10.0   & 0.397 & 0.389 & \color{red}{0.387}  \\
+                                & C = 100.0   & \color{red}{0.306} & \color{red}{0.29} & 0.686  \\ \hline
 
                                 & & \multicolumn{3}{c}{$\pi$=0.9} \\ \hline
                                 & C = 1.0    & 0.165 & 0.158 & 0.156    \\
@@ -815,6 +870,7 @@ $\newline$
     \hline
     \end{tabular}
 \end{table}
+Also with m=8 the results are more or less the same
 
 \clearpage
 
