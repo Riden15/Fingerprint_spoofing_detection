@@ -12,8 +12,9 @@ from Utility_functions.Validators import compute_dcf_min_effPrior
 from Models.PCA_LDA import *
 
 def evaluation_GMM(DTR, LTR, DTE, LTE, comp):
-    # evaluate_GMM(DTR, LTR, DTE, LTE, comp)
+    evaluate_GMM(DTR, LTR, DTE, LTE, comp)
 
+'''
     componentsToTry = [1, 2, 3, 4, 5, 6, 7]
     bars_full_cov = numpy.array([])
     bars_diag_cov = numpy.array([])
@@ -30,7 +31,7 @@ def evaluation_GMM(DTR, LTR, DTE, LTE, comp):
     plot_minDCF_GMM(bars_diag_cov, 'GMM_diag-cov_', componentsToTry, folder='evaluation/')
     plot_minDCF_GMM(bars_tied_full_cov, 'GMM_tied-full-cov_', componentsToTry, folder='evaluation/')
     plot_minDCF_GMM(bars_tied_diag_cov, 'GMM_tied-diag-cov_', componentsToTry, folder='evaluation/')
-
+'''
 
 def evaluate_GMM(DTR, LTR, DTE, LTE, comp):
     GMM_llr_fc = []

@@ -11,8 +11,9 @@ from Models.PCA_LDA import *
 
 
 def evaluation_SVM_RBF(DTR, LTR, DTE, LTE, K, gamma, C):
-    # evaluate_SVM_RBF(DTR, LTR, DTE, LTE, K, gamma, C)
+    evaluate_SVM_RBF(DTR, LTR, DTE, LTE, K, gamma, C)
 
+'''
     x = numpy.logspace(-3, 3, 15)  # x contains different values of C
     y = numpy.array([])
     gamma_minus_4 = numpy.array([])
@@ -37,6 +38,7 @@ def evaluation_SVM_RBF(DTR, LTR, DTE, LTE, K, gamma, C):
     y = numpy.vstack((y, gamma_minus_1))
 
     plot_DCF_for_SVM_RBF_calibration(x, y, 'C', 'SVM_RBF_minDCF_comparison', folder='evaluation/')
+'''
 
 def evaluate_SVM_RBF(DTR, LTR, DTE, LTE, K, gamma, C):
     scores_append = []

@@ -26,18 +26,19 @@
 \begin{document}
 
 \maketitle
+\tableofcontents
 
 \chapter{Introduction}
 
 \section{Abstract}
-    The goal is to build the best model for the Fingerprint Spoofing Detection task, using the models developed during the 
+    The goal is to build the best model for the Fingerprint-Spoofing Detection task, using the models developed during the
     laboratory and the lessons.
 
 \section{Overview}
-    The data set and test set are composed of 10 dimensional features. The last column is the class label which is \textbf{1} for the \textit{authentic
-    fingerprint} and \textbf{0} for the \textit{spoofed fingerprint}.\newline
+    The data set and test set are composed of 10 dimensional features.
+    The last column is the class label which is \textbf{1} for the \textit{authentic fingerprint} and \textbf{0} for the \textit{spoofed fingerprint}.\newline
 
-    The datasets are imbalanced, we have more spoofed fingerprint then the authentic fingerprint. 
+    The datasets are imbalanced, we have more spoofed fingerprint than the authentic fingerprint.
     The Training set is composed of ... samples and the Test set is composed of ... samples. \newline
 
     The application we are going to build has $\pi$ =0.5 meaning that we have the same prior probability for both classes, but we have different 
@@ -46,24 +47,24 @@
     has an higher cost due to security vulnerability.
 
 \section{Features Analisys}
-As we said, the Fingerprint Spoofing Detection task has 10 features. Here below we are going 
-to analyze them.
+As we said, the Fingerprint Spoofing Detection task has 10 features.
+Here below we are going to analyze them.
 
 \begin{figure}[h!]
     \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/feature_plot/heatmap_.png}
+        \includegraphics[scale=0.3]{../../images/feature_plot/heatmap_}
         \caption{All classes}
         
         \label{fig:heatmap}
     \end{subfigure}
     \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/feature_plot/heatmap_fingerprint_.png}
+        \includegraphics[scale=0.3]{../../images/feature_plot/heatmap_fingerprint_}
         \caption{Authentic Fingerprint}
         
         \label{fig:heatmap}
     \end{subfigure}
     \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/feature_plot/heatmap_spoofedFingerprint_.png}
+        \includegraphics[scale=0.3]{../../images/feature_plot/heatmap_spoofedFingerprint_}
         \caption{Spoofed Fingerprint}
         
         \label{fig:heatmap}
@@ -128,26 +129,26 @@ each feature has a Gaussian distribution. \newline
 \section{PCA Usage}
 
 
-
     PCA (Principal Component Analysis) is a Dimensionality Reduction technique that can be used to
-    remove noise, simplfy classification and data visualization. It can be also used to avoid overfitting,
-    but it may produce underfitting if too many dimensions are removed (removing too many usefull 
-    information). So it is a usefull technique but sometimes it can be useless because if used could
+    remove noise, simplify classification and data visualization.
+    It can be also used to avoid overfitting, but it may produce underfitting if too many dimensions are removed
+    (removing too much useful information).
+    So it is a useful technique, but sometimes it can be useless because if used could
     lead only to bad models. \newline\newline
     What does PCA do? 
 
     First of all we need to compute the mean of the Dataset $\mu$, then we need to compute the covariance
-    matrix 
+    matrix
     \[C = \frac{1}{K} \sum_{i=1}^{K} (x_i-\mu)(x_i-\mu)^T \]
     From C we need the eigen-decomposition \(C = U \Sigma U^T \), where U is a matrix that
-    constains the eigen-vectors and $\Sigma$ is a diagonal matrix that contains the eigen-values
+    contains the eigen-vectors and $\Sigma$ is a diagonal matrix that contains the eigen-values
     in descending order.
-    The solution are the \textit{m} eigen-vectors of U corresponding to the \textit{m} 
-    highest eiget-values of $\Sigma$.
+    The solution are the \textit{m} eigen-vectors of U corresponding to the \textit{m}
+    highest eigen-values of $\Sigma$.
 
 
     \begin{figure}[H]
-        \includegraphics[scale=0.5]{../../images/feature_plot/PCA_explainedVariance.png}
+        \includegraphics[scale=0.5]{../../images/feature_plot/PCA_explainedVariance}
         \centering
         \caption{PCA variance}
     \end{figure}
@@ -159,7 +160,7 @@ each feature has a Gaussian distribution. \newline
     \begin{figure}[H]
         \centering
         
-        \includegraphics[scale=0.5]{../../images/feature_plot/PCA_m=2.png}
+        \includegraphics[scale=0.5]{../../images/feature_plot/PCA_m=2}
         \caption{PCA}
     \end{figure}
 
@@ -168,7 +169,7 @@ each feature has a Gaussian distribution. \newline
     \begin{figure}[H]
         \centering
         
-        \includegraphics[scale=0.5]{../../images/feature_plot/PCA_m=2 + LDA.png}
+        \includegraphics[scale=0.5]{../../images/feature_plot/PCA_m=2 + LDA}
         \caption{LDA}
     \end{figure}
 
@@ -225,7 +226,7 @@ We are going to analyze all the Gaussian Classifiers, using the Multivariate Gau
     \item Tied Naive Bayes
 \end{itemize}
 
-For all these 4 model we have 2 parameters: $\theta$ = ($\mu$, $\Sigma$). We can easily estimate them starting 
+For all these 4 models we have 2 parameters: $\theta$ = ($\mu$, $\Sigma$). We can easily estimate them starting
 from the likelihood w.r.t. $\theta$ for the \textbf{M.V.G.}
 \[ \mathcal{L} (\theta) = \prod_{c}^{K}\prod_{i|c_i=c} \mathcal{N} (x_i|\mu_c,\Sigma_c)\]
 Then we can build the log-likelihood because it's easier to work with.
@@ -249,7 +250,7 @@ which solutions are
 \[\Sigma^* = \frac{1}{N}\sum_{c}^{K}\sum_{i|c_i=c}(x_{i}-\mu_{c}^*)(x_{i}-\mu_{c}^*)^T\] 
 
 The tables below show the computation of the minDCF on the validation set (extracted using K-Fold Cross Validation with K = 5).
-As said before we are going to consider the main application (0.5,1,10) and 2 other applications (0.1,1,1) and (0.9,1,1).
+As said before, we are going to consider the main application (0.5,1,10) and 2 other applications (0.1,1,1) and (0.9,1,1).
 There are also some computation of PCA with m=9 and m=8.
 
 \begin{table}[H]
@@ -292,7 +293,8 @@ There are also some computation of PCA with m=9 and m=8.
 \end{table}
 
 As we can see, the MVG model, that consider all the covariance matrices, is the best either with PCA or without.
-PCA is usefull only in the Naive Gaussian model. Tied models perform worse.
+PCA is useful only in the Naive Gaussian model.
+Tied models perform worse.
 
 Overall the best candidate is the \textbf{MVG classifier} without PCA. However, we will see that this kind of model is also
 useless for our imbalanced data.
@@ -304,13 +306,13 @@ useless for our imbalanced data.
 We are going to analyze both Linear Logistic Regression and Quadratic Logistic Regression.
 \subsection{Linear Logistic Regression}
 
-Logistic Regression is a discriminative model that directly computes the posterior probability \(P(C=c|X=x)\). 
-The model parameters are (w,b) that can be estimated using a frequentist approach. There's also an hyper-parameter $\lambda$
-that must be estimated by cross-validation. $\lambda$ is needed to avoid overfitting, if it's too high then the model will
+Logistic Regression is a discriminative model that directly computes the posterior probability \(P(C=c|X=x)\).
+The model parameters are (w,b) that can be estimated using a frequentist approach.
+There's also an hyper-parameter $\lambda$ that must be estimated by cross-validation. $\lambda$ is needed to avoid overfitting, if it's too high then the model will
 underfit but if it's too low then the model will overfit.\newline
 
-The plots show how minDCF is affected by different values of $\lambda$.  They are exploited to calibrate
-$\lambda$, which is the regularization coefficient.
+The plots show how minDCF is affected by different values of $\lambda$.
+They are exploited to calibrate $\lambda$, which is the regularization coefficient.
 
 \begin{figure}[H]
     \centering
@@ -320,8 +322,8 @@ $\lambda$, which is the regularization coefficient.
 \end{figure}
 
 The figure 2.1 shows that using a $\lambda$ = 10\textsuperscript{-5} or $\lambda$ = 10\textsuperscript{-1}
-is more or less the same, the minDCF doesn't change that much. From $\lambda$ = 10\textsuperscript{-1} to
-+$\infty$ the minDCF will be too high.
+is more or less the same, the minDCF doesn't change that much.
+From $\lambda$ = 10\textsuperscript{-1} to +$\infty$ the minDCF will be too high.
 
 For our main application, it's hard to see, but $\lambda$ = 0.4 is the best choice.
 
@@ -341,7 +343,7 @@ For our main application, it's hard to see, but $\lambda$ = 0.4 is the best choi
     \end{tabular}
 \end{table}
 
-Overall the MVG without PCA has a \textbf{minDCF = 0.331} and this value is better than all 
+Overall, the MVG without PCA has a \textbf{minDCF = 0.331} and this value is better than all
 the Linear Logistic Regression values (for our main application)
 
 \clearpage
@@ -455,7 +457,7 @@ $\newline$
 
 $\newline$
 We also tried to apply PCA with m = 9 since from Figure 2.3 and Figure 2.4 we can see that
-we can achive also a good minDCF.
+we can achieve also a good minDCF.
 
 \begin{table}[H]
     \centering
@@ -484,7 +486,7 @@ we can achive also a good minDCF.
     \end{tabular}
 \end{table}
 
-From this results we can conclude that using or not using PCA (with m = 9, so with almost all
+From these results we can conclude that using or not using PCA (with m = 9, so with almost all
 features) doesn't change that much.
 
 \newpage
@@ -495,29 +497,29 @@ We are going to apply a non-linear separation algorithm. We have seen two kind o
 In this section we are going to see the Quadratic one, in the next section there's the RBF. $\newline$
 
 The kernel is a function that allows the computation of a linear separation in the expanded feature
-space that correspond to a non-linear separation in the original feature space. For the Quadratic
+space that corresponds to a non-linear separation in the original feature space. For the Quadratic
 kernel we have:
 \[k(x_1,x_2) = (x_1^Tx_2 + c)^d\]
 where d identifies the degree, in our case d = 2 and c is a Constant that in our case will take values
 1 and 0.
 
 \begin{figure}[h!]
-    \includegraphics[scale = 0.5]{../../images/validation/SVM_Poly_minDCF_comparison_K=1_c=1_d=2.png}
+    \includegraphics[scale = 0.5]{../../images/validation/SVM_Poly_minDCF_comparison_K=1_c=1_d=2}
     \centering
     \caption{Poly K=1, c=1, d=2}
 \end{figure}
 
-Figure 2.5 shows the different values of C with K=1, c=1 e d=2. We are going to try 
-\(C = [0.01,0.1,1,10]\), but from the plot it's easy to see that C=1 and C=10 won't be good.
+Figure 2.5 shows the different values of C with K=1, c=1 e d=2.
+We are going to try \(C = [0.01,0.1,1,10]\), but from the plot it's easy to see that C=1 and C=10 won't be good.
 
 \begin{figure}[h!]
-    \includegraphics[scale = 0.5]{../../images/validation/SVM_Poly_minDCF_comparison_K=1_c=1_d=3.png}
+    \includegraphics[scale = 0.5]{../../images/validation/SVM_Poly_minDCF_comparison_K=1_c=1_d=3}
     \centering
     \caption{Poly K=1, c=1, d=3}
 \end{figure}
 
-Figure 2.6 show the different values of C with K=1, c=1 but d=3. It's much worse then using d=2, so 
-we decided to don't even show the results of this kernel.
+Figure 2.6 shows the different values of C with K=1, c=1 but d=3.
+It's much worse than using d=2, so we decided to don't even show the results of this kernel.
 
 \begin{table}[H]
     \centering

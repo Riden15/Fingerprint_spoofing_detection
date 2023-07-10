@@ -11,8 +11,9 @@ from Models.PCA_LDA import *
 
 
 def evaluation_SVM(DTR, LTR, DTE, LTE, K, C):
-    # evaluate_SVM(DTR, LTR, DTE, LTE, K, C)
+    evaluate_SVM(DTR, LTR, DTE, LTE, K, C)
 
+'''
     # algoritmo che serve per trovare il miglior hyper parameter C dato k fissato a 1
     x = numpy.logspace(-3, 2, 15)
     y = numpy.array([])
@@ -62,7 +63,7 @@ def evaluation_SVM(DTR, LTR, DTE, LTE, K, C):
     y = numpy.vstack((y, y_05_PCA))
     y = numpy.vstack((y, y_01_PCA))
     plot_DCF_PCA(x, y, 'K', 'SVM_minDCF_comparison_C=1', folder='evaluation/')
-
+'''
 
 def evaluate_SVM(DTR, LTR, DTE, LTE, K, C):
     scores_append = []

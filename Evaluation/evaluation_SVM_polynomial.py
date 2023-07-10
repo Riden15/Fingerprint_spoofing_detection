@@ -11,8 +11,9 @@ from Models.PCA_LDA import *
 
 
 def evaluation_SVM_polynomial(DTR, LTR, DTE, LTE, K, C, constant, degree):
-    # evaluate_SVM_polynomial(DTR, LTR, DTE, LTE, K, C, constant, degree)
+    evaluate_SVM_polynomial(DTR, LTR, DTE, LTE, K, C, constant, degree)
 
+'''
     x = numpy.logspace(-5, 1, 15)
     y = numpy.array([])
     y_05 = numpy.array([])
@@ -61,7 +62,7 @@ def evaluation_SVM_polynomial(DTR, LTR, DTE, LTE, K, C, constant, degree):
     y = numpy.vstack((y, y_05_PCA))
     y = numpy.vstack((y, y_01_PCA))
     plot_DCF_PCA(x, y, 'C', 'SVM_Poly_minDCF_comparison_K=1_c=1_d=3', folder='evaluation/')
-
+'''
 
 def evaluate_SVM_polynomial(DTR, LTR, DTE, LTE, K, C, constant, degree):
     scores_append = []
