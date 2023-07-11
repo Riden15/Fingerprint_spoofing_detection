@@ -207,12 +207,16 @@ We are going to develop this following models:
     \end{itemize}
     \item Support Vector Machine (\textbf{SVM})
     \begin{itemize}
-        \item \dots
+        \item Linear SVM
+        \item Polynomial SVM
+        \item Radial Basis Function SVM
     \end{itemize}
     \item Gaussian Mixture Models (\textbf{GMM})
     \begin{itemize}
-        \item \dots
-        \item \dots
+        \item Full Covariance Matrix
+        \item Diagonal Covariance Matrix
+        \item Tied Full Covariance Matrix
+        \item Tied Diagonal Covariance Matrix
     \end{itemize}
 \end{itemize}
 
@@ -888,7 +892,50 @@ Also with m=8 the results are more or less the same
 
 \clearpage
 
-\section{Gaussian Misxture Models}
+\section{Gaussian Mixture Models}
+
+$\newline$
+This is the last model we are going to consider. It's a generative model and it's called Gaussian Mixture
+Model. We are going to consider 4 models of GMM:
+\begin{itemize}
+    \item Full covariance matrix
+    \item Diagonal covariance matrix
+    \item Full Tied covariance matrix
+    \item Diagonal Tiead covariance matrix
+\end{itemize}
+
+The GMM is a distribution whose parameters are (M,S,W) where:
+\[M = [\mu_1, \mu_2, ..., \mu_K], S = [\Sigma_1, \Sigma_2, ..., \Sigma_K], 
+W = [w_1, w_2, ..., w_K]\]
+The GMM density can be rapresented as : 
+\[f_X(x) = \sum_{c=1}^{K}\pi_c\mathcal{N} (x|\mu_c,\Sigma_c)\]
+
+\begin{figure}[h!]
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[scale=0.3]{../../images/validation/GMM_full-cov_component_comparison.png}
+        \caption{GMM Full Cov}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[scale=0.3]{../../images/validation/GMM_diag-cov_component_comparison.png}
+        \caption{GMM Diag Cov}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[scale=0.3]{../../images/validation/GMM_tied-full-cov_component_comparison.png}
+        \caption{GMM Tied Full Cov}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[scale=0.3]{../../images/validation/GMM_tied-diag-cov_component_comparison.png}
+        \caption{GMM Tied Full Cov}
+    \end{subfigure}
+    \centering
+    \caption{GMM with $\pi$=0.5 RAW Features}
+    \label{fig:GMM}
+\end{figure}
+
+Figure~\ref{fig:GMM} show the different values of minDCF with $\pi$ = 0.5 and the corresponding number 
+of components for each type of GMM. For example we can see that for the full cov, the best number of 
+components is 4.
+Here below we are going to see the results of the RAW Features and with PCA with m = 9.
 
 $\newline$
 \textbf{GMM - RAW Feature}
@@ -898,7 +945,7 @@ $\newline$
     \centering
     \begin{tabular}{ll|lllllll}
         \hline
-                                & \textbf{Components} & $2^1$ & $2^2$ & $2^3$ & $2^4$ & $2^5$ & $2^6$ & $2^7$ \\ \hline
+                                & \textbf{Components} & $2$ & $4$ & $8$ & $16$ & $32$ & $64$ & $128$ \\ \hline
                                 & & \multicolumn{7}{c}{$\pi$=0.1} \\ \hline
                                 & Full-Cov        & 0.497 & 0.526 & 0.69 & 0.63 & 0.877 & 0.976 & 1.0   \\
                                 & Diag-Cov        & 0.719 & 0.544 & 0.514 & 0.531 & 0.592 & 0.698 & 0.741  \\
@@ -906,10 +953,10 @@ $\newline$
                                 & Diag-Cov-Tied   & 0.805 & 0.558 & 0.501 & 0.56 & 0.601 & 0.673 & 0.765  \\ \hline
 
                                 & & \multicolumn{7}{c}{$\pi$=0.5} \\ \hline
-                                & Full-Cov          & 0.28 & 0.264 & 0.325 & 0.391 & 0.568 & 0.737 & 1.0     \\
-                                & Diag-Cov          & 0.451 & 0.275 & 0.262 & 0.26 & 0.281 & 0.359 & 0.425  \\
-                                & Full-Cov-Tied     & 0.331 & 0.255 & 0.244 & 0.253 & 0.292 & 0.314 & 0.341  \\ 
-                                & Diag-Cov-Tied     & 0.462 & 0.276 & 0.254 & 0.262 & 0.282 & 0.286 &  0.358 \\ \hline
+                                & Full-Cov          & \color{red}{0.28} & 0.264 & 0.325 & 0.391 & 0.568 & 0.737 & 1.0     \\
+                                & Diag-Cov          & 0.451 & 0.275 & 0.262 & 0.26 & \color{red}{0.281} & 0.359 & 0.425  \\
+                                & Full-Cov-Tied     & 0.331 & \color{red}{0.255} & \color{red}{0.244} & \color{red}{0.253} & 0.292 & 0.314 & \color{red}{0.341}  \\ 
+                                & Diag-Cov-Tied     & 0.462 & 0.276 & 0.254 & 0.262 & 0.282 & \color{red}{0.286} &  0.358 \\ \hline
 
                                 & & \multicolumn{7}{c}{$\pi$=0.9} \\ \hline
                                 & Full-Cov          & 0.105 & 0.094 & 0.108 & 0.124 & 0.213 & 0.306 & 0.523    \\
@@ -922,6 +969,10 @@ $\newline$
 \end{table}
 
 $\newline$
+We can see that the Tied Full Covariance is the best in almost all components. Meanwhile the worst is the Full Covariance that
+reach a midDCF = 1.0 with 128 components.
+
+$\newline$
 \textbf{GMM - PCA with m = 9}
 
 
@@ -929,7 +980,7 @@ $\newline$
     \centering
     \begin{tabular}{ll|lllllll}
         \hline
-                                & \textbf{Components} & $2^1$ & $2^2$ & $2^3$ & $2^4$ & $2^5$ & $2^6$ & $2^7$ \\ \hline
+                                & \textbf{Components} & $2$ & $4$ & $8$ & $16$ & $32$ & $64$ & $128$ \\ \hline
                                 & & \multicolumn{7}{c}{$\pi$=0.1} \\ \hline
                                 & Full-Cov          & 0.455 & 0.599 & 0.599 & 0.684 & 0.837 & 0.999 & 1.0    \\
                                 & Diag-Cov          & 0.742 & 0.599 & 0.553 & 0.546 & 0.513 & 0.638 & 0.729  \\
@@ -937,10 +988,10 @@ $\newline$
                                 & Diag-Cov-Tied     & 0.741 & 0.554 & 0.528 & 0.538 & 0.554 & 0.58 & 0.624  \\ \hline
 
                                 & & \multicolumn{7}{c}{$\pi$=0.5} \\ \hline
-                                & Full-Cov          & 0.299 & 0.293 & 0.322 & 0.371 & 0.467 & 0.704 & 1.0    \\
+                                & Full-Cov          & \color{red}{0.299} & 0.293 & 0.322 & 0.371 & 0.467 & 0.704 & 1.0    \\
                                 & Diag-Cov          & 0.367 & 0.272 & 0.253 & 0.281 & 0.287 & 0.34 & 0.374  \\
-                                & Full-Cov-Tied     & 0.33 & 0.261 & 0.269 & 0.254 & 0.285 & 0.324 & 0.322  \\ 
-                                & Diag-Cov-Tied     & 0.368 & 0.268 & 0.248 & 0.276 & 0.306 & 0.328 & 0.359  \\ \hline
+                                & Full-Cov-Tied     & 0.33 & \color{red}{0.261} & 0.269 & \color{red}{0.254} & \color{red}{0.285} & \color{red}{0.324} & \color{red}{0.322}  \\ 
+                                & Diag-Cov-Tied     & 0.368 & 0.268 & \color{red}{0.248} & 0.276 & 0.306 & 0.328 & 0.359  \\ \hline
 
                                 & & \multicolumn{7}{c}{$\pi$=0.9} \\ \hline
                                 & Full-Cov          & 0.099 & 0.091 & 0.113 & 0.125 & 0.158 & 0.218 & 0.376   \\
