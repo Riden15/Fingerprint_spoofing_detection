@@ -67,21 +67,21 @@ def evaluation(DTR, LTR, DTE, LTE):
     #evaluation_LR(DTR, LTR, DTE, LTE, L)  # FINITO
 
     print("############    Support Vector Machine - Linear    ##############")
-    K = [0.1, 1.0, 10.0]
-    C = [0.01, 0.1, 1.0, 10.0]
+    K = 1.0
+    C = 1.0
     #evaluation_SVM(DTR, LTR, DTE, LTE, K, C)  # FINITO
 
     print("############    Support Vector Machine - Quadratic    ##############")
-    K = [0.1, 1, 10]
-    C = [0.01, 0.1, 1.0, 10]
-    constant = [0, 1]
+    K = 1
+    C = 0.1
+    constant = 1
     degree = 2
     #evaluation_SVM_polynomial(DTR, LTR, DTE, LTE, K, C, constant, degree)
 
     print("############    Support Vector Machine - RBF    ##############")
-    K = [0.1, 1, 10]
-    C = [1, 10, 100]
-    gamma = [0.001, 0.0001]
+    K = 0.1
+    C = 10
+    gamma = 0.001
     #evaluation_SVM_RBF(DTR, LTR, DTE, LTE, K, gamma, C)
 
     print("############    Gaussian Mixture Models   ##############")

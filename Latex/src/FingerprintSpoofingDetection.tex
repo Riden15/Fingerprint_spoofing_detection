@@ -399,10 +399,10 @@ This kind of model, with a Quadratic Kernel outperforms the MVG models, for our 
 
 \section{Support Vector Machine}
 
-In this section we are going to see how Linear SVM, Polynomial SVM and RBF SVM will handle our application
-
+In this section we are going to see how Linear SVM, Polynomial SVM and RBF SVM will handle our application.
 $\newline$
-\textbf{SVM - Linear - Raw Feature}
+
+\textbf{SVM - Linear}
 
 $\newline$
 \textbf{Linear SVM} can be obtained by the minimization of the primal problem:
@@ -435,6 +435,8 @@ We also decided to test 0.01 even if the minDCF is \("\)optimal\("\) only for th
 
 Here the table containing the results:
 
+$\newline$
+\textbf{SVM - Linear - RAW Featues}
 \begin{table}[H]
     \centering
     \begin{tabular}{ll|lllll}
@@ -497,10 +499,9 @@ we can achieve also a good minDCF\@.
 
 From these results we can conclude that using or not using PCA (with m = 9, so with almost all
 features) doesn't change that much.
-
+$\newline$
 \newpage
-\textbf{SVM - Quadratic - Raw Feature with degree = 2}
-
+\textbf{SVM - Quadratic}
 $\newline$
 We are going to apply a non-linear separation algorithm.
 We have seen two kind of non-linear separation.
@@ -532,6 +533,8 @@ We are going to try \(C = [0.01,0.1,1,10]\), but from the plot it's easy to see 
 
 Figure~\ref{fig:PolySVM_d3_valid} shows the different values of C with K=1, c=1 but d=3.
 It's much worse than using d=2, so we decided to don't even show the results of this kernel.
+\newpage
+\textbf{SVM - Quadratic - Raw Feature with degree = 2}
 
 \begin{table}[H]
     \centering
@@ -710,7 +713,7 @@ We also tried PCA with m = 8 because it's even better for some cases.
 \end{table}
 
 \newpage
-\textbf{SVM - Radial Basis kernel Function - Raw Feature}
+\textbf{SVM - Radial Basis kernel Function}
 $\newline$
 As we introduced in the Quadratic SVM section, there's another kernel function we are going to see.
 This one is called Gaussian Radial Basis Function or RBF:
@@ -728,6 +731,10 @@ If $\gamma$ is low then the kernel will be large, otherwise it will be small (if
 
 Figure~\ref{fig:RBF_valid} shows the different values of C with different values of $\gamma$.
 We are going to test \(C = [1, 10, 100]\) with a \(\gamma = [0.001, 0.0001]\), those are the best parameter we can get.
+
+$\newline$
+\textbf{SVM - Radial Basis kernel Function - Raw Feature}
+$\newline$
 \begin{table}[H]
     \centering
     
@@ -938,7 +945,6 @@ components is 4.
 Here below we are going to see the results of the RAW Features and with PCA with m = 9.
 
 $\newline$
-
 \textbf{GMM - RAW Feature}
 
 \begin{table}[H]
