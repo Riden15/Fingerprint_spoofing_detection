@@ -1110,6 +1110,65 @@ By the way, the results are also consistent with the Validation part.
 \newpage
 
 \section{Support Vector Machine}
+Here there're the best parameter of each SVM:
+\begin{itemize}
+    \item Linear SVM: K=1.0, C=1.0
+    \item Quadratic SVM: K=1.0, C=0.1, degree=2, constant=1
+    \item RBF SVM: K=0.1, C=10, $\gamma$=0.001
+\end{itemize}
+
+\textbf{SVM - Raw Features}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lllll}
+        \hline
+                                & & $\pi$=0.1 & $\pi$=0.5 & $\pi$=0.9 \\\hline
+                                
+                                & Linear SVM        & 0.778 & 0.459 & 0.176 \\
+                                & Quadratic SVM     & 0.529 & 0.278 & 0.098 \\
+                                & RBF SVM           & 0.51  & 0.242 & 0.086\\ 
+        \hline
+    \end{tabular}
+    \label{tab:SVM_Raw_eval}
+\end{table}
+
+\textbf{SVM - PCA with m = 9}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lllll}
+        \hline
+                                & & $\pi$=0.1 & $\pi$=0.5 & $\pi$=0.9 \\\hline
+                                                        
+                                & Linear SVM        & 0.79  & 0.456 & 0.179 \\
+                                & Quadratic SVM     & 0.541 & 0.274 & 0.093 \\
+                                & RBF SVM           & 0.494 & 0.24  & 0.084\\  
+        \hline
+    \end{tabular}
+    \label{tab:SVM_PCA9_eval}
+\end{table}
+
+\textbf{SVM - PCA with m = 8}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lllll}
+        \hline
+                                & & $\pi$=0.1 & $\pi$=0.5 & $\pi$=0.9 \\\hline
+                                                        
+                                & Quadratic SVM     & 0.51 & 0.266 & 0.092 \\
+                                & RBF SVM           & 0.469  & 0.236 & 0.084\\    
+        \hline
+    \end{tabular}
+    \label{tab:SVM_PCA8_eval}
+\end{table}
+
+As we said, the RBF and the Quadratic that are non-linear achieve good results. They are pretty similar to 
+the MVG (that is also quadratic), but are way better than the linear ones, for example the LR. 
+
+
+
 
 \newpage
 
@@ -1139,7 +1198,7 @@ We are now going to see how GMM handles the Test set.
 We have chosen 8 components, which seems to be the best number of components in the validation part.
 \newline
 
-\textbf{GMM - RAW Features}
+\textbf{SVM - Raw Featues and PCA with m = 9}
 \begin{table}[H]
     \centering
     \begin{tabular}{ll|l|ll}
@@ -1164,7 +1223,7 @@ We have chosen 8 components, which seems to be the best number of components in 
                                 & Diag-Cov-Tied     & \color{red}{0.071}  & 0.072\\  
     \hline
     \end{tabular}
-    \label{tab:GMM_valid_eval}
+    \label{tab:SVM_RAW_eval}
 \end{table}
 The GMM on the Test set is again consistent with the one on the Validation set.
 The best we can do for our application is with the Full Tied Covariance Matrix with minDCF = 0.217.
