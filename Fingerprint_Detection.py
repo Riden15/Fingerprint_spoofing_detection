@@ -69,7 +69,7 @@ def evaluation(DTR, LTR, DTE, LTE):
     print("############    Support Vector Machine - Linear    ##############")
     K = [0.1, 1.0, 10.0]
     C = [0.01, 0.1, 1.0, 10.0]
-    evaluation_SVM(DTR, LTR, DTE, LTE, K, C)  # FINITO
+    #evaluation_SVM(DTR, LTR, DTE, LTE, K, C)  # FINITO
 
     print("############    Support Vector Machine - Quadratic    ##############")
     K = [0.1, 1, 10]
@@ -85,8 +85,8 @@ def evaluation(DTR, LTR, DTE, LTE):
     #evaluation_SVM_RBF(DTR, LTR, DTE, LTE, K, gamma, C)
 
     print("############    Gaussian Mixture Models   ##############")
-    comp = 2
-    #evaluation_GMM(DTR, LTR, DTE, LTE, comp)
+    comp = 3
+    evaluation_GMM(DTR, LTR, DTE, LTE, comp)
 
 
 if __name__ == '__main__':
