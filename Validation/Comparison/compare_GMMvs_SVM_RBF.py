@@ -36,8 +36,8 @@ def compare_GMM_vs_SVM_RBF(DTR, LTR, k):
 
     GMM_llr_fct = np.hstack(GMM_llr_fct)
     PCA_m8_SVM = np.hstack(PCA_m8_SVM)
-    Roc_curve_compare(GMM_llr_fct, PCA_m8_SVM, labels, "GMM", "SVM_RBF")
-    Bayes_error_plot_compare(GMM_llr_fct, PCA_m8_SVM, labels, "GMM", "SVM_RBF")
+    Roc_curve_compare(GMM_llr_fct, PCA_m8_SVM, labels, "GMM", "SVM_RBF", folder='validation/')
+    Bayes_error_plot_compare(GMM_llr_fct, PCA_m8_SVM, labels, "GMM", "SVM_RBF", folder='validation/')
 
 def ll_GMM(Dtr, Ltr, Dte, llr, typeOf, comp):
     optimal_alpha = 0.1

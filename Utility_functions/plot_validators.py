@@ -34,11 +34,12 @@ def Roc_curve_compare(predictions_firstModel, prediction_secondModel, labelsEval
         index += 1
 
     plt.figure()
-    plt.plot(rate_matrix_firstModel[0], rate_matrix_firstModel[1], label=title1)
-    plt.plot(rate_matrix_secondModel[0], rate_matrix_secondModel[1], label=title2)
+    plt.plot(rate_matrix_firstModel[0], rate_matrix_firstModel[1], label=title1, color='r')
+    plt.plot(rate_matrix_secondModel[0], rate_matrix_secondModel[1], label=title2, color='b')
     plt.xlabel('FPR')
     plt.ylabel('TPR')
-    plt.savefig('images/' + folder + 'Comparison/ROC_' + title1 + '&' + title2 + '.png')
+    plt.legend()
+    plt.savefig('images/comparison/' + folder + 'ROC_' + title1 + '&' + title2 + '.png')
     plt.show()
 
 
@@ -67,7 +68,7 @@ def Bayes_error_plot_compare(predictions_firstModel, prediction_secondModel, lab
     plt.xlabel('prior log-odds')
     plt.ylabel('DCF')
     plt.legend()
-    plt.savefig('images/' + folder + 'comparison/DCF_' + title1 + '&' + title2 + '.png')
+    plt.savefig('images/comparison/' + folder + 'DCF_' + title1 + '&' + title2 + '.png')
     plt.show()
 
 def plot_DCF(x, y, xlabel, title, base=10, folder=''):

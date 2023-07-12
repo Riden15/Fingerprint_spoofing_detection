@@ -39,8 +39,8 @@ def compare_MVG_vs_SVM_RBF(DTR, LTR, k):
 
     PCA_m9_mvg = np.hstack(PCA_m9_mvg)
     PCA_m8_SVM = np.hstack(PCA_m8_SVM)
-    Roc_curve_compare(PCA_m9_mvg, PCA_m8_SVM, labels, "MVG", "SVM_RBF")
-    Bayes_error_plot_compare(PCA_m9_mvg, PCA_m8_SVM, labels, "MVG", "SVM_RBF")
+    Roc_curve_compare(PCA_m9_mvg, PCA_m8_SVM, labels, "MVG", "SVM_RBF", folder='validation/')
+    Bayes_error_plot_compare(PCA_m9_mvg, PCA_m8_SVM, labels, "MVG", "SVM_RBF", folder='validation/')
 
 
 

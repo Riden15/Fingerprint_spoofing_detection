@@ -39,8 +39,8 @@ def compare_MVG_vs_GMM(DTR, LTR, k):
 
     GMM_llr_fct = np.hstack(GMM_llr_fct)
     PCA_m9_mvg = np.hstack(PCA_m9_mvg)
-    Roc_curve_compare(PCA_m9_mvg, GMM_llr_fct, labels, "MVG", "GMM")
-    Bayes_error_plot_compare(PCA_m9_mvg, GMM_llr_fct, labels, "MVG", "GMM")
+    Roc_curve_compare(PCA_m9_mvg, GMM_llr_fct, labels, "MVG", "GMM", folder='validation/')
+    Bayes_error_plot_compare(PCA_m9_mvg, GMM_llr_fct, labels, "MVG", "GMM", folder='validation/')
 
 
 # Dte è il fold selezionato, Dtr è tutto il resto
