@@ -25,7 +25,6 @@ def lr_binary(DTR, LTR, DTE, l):
     return S
 
 
-
 ''' QUADRATIC LOGISTIC REGRESSION'''
 def quad_logreg_obj(DTR, LTR, l, pi):
     M = DTR.shape[0]
@@ -50,3 +49,12 @@ def quad_logistic_reg_score(DTR, LTR, DTE, l, pi=0.5):
     b = x[-1]
     STE = numpy.dot(w.T, DTE) + b
     return STE
+
+def logistic_reg_calibration(DTR, LTR, DTE, l):
+    param = numpy.zeros(DTR.shape[0] + 1)
+    linear_logreg_obj(param, DTR, LTR, l)
+    x, d, f = scipy.optimize.fmin_l_bfgs_b(linear_logreg_obj, numpy.zeros(DTR.shape[0] + 1), approx_grad=True, args=(DTR, LTR, l))
+    w = x[0:DTR.shape[0]]
+    b = x[-1]
+    STE = numpy.dot(w.T, DTE) + b
+    return STE, w, b

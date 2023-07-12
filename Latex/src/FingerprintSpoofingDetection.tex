@@ -902,45 +902,46 @@ Also with m=8 the results are more or less the same
 \section{Gaussian Mixture Models}
 
 $\newline$
-This is the last model we are going to consider. It's a generative model and it's called Gaussian Mixture
-Model. We are going to consider 4 models of GMM:
+This is the last model we are going to consider.
+It's a generative model and it's called Gaussian Mixture Model.
+We are going to consider 4 models of GMM:
 \begin{itemize}
     \item Full covariance matrix
     \item Diagonal covariance matrix
     \item Full Tied covariance matrix
-    \item Diagonal Tiead covariance matrix
+    \item Diagonal Tied covariance matrix
 \end{itemize}
 
 The GMM is a distribution whose parameters are (M,S,W) where:
-\[M = [\mu_1, \mu_2, ..., \mu_K], S = [\Sigma_1, \Sigma_2, ..., \Sigma_K], 
-W = [w_1, w_2, ..., w_K]\]
-The GMM density can be rapresented as : 
+\[M = [\mu_1, \mu_2, \dots, \mu_K], S = [\Sigma_1, \Sigma_2, \dots, \Sigma_K],
+W = [w_1, w_2, \dots, w_K]\]
+The GMM density can be rapresented as:
 \[f_X(x) = \sum_{c=1}^{K}\pi_c\mathcal{N} (x|\mu_c,\Sigma_c)\]
 
 \begin{figure}[h!]
-    \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/validation/GMM_full-cov_component_comparison.png}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[scale=0.4]{../../images/validation/GMM_full-cov_component_comparison}
         \caption{GMM Full Cov}
     \end{subfigure}
-    \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/validation/GMM_diag-cov_component_comparison.png}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[scale=0.4]{../../images/validation/GMM_diag-cov_component_comparison}
         \caption{GMM Diag Cov}
     \end{subfigure}
-    \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/validation/GMM_tied-full-cov_component_comparison.png}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[scale=0.4]{../../images/validation/GMM_tied-full-cov_component_comparison}
         \caption{GMM Tied Full Cov}
     \end{subfigure}
-    \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/validation/GMM_tied-diag-cov_component_comparison.png}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[scale=0.4]{../../images/validation/GMM_tied-diag-cov_component_comparison}
         \caption{GMM Tied Full Cov}
     \end{subfigure}
     \centering
     \caption{GMM with $\pi$=0.5 RAW Features}
-    \label{fig:GMM}
+    \label{fig:GMM_valid}
 \end{figure}
 
-Figure~\ref{fig:GMM} show the different values of minDCF with $\pi$ = 0.5 and the corresponding number 
-of components for each type of GMM. For example we can see that for the full cov, the best number of 
+Figure~\ref{fig:GMM_valid} shows the different values of minDCF with $\pi$ = 0.5 and the corresponding number
+of components for each type of GMM. For example, we can see that for the full cov, the best number of
 components is 4.
 Here below we are going to see the results of the RAW Features and with PCA with m = 9.
 
@@ -976,7 +977,7 @@ $\newline$
 
 $\newline$
 We can see that the Tied Full Covariance is the best in almost all components.
-Meanwhile the worst is the Full Covariance that reach a midDCF = 1.0 with 128 components.
+Meanwhile, the worst is the Full Covariance that reaches a midDCF = 1.0 with 128 components.
 
 $\newline$
 \textbf{GMM - PCA with m = 9}
@@ -1011,10 +1012,10 @@ $\newline$
 
 \chapter{Evaluation}
 
-We are now going to evaluate our models using the evaluation set (or test set). The evaluation will be done
-thanks to the minDCF. In the validation part we used the k-fold with k = 5, but in the evaluation part
-we won't use k-fold because we don't need the validation test, since there's the test set. So we are going
-to train each model on the full training set then test this model on the test set.
+We are now going to evaluate our models using the evaluation set (or test set).
+The evaluation will be done thanks to the minDCF. In the validation part we used the k-fold with k = 5, but in the evaluation part
+we won't use k-fold because we don't need the validation test, since there's the test set.
+So we are going to train each model on the full training set then test this model on the test set.
 
 \section{Multivariate Gaussian Model}
 In this section we are going to show the result on the \textbf{Test set} for the Gaussian part, 
@@ -1063,9 +1064,9 @@ to test on Raw features, PCA with m = 8 and m = 9.
     \label{tab:MVG_PCA8_valid_eval}
 \end{table}
 
-We can see that for all 3 models (Raw,m=8,m=9) the MVG is the best. Only for the Naive assumption the model with PCA are better
-than the Raw model. \newline
-Comparing these results with the one obtained from the Validation part, they seems to be a little bit better, but not that much, so
+We can see that for all 3 models (Raw, m=8, m=9) the MVG is the best.
+Only for the Naive assumption the model with PCA are better than the Raw model. \newline
+Comparing these results with the one obtained from the Validation part, they seem to be a little bit better, but not that much, so
 the results are consistent. 
 
 \newpage
@@ -1074,13 +1075,14 @@ the results are consistent.
 Again, in this section there're the results for the Logistic Regression part.
 
 \begin{figure}[h!]
-    \includegraphics[scale=0.5]{../../images/evaluation/LR_PCA_minDCF_comparison.png}
+    \includegraphics[scale=0.5]{../../images/evaluation/LR_PCA_minDCF_comparison}
     \centering
     \caption{LR - compare different $\lambda$}
     \label{fig:LR_eval}
 \end{figure}
-Figure~\ref{fig:LR_eval} shows the midDCF for each $\lambda$. The optimal $\lambda$ = 0.4. We can also notice
-that for our application ($\pi$ = 0.5) the model with PCA with m = 9 is slightly better. Now let's see the results.
+Figure~\ref{fig:LR_eval} shows the midDCF for each $\lambda$.
+The optimal $\lambda$ = 0.4. We can also notice that for our application ($\pi$= 0.5) the model with PCA with m = 9 is slightly better.
+Now let's see the results.
 
 \begin{table}[H]
     \centering
@@ -1097,12 +1099,13 @@ that for our application ($\pi$ = 0.5) the model with PCA with m = 9 is slightly
     \end{tabular}
     \label{tab:LinearLogReg_valid_eval}
 \end{table}
-We can see that using the Raw or PCA models doesn't change that much, so all the three models can be considered the "best" choise 
-for LR, but for our application, from the Gaussian part, the MVG model has midDCF = \textbf{0.271}, meanwhile the best 
-I can obtain using LR is minDCF = \textbf{0.45}. So the LR model isn't the best choice overall. This is telling us that the linear
-separation isn't the one we need, so we expect that the RBF and Poly SVM will perform better!!! (In fact those result are similar
-to the ones given by the Tied Gaussian, that is also linear)
-By the way the results are also consistent with the Validation part.
+We can see that using the Raw or PCA models doesn't change that much, so all the three models can be considered the \("\)best\("\) choice
+for LR, but for our application, from the Gaussian part, the MVG model has midDCF = \textbf{0.271}, meanwhile the best I can obtain using LR is minDCF = \textbf{0.45}.
+So the LR model isn't the best choice overall.
+This is telling us that the linear separation isn't the one we need,
+so we expect that the RBF and Poly SVM will perform better!
+(In fact, those results are similar to the ones given by the Tied Gaussian, that is also linear)
+By the way, the results are also consistent with the Validation part.
 
 \newpage
 
@@ -1111,26 +1114,27 @@ By the way the results are also consistent with the Validation part.
 \newpage
 
 \section{Gaussian Mixture Model}
-We are now going to see how GMM handle the Test set. 
+We are now going to see how GMM handles the Test set.
 
 \begin{figure}[h!]
-    \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/evaluation/GMM_full-cov_component_comparison.png}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[scale=0.4]{../../images/evaluation/GMM_full-cov_component_comparison}
         \caption{Full Covariance}
     \end{subfigure}
-    \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/evaluation/GMM_diag-cov_component_comparison.png}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[scale=0.4]{../../images/evaluation/GMM_diag-cov_component_comparison}
         \caption{Diagonal Covariance}
     \end{subfigure}
-    \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/evaluation/GMM_tied-full-cov_component_comparison.png}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[scale=0.4]{../../images/evaluation/GMM_tied-full-cov_component_comparison}
         \caption{Full Tied Covariance}
     \end{subfigure}
-    \begin{subfigure}{0.3\textwidth}
-        \includegraphics[scale=0.3]{../../images/evaluation/GMM_tied-diag-cov_component_comparison.png}
+    \begin{subfigure}{0.4\textwidth}
+        \includegraphics[scale=0.4]{../../images/evaluation/GMM_tied-diag-cov_component_comparison}
         \caption{Diagonal Tied Covariance}
     \end{subfigure}
     \centering
+    \label{fig:GMM_eval}
 \end{figure}
 We have chosen 8 components, which seems to be the best number of components in the validation part.
 \newline
@@ -1162,8 +1166,8 @@ We have chosen 8 components, which seems to be the best number of components in 
     \end{tabular}
     \label{tab:GMM_valid_eval}
 \end{table}
-The GMM on the Test set is again consistent with the one on the Validation set. The best we can do
-for our application is with the Full Tied Covariance Matrix with minDCF = 0.217.
+The GMM on the Test set is again consistent with the one on the Validation set.
+The best we can do for our application is with the Full Tied Covariance Matrix with minDCF = 0.217.
 
 \newpage
 \section{...}

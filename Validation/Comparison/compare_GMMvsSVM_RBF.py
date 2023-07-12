@@ -6,7 +6,7 @@ from Models.SVM import RBF_KernelFunction
 from Utility_functions.plot_validators import Roc_curve_compare, Bayes_error_plot_compare
 from Models.PCA_LDA import *
 
-def compare_GMM_vs_SVM_RBF(DTR, LTR, k):
+def compare_validation_GMM_vs_SVM_RBF(DTR, LTR, k):
     FoldedData_List = np.split(DTR, k, axis=1)  # lista di fold
     FoldedLabel_List = np.split(LTR, k)
 

@@ -10,7 +10,7 @@ from Utility_functions.Validators import *
 from prettytable import PrettyTable
 from Models.PCA_LDA import *
 
-def compare_MVG_vs_GMM(DTR, LTR, k):
+def compare_validation_MVG_vs_GMM(DTR, LTR, k):
     FoldedData_List = np.split(DTR, k, axis=1)  # lista di fold
     FoldedLabel_List = np.split(LTR, k)
 

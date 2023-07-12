@@ -42,8 +42,6 @@ def Roc_curve_compare(predictions_firstModel, prediction_secondModel, labelsEval
     plt.savefig('images/comparison/' + folder + 'ROC_' + title1 + '&' + title2 + '.png')
     plt.show()
 
-
-# serve per plottare, vedere le differenze tra il DCF
 def Bayes_error_plot_compare(predictions_firstModel, prediction_secondModel, labelsEval, title1, title2, folder=''):
     C = numpy.array([[0, 1], [1, 0]])
     effPriorLogOdds = numpy.linspace(-3, 3, 21)
@@ -69,6 +67,27 @@ def Bayes_error_plot_compare(predictions_firstModel, prediction_secondModel, lab
     plt.ylabel('DCF')
     plt.legend()
     plt.savefig('images/comparison/' + folder + 'DCF_' + title1 + '&' + title2 + '.png')
+    plt.show()
+
+def Bayes_error_plot(predictions, labelsEval, title, folder=''):
+    C = numpy.array([[0, 1], [1, 0]])
+    effPriorLogOdds = numpy.linspace(-3, 3, 21)
+    dcf_array = [0] * effPriorLogOdds.size
+    mindcf_array = [0] * effPriorLogOdds.size
+    for i in range(effPriorLogOdds.size):
+        effective_prior = 1 / (1 + numpy.exp(-effPriorLogOdds[i]))
+        dcf_array[i] = compute_act_DCF(effective_prior, C, predictions, labelsEval)
+        mindcf_array[i] = compute_dcf_min(effective_prior, predictions, labelsEval)
+
+    plt.figure()
+    plt.plot(effPriorLogOdds, dcf_array, label='DCF ' + title, color='b')
+    plt.plot(effPriorLogOdds, mindcf_array, label='min DCF ' + title, color='r')
+    plt.ylim([0, 1.1])
+    plt.xlim([-3, 3])
+    plt.xlabel('prior log-odds')
+    plt.ylabel('DCF')
+    plt.legend()
+    plt.savefig('images/comparison/' + folder + 'DCF_' + title + '.png')
     plt.show()
 
 def plot_DCF(x, y, xlabel, title, base=10, folder=''):
