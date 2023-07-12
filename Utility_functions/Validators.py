@@ -2,8 +2,8 @@ import numpy
 import matplotlib
 import matplotlib.pyplot as plt
 
-def compute_confusion_matrix(nClasses, pred, real):
-    CM = numpy.zeros((nClasses, nClasses), dtype=numpy.intc)
+def compute_confusion_matrix(pred, real):
+    CM = numpy.zeros((int(real.max()) + 1, int(real.max()) + 1), dtype=numpy.intc)
     for i in range(real.shape[0]):
         CM[pred[i]][int(real[i])] += 1
     return CM
@@ -35,13 +35,14 @@ def compute_optimal_Bayes_decision(C, Predictions, labelsEval):
     NCorrect = (PredictedLabel.ravel() == labelsEval.ravel()).sum()
     NTotal = labelsEval.size
     # CONFUSION MATRIX
-    CM = compute_confusion_matrix(int(labelsEval.max() + 1), PredictedLabel, labelsEval)
+    CM = compute_confusion_matrix(PredictedLabel, labelsEval)
     Accuracy = float(NCorrect) / float(NTotal)
 
     return Accuracy, CM
 
-
 def compute_optimal_Bayes_decision_Binary_withT(piT, C, predictions, labelsEval):
+
+    '''
     CostMatrix = compute_CostMatrix(predictions, C)
 
     # C[0,1] = Costo dei falsi negativi
@@ -49,18 +50,13 @@ def compute_optimal_Bayes_decision_Binary_withT(piT, C, predictions, labelsEval)
     t = numpy.log((piT * C[0, 1]) / ((1 - piT) * C[1, 0])) * -1  # compute the threshold
 
     # log(Cfn * P(C=1) | x) / log(Cfn * P(C=0) | x) non so perchè è invertito TODO
+
     final = numpy.log(CostMatrix[0] / CostMatrix[1])
-
-    pred_label = []
-    for i in range(final.size):
-        if final[i] > t:
-            pred_label.append(1)
-        else:
-            pred_label.append(0)
-
-    acc = sum(pred_label == labelsEval) / labelsEval.shape[0]
-    conf_matrix = compute_confusion_matrix(int(labelsEval.max()) + 1, pred_label, labelsEval)
-    return acc, conf_matrix
+'''
+    t = numpy.log((piT * C[0, 1]) / ((1 - piT) * C[1, 0])) * -1  # compute the threshold
+    pred_label = numpy.int32(predictions > t)
+    conf_matrix = compute_confusion_matrix(pred_label, labelsEval)
+    return conf_matrix
 
 
 def compute_bayes_risk_DCFu_Binary(piT, C, confuse_matrix):
@@ -76,6 +72,13 @@ def compute_bayes_risk_DCFu_Binary(piT, C, confuse_matrix):
     return dfcu
 
 def compute_bayes_risk_DCF_Binary(piT, C, confuse_matrix):
+    dfcu = compute_bayes_risk_DCFu_Binary(piT, C, confuse_matrix)
+    min = numpy.min((piT * C[0, 1], (1 - piT) * C[1, 0]))
+    dfc = dfcu / min  # dfc è dfcu diviso il minimo tra piT*Cfn e (1-piT)*Cfp
+    return dfc
+
+def compute_act_DCF(piT, C, prediction, labelsEval):
+    confuse_matrix = compute_optimal_Bayes_decision_Binary_withT(piT, C, prediction, labelsEval)
     dfcu = compute_bayes_risk_DCFu_Binary(piT, C, confuse_matrix)
     min = numpy.min((piT * C[0, 1], (1 - piT) * C[1, 0]))
     dfc = dfcu / min  # dfc è dfcu diviso il minimo tra piT*Cfn e (1-piT)*Cfp
