@@ -1011,7 +1011,95 @@ we won't use k-fold because we don't need the validation test, since there's the
 to train each model on the full training set then test this model on the test set.
 
 \section{Multivariate Gaussian Model}
+In this section we are going to show the result on the \textbf{Test set} for the Gaussian part, 
+exaclty as we did for the validation part (that was done on the \textbf{Validation set}). We are going
+to test on Raw features, PCA with m = 8 and m = 9.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}llll@{}}
+    \toprule
+                        & pi = 0.1  & pi = 0.5  & pi = 0.9 \\ \midrule
+                        & \multicolumn{3}{c}{RAW Features} \\ \midrule
+    MVG                 & \color{red}{0.545}     & \color{red}{0.276}     & \color{red}{0.083}    \\
+    Naive Gaussian      & 0.718     & 0.352     & 0.111    \\
+    Tied Gaussian       & 0.789     & 0.455     & 0.176    \\
+    Naive Tied Gaussian & 0.829     & 0.48     & 0.177    \\ \bottomrule
+    \end{tabular}
+    \label{tab:MVG_RAW_valid_eval}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}llll@{}}
+    \toprule
+                        & pi = 0.1  & pi = 0.5  & pi = 0.9 \\ \midrule
+                        & \multicolumn{3}{c}{PCA m = 9} \\ \midrule
+    MVG                 & \color{red}{0.569}     & \color{red}{0.272}     & \color{red}{0.082}    \\
+    Naive Gaussian      & 0.635     & 0.31      & 0.087    \\
+    Tied Gaussian       & 0.783     & 0.461     & 0.177    \\
+    Naive Tied Gaussian & 0.864     & 0.483     & 0.175    \\ \bottomrule
+    \end{tabular}
+    \label{tab:MVG_PCA9_valid_eval}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}llll@{}}
+    \toprule
+                        & pi = 0.1  & pi = 0.5  & pi = 0.9 \\ \midrule
+                        & \multicolumn{3}{c}{PCA m = 8} \\ \midrule
+    MVG                 & \color{red}{0.571}     & \color{red}{0.271}     & \color{red}{0.083}    \\
+    Naive Gaussian      & 0.638     & 0.315     & 0.087    \\
+    Tied Gaussian       & 0.773     & 0.456     & 0.178    \\
+    Naive Tied Gaussian & 0.865     & 0.484     & 0.176    \\ \bottomrule
+    \end{tabular}
+    \label{tab:MVG_PCA8_valid_eval}
+\end{table}
+
+We can see that for all 3 models (Raw,m=8,m=9) the MVG is the best. Only for the Naive assumption the model with PCA are better
+than the Raw model. \newline
+Comparing these results with the one obtained from the Validation part, they seems to be a little bit better, but not that much, so
+the results are consistent. 
+
+\newpage
+
 \section{Logistic Regression}
+Again, in this section there're the results for the Logistic Regression part.
+
+\begin{figure}[h!]
+    \includegraphics[scale=0.5]{../../images/evaluation/LR_PCA_minDCF_comparison.png}
+    \centering
+    \caption{LR - compare different $\lambda$}
+    \label{fig:LR_eval}
+\end{figure}
+Figure~\ref{fig:LR_eval} shows the midDCF for each $\lambda$. The optimal $\lambda$ = 0.4. We can also notice
+that for our application ($\pi$ = 0.5) the model with PCA with m = 9 is slightly better. Now let's see the results.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lllllll}
+        \toprule
+               & pi=0.1 & pi=0.5 & pi=0.9 \\ \midrule
+                                & \multicolumn{3}{c}{RAW Features}  \\
+    Log Reg    & \color{red}{0.789}      & 0.454      & 0.175  \\ \midrule
+                                & \multicolumn{3}{c}{PCA m=9}  \\
+    Log Reg    & 0.79     & \color{red}{ 0.45}       & 0.175 \\ \midrule
+                                & \multicolumn{3}{c}{PCA m=8}  \\
+    Log Reg    & 0.789      & \color{red}{ 0.45}      & \color{red}{0.174} \\
+    \bottomrule
+    \end{tabular}
+    \label{tab:LinearLogReg_valid_eval}
+\end{table}
+We can see that using the Raw or PCA models doesn't change that much, so all the three models can be considered the "best" choise 
+for LR, but for our application, from the Gaussian part, the MVG model has midDCF = \textbf{0.271}, meanwhile the best 
+I can obtain using LR is minDCF = \textbf{0.45}. So the LR model isn't the best choice overall. This is telling us that the linear
+separation isn't the one we need, so we expect that the RBF and Poly SVM will perform better!!! (In fact those result are similar
+to the ones given by the Tied Gaussian, that is also linear)
+By the way the results are also consistent with the Validation part.
+
+\newpage
+
 \section{Support Vector Machine}
 \section{Gaussian Mixture Model}
 \end{document}
