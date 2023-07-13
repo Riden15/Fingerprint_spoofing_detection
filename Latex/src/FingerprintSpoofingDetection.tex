@@ -1252,7 +1252,7 @@ We are now going to see how GMM handles the Test set.
 We have chosen 8 components, which seems to be the best number of components in the validation part.
 \newline
 
-\textbf{SVM - Raw Features and PCA with m = 9}
+\textbf{GMM - Raw Features and PCA with m = 9}
 \begin{table}[H]
     \centering
     \begin{tabular}{ll|l|ll}
@@ -1277,7 +1277,7 @@ We have chosen 8 components, which seems to be the best number of components in 
                                 & Diag-Cov-Tied     & \color{red}{0.071}  & 0.072\\  
     \hline
     \end{tabular}
-    \label{tab:SVM_RAW_eval}
+    \label{tab:GMM_RAW_eval}
 \end{table}
 The GMM on the Test set is again consistent with the one on the Validation set.
 The best we can do for our application is with the Full Tied Covariance Matrix with minDCF = 0.217.
