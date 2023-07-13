@@ -165,11 +165,13 @@ It's easy to see that each feature has a Gaussian distribution. \newline
         \label{fig:PCA}
     \end{figure}
 
-    From this plot (Figure~\ref{fig:PCA}) we can see the distribution of the 2 main features.
+    From this plot (Figure~\ref{fig:PCA}) we can see the distribution of the 2 main features. It's also easy to see that linear
+    models won't be able to find a separation, meanwhile the quadratic models will find a separation. So models like MVG, Quadratic
+    SVM and RBF SVM will perform well.
 
     \begin{figure}[H]
         \centering
-        \includegraphics[scale=0.5]{../../images/feature_plot/PCA_m=2 + LDA}
+        \includegraphics[scale=0.5]{../../images/feature_plot/histPCA_m=2 + LDA.png}
         \caption{LDA}
         \label{fig:LDA}
     \end{figure}
@@ -203,7 +205,6 @@ We are going to develop this following models:
     \item Logistic Regression (\textbf{LR})
     \begin{itemize}
         \item Linear Logistic Regression
-        \item Quadratic Logistic Regression
     \end{itemize}
     \item Support Vector Machine (\textbf{SVM})
     \begin{itemize}
@@ -263,7 +264,7 @@ There are also some computation of PCA with m=9 and m=8.
     \toprule
     Classifier          & pi = 0.1  & pi = 0.5  & pi = 0.9 \\ \midrule
                         & \multicolumn{3}{c}{RAW Features - NO PCA} \\ \midrule
-    MVG                 & 0.616     & 0.331     & 0.111    \\
+    MVG                 & 0.616     & \color{red}{0.331}     & 0.111    \\
     Naive Gaussian      & 0.806     & 0.472     & 0.144    \\
     Tied Gaussian       & 0.706     & 0.486     & 0.184    \\
     Naive Tied Gaussian & 0.79      & 0.551     & 0.198    \\ \bottomrule
@@ -277,7 +278,7 @@ There are also some computation of PCA with m=9 and m=8.
     \toprule
     Classifiers         & pi = 0.1 & pi = 0.5 & pi = 0.9 \\ \midrule
                         & \multicolumn{3}{c}{PCA (m=9)}  \\ \midrule
-    MVG                 & 0.629    & 0.33    & 0.109    \\
+    MVG                 & 0.629    & \color{red}{0.33}    & 0.109    \\
     Naive Gaussian      & 0.74    & 0.369    & 0.113    \\
     Tied Gaussian       & 0.696    & 0.492    & 0.18    \\
     Naive Tied Gaussian & 0.772    & 0.543    & 0.202    \\ \bottomrule
@@ -291,7 +292,7 @@ There are also some computation of PCA with m=9 and m=8.
     \toprule
     Classifiers         & pi = 0.1 & pi = 0.5 & pi = 0.9 \\ \midrule
                         & \multicolumn{3}{c}{PCA (m=8)}  \\ \midrule
-    MVG                 & 0.612    & 0.333    & 0.109    \\
+    MVG                 & 0.612    & \color{red}{0.333}    & 0.109    \\
     Naive Gaussian      & 0.712     & 0.36    & 0.112    \\
     Tied Gaussian       & 0.686    & 0.485    & 0.181    \\
     Naive Tied Gaussian & 0.774    & 0.544    & 0.201    \\ \bottomrule
@@ -299,7 +300,8 @@ There are also some computation of PCA with m=9 and m=8.
     \label{tab:MVG_PCA8_valid}
 \end{table}
 
-As we can see, the MVG model, that consider all the covariance matrices, is the best either with PCA or without.
+As we can see, the MVG model, that consider all the covariance matrices, is the best either with PCA or without. As we said previously, 
+the quadratic models do a good job on these data, in fact the MVG is the best, meanwhile the Tieds are the worse.
 PCA is useful only in the Naive Gaussian model.
 Tied models perform worse.
 
@@ -332,7 +334,8 @@ The Figure~\ref{fig:DCF_LinearLogReg_valid} shows that using a $\lambda$ = 10\te
 is more or less the same, the minDCF doesn't change that much.
 From $\lambda$ = 10\textsuperscript{-1} to +$\infty$ the minDCF will be too high.
 
-For our main application, it's hard to see, but $\lambda$ = 0.4 is the best choice.
+For our main application, it's hard to see, but $\lambda$ = 0.4 is the best choice. By the way, the LR computes a linear separation,
+but we said that the separation can't be found using a linear function, so we expect highier minDCF than the MVG.
 
 \begin{table}[H]
     \centering
@@ -344,56 +347,14 @@ For our main application, it's hard to see, but $\lambda$ = 0.4 is the best choi
                                 & \multicolumn{3}{c}{PCA m=9}  \\
     Log Reg ($\lambda$ = 0.4)   & 0.705      & 0.496       & 0.193 \\ \midrule
                                 & \multicolumn{3}{c}{PCA m=8}  \\
-    Log Reg ($\lambda$ = 0.4)   & 0.689       & 0.483       & 0.188 \\
+    Log Reg ($\lambda$ = 0.4)   & 0.689       & \color{red}{0.483}       & 0.188 \\
     \bottomrule
     \end{tabular}
     \label{tab:LinearLogReg_valid}
 \end{table}
 
 Overall, the MVG without PCA has a \textbf{minDCF = 0.331} and this value is better than all
-the Linear Logistic Regression values (for our main application)
-
-\clearpage
-
-\subsection{Quadratic Logistic Regression}
-
-The Figure~\ref{fig:DCF_QuadLogReg_valid} shows how minDCF is affected by different values of $\lambda$.
-Also in this case, for our main application, taking a $\lambda$=10\textsuperscript{-5} or $\lambda$=10\textsuperscript{-1}
-doesn't change the minDCF that much.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.5]{../../images/validation/QUAD_LR_PCA_minDCF_comparison}
-    \caption{DCF - Quadratic LogReg}
-    \label{fig:DCF_QuadLogReg_valid}
-\end{figure}
-
-It is also easy to see that PCA is pretty useless for all applications.
-The minDCF it's always worse than the model without PCA\@.
-
-\begin{table}[H]
-    \centering
-    \begin{tabular}{lllllll}
-        \toprule
-                                & pi=0.1 & pi=0.5 & pi=0.9 \\ \midrule
-                                & \multicolumn{3}{c}{NO-PCA}  \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.1)   & 0.6      & 0.31      & 0.119      \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.5)   & 0.644      & 0.305      & 0.106       \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.707      & 0.335      & 0.105      \\ \midrule
-                                & \multicolumn{3}{c}{PCA m=9}  \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.1)   & 0.691      & 0.489       & 0.189       \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.5)   & 0.7      & 0.497      & 0.191      \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.713      & 0.506      & 0.194      \\ \midrule
-                                & \multicolumn{3}{c}{PCA m=8}  \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.1)   & 0.691       & 0.483       & 0.191       \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.5)   & 0.691      & 0.483      & 0.191      \\
-    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.691      & 0.483      & 0.191      \\
-    \bottomrule
-    \end{tabular}
-    \label{tab:QuadLogReg_valid}
-\end{table}
-
-This kind of model, with a Quadratic Kernel outperforms the MVG models, for our main application.
+the Linear Logistic Regression values (for our main application).
 
 \clearpage
 
@@ -1009,6 +970,95 @@ $\newline$
     \end{tabular}
     \label{tab:GMM_PCA9_valid}
 \end{table}
+
+
+\clearpage
+\section{Recap}
+We are now going to compare three models with their best parameters: 
+\begin{itemize}
+    \item Multivariate Gaussian Model, \textbf{PCA m = 9}
+    \item Radial Basis Function SVM, \textbf{PCA m = 8, C = 10, K = 0.1, $\gamma$ = 0.001}
+    \item Gaussian Mixture Model, \textbf{RAW, Components = 8}
+\end{itemize}
+\textit{NOTE: we didn't considered LR beacuse it computes linear separation, so it'd have achieved the worst
+result compared to the other three.}
+
+Now let's see the Bayes Error Plot and the ROC curve of each comparison. We start with MVG and GMM.
+
+\begin{figure}[h!]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&GMM.png}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_MVG&GMM.png}
+    \end{subfigure}
+\end{figure}
+It can be seen that GMM performs better than the MVG for both minDCF and actDCF.
+Also, the actDCF of both model is close to the minDCF, so no calibration is needed.
+
+Now let's see MVG vs SVM RBF
+\begin{figure}[h!]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&SVM_RBF.png}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_MVG&SVM_RBF.png}
+    \end{subfigure}
+\end{figure}
+Here we clearly need some calibration about the SVM. This is needed beacuse the scores are not calibrated
+since SVM has no probabilistic interpretation!
+We are going to apply the prior weighted logistic regression as calibration model. Let's define a function
+\[f(s) = log\frac{f_{S|H}(s|H_T)}{f_{S|H}(s|H_F)} = \alpha s + \beta\]
+where s is the input score, $f(s)$ computes the $s_{cal}$ that is the calibrated score. The original 
+score s are the scores obtained by the SVM.
+
+\begin{figure}[H]
+    \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_SVM_RBF_calibrated.png}
+    \centering
+    \caption{SVM RBF Calibrated}
+    \label{fig:SVM_RBF_Cal}
+\end{figure}
+ Figure~\ref{fig:SVM_RBF_Cal} shows the calibrated SVM, with an actDCF that is closer to the minDCF,
+ so the calibration worked.
+
+ Now les't see the SVM RBF Calibrated vs MVG.
+\begin{figure}[H]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&SVM_RBF_calibrated.png}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_GMM&SVM_RBF_calibrated.png}
+    \end{subfigure}
+\end{figure}
+Again the SVM RBF is slightly better than the MVG, but nothing relevant. Last we have the comparison 
+between the SVM RBF and GMM. Again the SVM's scores are not calibrated so let's calibrate them.
+
+\begin{figure}[H]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_GMM&SVM_RBF.png}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_GMM&SVM_RBF.png}
+    \end{subfigure}
+\end{figure}
+
+
+\begin{figure}[H]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_GMM&SVM_RBF_calibrated.png}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_GMM&SVM_RBF_calibrated.png}
+    \end{subfigure}
+\end{figure}
+Here we have the calibrated score, we can see that the GMM is better than the SVM.
+
+$\newline$
+\textbf{LAST DECISION:}
+Our best model is the \textbf{Gaussian Mixture Model, RAW, Components = 8}.
+Now let's use the Test set and see if the GMM is also the best model for the evaluation.
+
+
 
 \chapter{Evaluation}
 
