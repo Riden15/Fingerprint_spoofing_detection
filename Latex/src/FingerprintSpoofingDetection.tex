@@ -983,37 +983,41 @@ We are now going to compare three models with their best parameters:
 \textit{NOTE: we didn't considered LR beacuse it computes linear separation, so it'd have achieved the worst
 result compared to the other three.}
 
-Now let's see the Bayes Error Plot and the ROC curve of each comparison. We start with MVG and GMM.
+Now let's see the Bayes Error Plot and the ROC curve of each comparison.
+We start with MVG and GMM.
 
 \begin{figure}[h!]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&GMM.png}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&GMM}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_MVG&GMM.png}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_MVG&GMM}
     \end{subfigure}
+    \label{fig:MVGvsGMM}
 \end{figure}
 It can be seen that GMM performs better than the MVG for both minDCF and actDCF.
 Also, the actDCF of both model is close to the minDCF, so no calibration is needed.
 
-Now let's see MVG vs SVM RBF
+Now let's see MVG vs SVM RBF\@.
+
 \begin{figure}[h!]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&SVM_RBF.png}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&SVM_RBF}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_MVG&SVM_RBF.png}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_MVG&SVM_RBF}
     \end{subfigure}
+    \label{fig:MVGvsSVM}
 \end{figure}
-Here we clearly need some calibration about the SVM. This is needed beacuse the scores are not calibrated
+Here we clearly need some calibration about the SVM. This is needed because the scores are not calibrated
 since SVM has no probabilistic interpretation!
-We are going to apply the prior weighted logistic regression as calibration model. Let's define a function
-\[f(s) = log\frac{f_{S|H}(s|H_T)}{f_{S|H}(s|H_F)} = \alpha s + \beta\]
-where s is the input score, $f(s)$ computes the $s_{cal}$ that is the calibrated score. The original 
-score s are the scores obtained by the SVM.
+We are going to apply the prior weighted logistic regression as calibration model.
+Let's define a function \[f(s) = \log\frac{f_{S|H}(s|H_T)}{f_{S|H}(s|H_F)} = \alpha s + \beta\]
+where s is the input score, $f(s)$ computes the $s_{cal}$ that is the calibrated score.
+The original score s are the scores obtained by the SVM\@.
 
 \begin{figure}[H]
-    \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_SVM_RBF_calibrated.png}
+    \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_SVM_RBF_calibrated}
     \centering
     \caption{SVM RBF Calibrated}
     \label{fig:SVM_RBF_Cal}
@@ -1021,37 +1025,40 @@ score s are the scores obtained by the SVM.
  Figure~\ref{fig:SVM_RBF_Cal} shows the calibrated SVM, with an actDCF that is closer to the minDCF,
  so the calibration worked.
 
- Now les't see the SVM RBF Calibrated vs MVG.
+ Now let's see the SVM RBF Calibrated vs MVG\@.
 \begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&SVM_RBF_calibrated.png}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&SVM_RBF_calibrated}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_GMM&SVM_RBF_calibrated.png}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_GMM&SVM_RBF_calibrated}
     \end{subfigure}
+    \label{fig:SVMcalibvsMVG}
 \end{figure}
-Again the SVM RBF is slightly better than the MVG, but nothing relevant. Last we have the comparison 
-between the SVM RBF and GMM. Again the SVM's scores are not calibrated so let's calibrate them.
+Again the SVM RBF is slightly better than the MVG, but nothing relevant.
+Last we have the comparison between the SVM RBF and GMM. Again the SVM's scores are not calibrated so let's calibrate them.
 
 \begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_GMM&SVM_RBF.png}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_GMM&SVM_RBF}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_GMM&SVM_RBF.png}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_GMM&SVM_RBF}
     \end{subfigure}
+    \label{fig:SVMvsGMM}
 \end{figure}
 
 
 \begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_GMM&SVM_RBF_calibrated.png}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_GMM&SVM_RBF_calibrated}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_GMM&SVM_RBF_calibrated.png}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_GMM&SVM_RBF_calibrated}
     \end{subfigure}
+    \label{fig:SVMcalibvsGMM}
 \end{figure}
-Here we have the calibrated score, we can see that the GMM is better than the SVM.
+Here we have the calibrated score, we can see that the GMM is better than the SVM\@.
 
 $\newline$
 \textbf{LAST DECISION:}
@@ -1069,7 +1076,7 @@ So we are going to train each model on the full training set then test this mode
 
 \section{Multivariate Gaussian Model}
 In this section we are going to show the result on the \textbf{Test set} for the Gaussian part, 
-exaclty as we did for the validation part (that was done on the \textbf{Validation set}). We are going
+exactly as we did for the validation part (that was done on the \textbf{Validation set}). We are going
 to test on Raw features, PCA with m = 8 and m = 9.
 
 \begin{table}[H]
@@ -1122,7 +1129,7 @@ the results are consistent.
 \newpage
 
 \section{Logistic Regression}
-Again, in this section there're the results for the Logistic Regression part.
+Again, in this section there are the results for the Logistic Regression part.
 
 \begin{figure}[h!]
     \includegraphics[scale=0.5]{../../images/evaluation/LR_PCA_minDCF_comparison}
@@ -1160,7 +1167,7 @@ By the way, the results are also consistent with the Validation part.
 \newpage
 
 \section{Support Vector Machine}
-Here there're the best parameter of each SVM:
+Here there are the best parameter of each SVM:
 \begin{itemize}
     \item Linear SVM: K=1.0, C=1.0
     \item Quadratic SVM: K=1.0, C=0.1, degree=2, constant=1
@@ -1214,11 +1221,8 @@ Here there're the best parameter of each SVM:
     \label{tab:SVM_PCA8_eval}
 \end{table}
 
-As we said, the RBF and the Quadratic that are non-linear achieve good results. They are pretty similar to 
-the MVG (that is also quadratic), but are way better than the linear ones, for example the LR. 
-
-
-
+As we said, the RBF and the Quadratic that are non-linear achieve good results.
+They are pretty similar to the MVG (that is also quadratic), but are way better than the linear ones, for example the LR.
 
 \newpage
 
@@ -1248,7 +1252,7 @@ We are now going to see how GMM handles the Test set.
 We have chosen 8 components, which seems to be the best number of components in the validation part.
 \newline
 
-\textbf{SVM - Raw Featues and PCA with m = 9}
+\textbf{SVM - Raw Features and PCA with m = 9}
 \begin{table}[H]
     \centering
     \begin{tabular}{ll|l|ll}
@@ -1292,71 +1296,76 @@ result compared to the other three.}
 Let's start with MVG vs GMM.
 \begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_MVG&GMM.png}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_MVG&GMM}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_MVG&GMM.png}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_MVG&GMM}
     \end{subfigure}
+    \label{fig:eval_MVGvsGMM}
 \end{figure}
 
-The minDCF and actDCF are close, so we don't need any calibration. The GMM model is better than
-the MVG for both actDCF and minDCF. Now let's see the SVM vs MVG.
+The minDCF and actDCF are close, so we don't need any calibration.
+The GMM model is better than the MVG for both actDCF and minDCF. Now let's see the SVM vs MVG.
 
 \begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_MVG&SVM_RBF.png}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_MVG&SVM_RBF}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_MVG&SVM_RBF.png}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_MVG&SVM_RBF}
     \end{subfigure}
+    \label{fig:eval_MVGvsSVM}
 \end{figure}
-Again the SVM RBF is not calibrated, so we need to calibrate the scores. We used the prior weighted
-logistic regression.
+Again the SVM RBF is not calibrated, so we need to calibrate the scores.
+We used the prior weighted logistic regression.
 
 \begin{figure}[H]
-    \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_SVM_RBF_calibrated.png}
+    \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_SVM_RBF_calibrated}
     \centering
     \caption{SVM RBF Calibrated}
     \label{fig:SVM_RBF_eval_cal}
 \end{figure}
-Figure~\ref{fig:SVM_RBF_eval_Cal} shows the calibrated SVM. 
+Figure~\ref{fig:SVM_RBF_eval_cal} shows the calibrated SVM.
 
 \begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_MVG&SVM_RBF_calibrated.png}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_MVG&SVM_RBF_calibrated}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_MVG&SVM_RBF_calibrated.png}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_MVG&SVM_RBF_calibrated}
     \end{subfigure}
+    \label{fig:eval_MVGvsSVMcalib}
 \end{figure}
 Here the SVM RBF calibrated vs MVG. We can see that SVM is better than the MVG. The last comparison
 is between SVM RBF and GMM.
 
 \begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_GMM&SVM_RBF.png}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_GMM&SVM_RBF}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_GMM&SVM_RBF.png}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_GMM&SVM_RBF}
     \end{subfigure}
+    \label{fig:eval_GMMvsSVM}
 \end{figure}
 Again, the scores are not calibrated, let's calibrate them.
 
 \begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_GMM&SVM_RBF_calibrated.png}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_GMM&SVM_RBF_calibrated}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_GMM&SVM_RBF_calibrated.png}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_GMM&SVM_RBF_calibrated}
     \end{subfigure}
+    \label{fig:eval_GMMvsSVMcalib}
 \end{figure}
-We can see that the GMM is better then the SVM.
+We can see that the GMM is better than the SVM.
 
 $\newline$
 \textbf{Final Decision}
-The best model is againt the Gaussian Mixture Model with 8 components, but the with the RAW we 
-obtain midDCF = 0.219 and with PCA with m = 9 we obtain midDCF = 0.217. So the best of the best 
-would be the GMM PCA with m = 9 instead of GMM RAW. Anyway, the difference is so small that we can 
+The best model is again the Gaussian Mixture Model with 8 components, but the with the RAW we
+obtain midDCF = 0.219 and with PCA with m = 9 we obtain midDCF = 0.217.
+So the best of the best would be the GMM PCA with m = 9 instead of GMM RAW. Anyway, the difference is so small that we can
 consider that the expectation made on the validation part are right.
 
 
