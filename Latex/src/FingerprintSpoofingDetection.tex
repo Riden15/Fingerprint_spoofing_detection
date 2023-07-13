@@ -165,13 +165,13 @@ It's easy to see that each feature has a Gaussian distribution. \newline
         \label{fig:PCA}
     \end{figure}
 
-    From this plot (Figure~\ref{fig:PCA}) we can see the distribution of the 2 main features. It's also easy to see that linear
-    models won't be able to find a separation, meanwhile the quadratic models will find a separation. So models like MVG, Quadratic
-    SVM and RBF SVM will perform well.
+    From this plot (Figure~\ref{fig:PCA}) we can see the distribution of the 2 main features.
+    It's also easy to see that linear models won't be able to find a separation, meanwhile the quadratic models will find a separation.
+    So models like MVG, Quadratic SVM and RBF SVM will perform well.
 
     \begin{figure}[H]
         \centering
-        \includegraphics[scale=0.5]{../../images/feature_plot/histPCA_m=2 + LDA.png}
+        \includegraphics[scale=0.5]{../../images/feature_plot/histPCA_m=2 + LDA}
         \caption{LDA}
         \label{fig:LDA}
     \end{figure}
@@ -300,8 +300,8 @@ There are also some computation of PCA with m=9 and m=8.
     \label{tab:MVG_PCA8_valid}
 \end{table}
 
-As we can see, the MVG model, that consider all the covariance matrices, is the best either with PCA or without. As we said previously, 
-the quadratic models do a good job on these data, in fact the MVG is the best, meanwhile the Tieds are the worse.
+As we can see, the MVG model, that consider all the covariance matrices, is the best either with PCA or without.
+As we said previously, the quadratic models do a good job on these data, in fact the MVG is the best, meanwhile the Tieds are the worst.
 PCA is useful only in the Naive Gaussian model.
 Tied models perform worse.
 
@@ -335,7 +335,7 @@ is more or less the same, the minDCF doesn't change that much.
 From $\lambda$ = 10\textsuperscript{-1} to +$\infty$ the minDCF will be too high.
 
 For our main application, it's hard to see, but $\lambda$ = 0.4 is the best choice. By the way, the LR computes a linear separation,
-but we said that the separation can't be found using a linear function, so we expect highier minDCF than the MVG.
+but we said that the separation can't be found using a linear function, so we expect higher minDCF than the MVG.
 
 \begin{table}[H]
     \centering
