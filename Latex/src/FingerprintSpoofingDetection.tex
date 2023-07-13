@@ -1152,7 +1152,7 @@ Now let's see the results.
 We can see that using the Raw or PCA models doesn't change that much, so all the three models can be considered the \("\)best\("\) choice
 for LR, but for our application, from the Gaussian part, the MVG model has midDCF = \textbf{0.271}, meanwhile the best I can obtain using LR is minDCF = \textbf{0.45}.
 So the LR model isn't the best choice overall.
-This is telling us that the linear separation isn't the one we need,
+Again, this is telling us that the linear separation isn't the one we need,
 so we expect that the RBF and Poly SVM will perform better!
 (In fact, those results are similar to the ones given by the Tied Gaussian, that is also linear)
 By the way, the results are also consistent with the Validation part.
@@ -1279,5 +1279,88 @@ The GMM on the Test set is again consistent with the one on the Validation set.
 The best we can do for our application is with the Full Tied Covariance Matrix with minDCF = 0.217.
 
 \newpage
-\section{...}
+\section{Recap}
+As we did for the evaluation part, we are going to compare the three models:
+\begin{itemize}
+    \item Multivariate Gaussian Model, \textbf{PCA m = 9}
+    \item Radial Basis Function SVM, \textbf{PCA m = 8, C = 10, K = 0.1, $\gamma$ = 0.001}
+    \item Gaussian Mixture Model, \textbf{RAW, Components = 8}
+\end{itemize}
+\textit{NOTE: we didn't considered LR beacuse it computes linear separation, so it'd have achieved the worst
+result compared to the other three.}
+
+Let's start with MVG vs GMM.
+\begin{figure}[H]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_MVG&GMM.png}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_MVG&GMM.png}
+    \end{subfigure}
+\end{figure}
+
+The minDCF and actDCF are close, so we don't need any calibration. The GMM model is better than
+the MVG for both actDCF and minDCF. Now let's see the SVM vs MVG.
+
+\begin{figure}[H]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_MVG&SVM_RBF.png}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_MVG&SVM_RBF.png}
+    \end{subfigure}
+\end{figure}
+Again the SVM RBF is not calibrated, so we need to calibrate the scores. We used the prior weighted
+logistic regression.
+
+\begin{figure}[H]
+    \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_SVM_RBF_calibrated.png}
+    \centering
+    \caption{SVM RBF Calibrated}
+    \label{fig:SVM_RBF_eval_cal}
+\end{figure}
+Figure~\ref{fig:SVM_RBF_eval_Cal} shows the calibrated SVM. 
+
+\begin{figure}[H]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_MVG&SVM_RBF_calibrated.png}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_MVG&SVM_RBF_calibrated.png}
+    \end{subfigure}
+\end{figure}
+Here the SVM RBF calibrated vs MVG. We can see that SVM is better than the MVG. The last comparison
+is between SVM RBF and GMM.
+
+\begin{figure}[H]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_GMM&SVM_RBF.png}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_GMM&SVM_RBF.png}
+    \end{subfigure}
+\end{figure}
+Again, the scores are not calibrated, let's calibrate them.
+
+\begin{figure}[H]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/DCF_GMM&SVM_RBF_calibrated.png}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[scale=0.5]{../../images/comparison/evaluation/ROC_GMM&SVM_RBF_calibrated.png}
+    \end{subfigure}
+\end{figure}
+We can see that the GMM is better then the SVM.
+
+$\newline$
+\textbf{Final Decision}
+The best model is againt the Gaussian Mixture Model with 8 components, but the with the RAW we 
+obtain midDCF = 0.219 and with PCA with m = 9 we obtain midDCF = 0.217. So the best of the best 
+would be the GMM PCA with m = 9 instead of GMM RAW. Anyway, the difference is so small that we can 
+consider that the expectation made on the validation part are right.
+
+
+
+
+
 \end{document}
