@@ -1249,7 +1249,13 @@ By the way, the results are also consistent with the Validation part.
     \includegraphics[scale = 0.5]{../../images/evaluation/QUAD_LR_PCA_minDCF_comparison.png}
     \centering
     \caption{minDCF for the QLR}
+    \label{fig:QLR_eval}
 \end{figure}
+
+Figure ~\ref{fir:QLR_eval} show that PCA will perform badly, in fact for all application we have the minDCF related
+to PCA higher than the minDCF related to the RAW features. 
+
+Here the results:
 
 \begin{table}[H]
     \centering
@@ -1272,6 +1278,8 @@ By the way, the results are also consistent with the Validation part.
     \end{tabular}
     \label{tab:QuadLogReg_eval}
 \end{table}
+These result are consistent with the validation part. As we expected this model is a quadratic one, so the minDCF are good. Those result
+are also similar to the MVG.
 
 \newpage
 
