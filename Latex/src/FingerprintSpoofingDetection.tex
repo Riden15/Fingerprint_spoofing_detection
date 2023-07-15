@@ -319,7 +319,7 @@ perform better.
 
 \section{Logistic Regression}
 
-We are going to analyze the Linear Logistic Regression.
+We are going to analyze the Linear Logistic Regression and the Quadratic Logistic Regression.
 \subsection{Linear Logistic Regression}
 
 Logistic Regression is a discriminative model that directly computes the posterior probability \(P(C=c|X=x)\).
@@ -328,9 +328,11 @@ There's also an hyper-parameter $\lambda$ that must be estimated by cross-valida
 underfit but if it's too low then the model will overfit.\newline
 
 We need to minimize:
-\[argmin_{w,b} J(w,b) = \frac{\lambda}{2}||w||^2 + \frac{1}{n}\sum_{i=1}^{n}log(1+e^{-z_i(w^Tx_i+b)})\]
-where \(\frac{\lambda}{2}||w||^2\) is a penalizer term and \(log(1+e^{-z_i(w^Tx_i+b)})\) is the logistic
-loss function. \newline
+\[argmin_{w,b} J(w,b) = \frac{\lambda}{2}||w||^2 + \frac{\pi_T}{n_T}\sum_{i|z_i=1}^{n}log(1+e^{-z_i(w^Tx_i+b)}) 
++ \frac{1 - \pi_T}{n_F}\sum_{i|z_i=-1}^{n}log(1+e^{-z_i(w^Tx_i+b)})\]
+where \(\frac{\lambda}{2}||w||^2\) is a penalizer term, \(log(1+e^{-z_i(w^Tx_i+b)})\) is the logistic
+loss function, $\pi_T$ is the prior of class true and $n_T$ ($n_F$) is the number of elements of class
+true (false). \newline
 
 The plots show how minDCF is affected by different values of $\lambda$.
 They are exploited to calibrate $\lambda$, which is the regularization coefficient.
@@ -353,13 +355,19 @@ but we said that the separation can't be found using a linear function, so we ex
     \centering
     \begin{tabular}{lllllll}
         \toprule
-                                & pi=0.1 & pi=0.5 & pi=0.9 \\ \midrule
-                                & \multicolumn{3}{c}{NO-PCA}  \\
-    Log Reg ($\lambda$ = 0.4)   & 0.715      & 0.485      & 0.189  \\ \midrule
+                                            & pi=0.1 & pi=0.5 & pi=0.9 \\ \midrule
+                                & \multicolumn{3}{c}{RAW}  \\
+    Log Reg ($\lambda$ = 0.4 $\pi_T$ = 0.1)   & 0.705  & 0.486 & 0.187  \\ \midrule
+    Log Reg ($\lambda$ = 0.4 $\pi_T$ = 0.5)   & 0.709      & 0.488      & 0.186  \\ \midrule
+    Log Reg ($\lambda$ = 0.4 $\pi_T$ = 0.9)   &  0.726     &  \color{red}{0.506}     & 0.194  \\ \midrule
                                 & \multicolumn{3}{c}{PCA m=9}  \\
-    Log Reg ($\lambda$ = 0.4)   & 0.705      & 0.496       & 0.193 \\ \midrule
+    Log Reg ($\lambda$ = 0.4 $\pi_T$ = 0.5)   & 0.691      & 0.489      & 0.189 \\ \midrule
+    Log Reg ($\lambda$ = 0.4 $\pi_T$ = 0.5)   & 0.7      & 0.497      & 0.191  \\ \midrule
+    Log Reg ($\lambda$ = 0.4 $\pi_T$ = 0.9)   & 0.713      & \color{red}{0.506}      & 0.194  \\ \midrule
                                 & \multicolumn{3}{c}{PCA m=8}  \\
-    Log Reg ($\lambda$ = 0.4)   & 0.689       & \color{red}{0.483}       & 0.188 \\
+    Log Reg ($\lambda$ = 0.4 $\pi_T$ = 0.9)   & 0.68      & \color{red}{0.48}      & 0.189 \\ \midrule
+    Log Reg ($\lambda$ = 0.4 $\pi_T$ = 0.5)   &  0.691     &  \color{red}{0.483}     & 0.191  \\ \midrule
+    Log Reg ($\lambda$ = 0.4 $\pi_T$ = 0.9)   &  0.708     & 0.51      & 0.192  \\ 
     \bottomrule
     \end{tabular}
     \label{tab:LinearLogReg_valid}
@@ -367,6 +375,55 @@ but we said that the separation can't be found using a linear function, so we ex
 
 Overall, the MVG without PCA has a \textbf{minDCF = 0.331} and this value is better than all
 the Linear Logistic Regression values (for our main application).
+
+\clearpage
+
+\subsection{Quadratic Logistic Regression}
+
+The Quadratic Logistic Regression allows the computation of a linear spearation in the expanded feature
+space that correspond to a non-linear separation in the original feature space.
+From the MVG we have that the llr is a quadratic function: \(xAx^T + x^Tb + c\)
+\[\Phi(x) = \bigg[Vec(xx^T), x\bigg], w = \bigg[Vec(A), b\bigg]\]
+where Vec(T) just stack the columns of T. We can now compute a linear separation     
+\(w^T\Phi(x) + b\). \newline
+
+The Figure~\ref{fig:DCF_QuadLogReg_valid} shows how minDCF is affected by different values of $\lambda$.
+Also in this case, for our main application, taking a $\lambda$=10\textsuperscript{-5} or $\lambda$=10\textsuperscript{-1}
+doesn't change the minDCF that much.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{../../images/validation/QUAD_LR_PCA_minDCF_comparison}
+    \caption{DCF - Quadratic LogReg}
+    \label{fig:DCF_QuadLogReg_valid}
+\end{figure}
+
+It is also easy to see that PCA is pretty useless for all applications.
+The minDCF it's always worse than the model without PCA\@.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lllllll}
+        \toprule
+                                & pi=0.1 & pi=0.5 & pi=0.9 \\ \midrule
+                                & \multicolumn{3}{c}{RAW}  \\
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.1)   & 0.616      & \color{red}{0.312}      & 0.118      \\
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.5)   & 0.664      & \color{red}{0.297}      & 0.109       \\
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.708      & \color{red}{0.333}      & 0.105      \\ \midrule
+                                & \multicolumn{3}{c}{PCA m=9}  \\
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.1)   & 0.691      & 0.489       & 0.189       \\
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.5)   & 0.7      & 0.497      & 0.191      \\
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.713      & 0.506      & 0.194      \\ \midrule
+                                & \multicolumn{3}{c}{PCA m=8}  \\
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.1)   & 0.68       & 0.48       & 0.189       \\
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.5)   & 0.691      & 0.483      & 0.191      \\
+    Log Reg ($\lambda$ = 0.4, $\pi$\textsubscript{T} = 0.9)   & 0.708      & 0.51      & 0.192      \\
+    \bottomrule
+    \end{tabular}
+    \label{tab:QuadLogReg_valid}
+\end{table}
+We can see that, since it finds a non-linear separation, the results are good. From the minDCF = 0.331 
+of the MVG we got a 0.297 on the Quadratic LR.
 
 \clearpage
 
@@ -988,38 +1045,36 @@ $\newline$
 
 \clearpage
 \section{Recap}
-We are now going to compare three models with their best parameters: 
+We are now going to compare the best three models with their best parameters: 
 \begin{itemize}
-    \item Multivariate Gaussian Model, \textbf{PCA m = 9}
+    \item Quadratic Logistic Regression, \textbf{$\lambda$ = 0.4}
     \item Radial Basis Function SVM, \textbf{PCA m = 8, C = 10, K = 0.1, $\gamma$ = 0.001}
     \item Gaussian Mixture Model, \textbf{RAW, Components = 8}
 \end{itemize}
-\textit{NOTE: we didn't considered LR beacuse it computes linear separation, so it'd have achieved the worst
-result compared to the other three.}
 
 Now let's see the Bayes Error Plot and the ROC curve of each comparison.
-We start with MVG and GMM.
+We start with QLR and GMM.
 
 \begin{figure}[h!]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&GMM}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_LRQ&GMM.png}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_MVG&GMM}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_LRQ&GMM.png}
     \end{subfigure}
     \label{fig:MVGvsGMM}
 \end{figure}
-It can be seen that GMM performs better than the MVG for both minDCF and actDCF.
+It can be seen that GMM performs better than the QLR for both minDCF and actDCF.
 Also, the actDCF of both model is close to the minDCF, so no calibration is needed.
 
-Now let's see MVG vs SVM RBF\@.
+Now let's see QLR vs SVM RBF\@.
 
 \begin{figure}[h!]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&SVM_RBF}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_LRQ&SVM_RBF.png}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_MVG&SVM_RBF}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_LRQ&SVM_RBF.png}
     \end{subfigure}
     \label{fig:MVGvsSVM}
 \end{figure}
@@ -1039,13 +1094,13 @@ The original score s are the scores obtained by the SVM\@.
  Figure~\ref{fig:SVM_RBF_Cal} shows the calibrated SVM, with an actDCF that is closer to the minDCF,
  so the calibration worked.
 
- Now let's see the SVM RBF Calibrated vs MVG\@.
+ Now let's see the SVM RBF Calibrated vs QLR\@.
 \begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_MVG&SVM_RBF_calibrated}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/DCF_LRQ&SVM_RBF_calibrated.png}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_GMM&SVM_RBF_calibrated}
+        \includegraphics[scale=0.5]{../../images/comparison/validation/ROC_LRQ&SVM_RBF_calibrated.png}
     \end{subfigure}
     \label{fig:SVMcalibvsMVG}
 \end{figure}
