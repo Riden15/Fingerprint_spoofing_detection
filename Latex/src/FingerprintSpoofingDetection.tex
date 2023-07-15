@@ -38,7 +38,10 @@
 
 \section{Overview}
     The data set and test set are composed of 10 dimensional features.
-    The last column is the class label which is \textbf{1} for the \textit{authentic fingerprint} and \textbf{0} for the \textit{spoofed fingerprint}.\newline
+    The last column is the class label which is \textbf{1} for the \textit{authentic fingerprint} and \textbf{0} for the \textit{spoofed fingerprint}.
+    We have that the spoofed fingerprints have 6 sub-classes corresponding to the different spoofing ways.
+    \newline
+
 
     The datasets are imbalanced, we have more spoofed fingerprint than the authentic fingerprint.
     The Training set is composed of 2325 samples and the Test set is composed of 7704 samples. \newline
@@ -126,6 +129,8 @@ It's easy to see that each feature has a Gaussian distribution. \newline
     \label{fig:RawFeatureHistogram}
 \end{figure}
 
+We can see that the feature 4 is the most discriminant feature.
+
 
 \section{PCA Usage}
 
@@ -166,17 +171,19 @@ It's easy to see that each feature has a Gaussian distribution. \newline
     \end{figure}
 
     From this plot (Figure~\ref{fig:PCA}) we can see the distribution of the 2 main features.
-    It's also easy to see that linear models won't be able to find a separation, meanwhile the quadratic models will find a separation.
+    It's also easy to see that linear models won't be able to find a good separation, meanwhile the quadratic models will find it.
     So models like MVG, Quadratic SVM and RBF SVM will perform well.
 
     \begin{figure}[H]
         \centering
         \includegraphics[scale=0.5]{../../images/feature_plot/histPCA_m=2 + LDA}
-        \caption{LDA}
+        \caption{LDA + PCA}
         \label{fig:LDA}
     \end{figure}
 
-    From this plot (Figure~\ref{fig:LDA}) we can see the distribution of the 2 main features using both PCA and LDA
+    From this plot (Figure~\ref{fig:LDA}) we can see the distribution of the 2 main features using both PCA and LDA. Also from
+    here we can see that LDA can't find a good separation between the 2 classes, so linear models WON'T 
+    perform well.
 
 \section{Training}
     \begin{itemize}
@@ -243,10 +250,10 @@ obtaining
 \[\mu_c^* = \frac{1}{N_c}\sum_{i|c_i=c}x_i\]
 \[\Sigma_c^* = \frac{1}{N_c}\sum_{i|c_i=c}(x_i-\mu_c^*)(x_i-\mu_c^*)^T\]
 We can do the same thing for the \textbf{Naive Bayes} model (that has diagonal covariance matrix)
-\[ l (\theta) = \sum_{c}^{K}\sum_{i|c_i=c}\sum_{j=1}^{D} \log \mathcal{N} (x_{i,[j]}|\mu_{c,[j]},\Sigma_{c,[j]})\]
+\[ l (\theta) = \sum_{c}^{K}\sum_{i|c_i=c}\sum_{j=1}^{D} \log \mathcal{N} (x_{i,[j]}|\mu_{c,[j]},\sigma^2_{c,[j]})\]
 which solutions are
 \[\mu_{c,[j]}^* = \frac{1}{N_c}\sum_{i|c_i=c}x_{i,[j]}\] 
-\[\Sigma_{c,[j]}^* = \frac{1}{N_c}\sum_{i|c_i=c}(x_{i,[j]}-\mu_{c,[j]}^*)(x_{i,[j]}-\mu_{c,[j]}^*)^T\] 
+\[\sigma_{c,[j]}^{2*} = \frac{1}{N_c}\sum_{i|c_i=c}(x_{i,[j]}-\mu_{c,[j]}^*)(x_{i,[j]}-\mu_{c,[j]}^*)^T\] 
 
 Finally, the \textbf{Tied} model can be built in the same way (has a single covariance matrix for all classes)
 \[ l (\theta) = \sum_{c}^{K}\sum_{i|c_i=c} \log \mathcal{N} (x_i|\mu_c,\Sigma)\]
@@ -305,20 +312,25 @@ As we said previously, the quadratic models do a good job on these data, in fact
 PCA is useful only in the Naive Gaussian model.
 Tied models perform worse.
 
-Overall the best candidate is the \textbf{MVG classifier} without PCA. However, we will see that this kind of model is also
-useless for our imbalanced data.
+Overall the best candidate is the \textbf{MVG classifier} without PCA. However, we will see that other models
+perform better.
 
 \clearpage
 
 \section{Logistic Regression}
 
-We are going to analyze both Linear Logistic Regression and Quadratic Logistic Regression.
+We are going to analyze the Linear Logistic Regression.
 \subsection{Linear Logistic Regression}
 
 Logistic Regression is a discriminative model that directly computes the posterior probability \(P(C=c|X=x)\).
 The model parameters are (w,b) that can be estimated using a frequentist approach.
 There's also an hyper-parameter $\lambda$ that must be estimated by cross-validation. $\lambda$ is needed to avoid overfitting, if it's too high then the model will
 underfit but if it's too low then the model will overfit.\newline
+
+We need to minimize:
+\[argmin_{w,b} J(w,b) = \frac{\lambda}{2}||w||^2 + \frac{1}{n}\sum_{i=1}^{n}log(1+e^{-z_i(w^Tx_i+b)})\]
+where \(\frac{\lambda}{2}||w||^2\) is a penalizer term and \(log(1+e^{-z_i(w^Tx_i+b)})\) is the logistic
+loss function. \newline
 
 The plots show how minDCF is affected by different values of $\lambda$.
 They are exploited to calibrate $\lambda$, which is the regularization coefficient.
@@ -360,6 +372,8 @@ the Linear Logistic Regression values (for our main application).
 
 \section{Support Vector Machine}
 
+The SVM has a non probabilistic interpretation, in fact, as we will see, we'll have to do some score 
+calibration in order to obtain a good DCF.
 In this section we are going to see how Linear SVM, Polynomial SVM and RBF SVM will handle our application.
 $\newline$
 
@@ -369,7 +383,7 @@ $\newline$
 \textbf{Linear SVM} can be obtained by the minimization of the primal problem:
 \[\hat{J}(\hat{w}) = \frac{1}{2}||\hat{w}||^2 + C\sum_{i=1}^{n}max_i(0,1-z_i(\hat{w}^T\hat{x_i}))\]
 where
-\[\hat{x_i} = \biggl[ \hat{x_i} K \biggr] , \hat{w_i} = \biggl[w b\biggr]\]
+\[\hat{x_i} = \biggl[ \hat{x_i}, K \biggr] , \hat{w_i} = \biggl[w, b\biggr]\]
 and K is a regularization term.
 \begin{figure}[h!]
     \centering
