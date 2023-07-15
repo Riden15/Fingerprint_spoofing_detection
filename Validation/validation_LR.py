@@ -9,7 +9,8 @@ from Models.PCA_LDA import *
 
 def validation_LR(DTR, LTR, L, k):
     for l in L:
-        kFold_LR(DTR, LTR, l, k)
+        for pi in [0.1, 0.5, 0.9]:
+            kFold_LR(DTR, LTR, l, k, pi)
 
 '''
  #algoritmo che serve per trovare il miglior hyper parameter L
@@ -42,7 +43,7 @@ def validation_LR(DTR, LTR, L, k):
     plot_DCF_PCA(x, y, 'lambda', 'LR_PCA_minDCF_comparison', folder='validation/')
 '''
 
-def kFold_LR(DTR, LTR, l, k):
+def kFold_LR(DTR, LTR, l, k, pi):
     FoldedData_List = numpy.split(DTR, k, axis=1)
     FoldedLabel_List = numpy.split(LTR, k)
 
@@ -55,53 +56,40 @@ def kFold_LR(DTR, LTR, l, k):
         Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
         # Calcolo scores con RAW data
-        scores_append.append(lr_binary(Dtr, Ltr, Dte, l))
+        scores_append.append(weighted_logistic_reg_score(Dtr, Ltr, Dte, l, pi))
 
         ''' calcolo scores con PCA with m = 9'''
         s, P = PCA(Dtr, 9)
         DTR_PCA = numpy.dot(P.T,Dtr)
         DTE_PCA = numpy.dot(P.T,Dte)
-        PCA_m9_scores.append(lr_binary(DTR_PCA,Ltr,DTE_PCA,l))
+        PCA_m9_scores.append(weighted_logistic_reg_score(DTR_PCA,Ltr,DTE_PCA,l, pi))
 
         ''' calcolo scores PCA with m = 8'''
         s, P = PCA(Dtr, 8)
         DTR_PCA = numpy.dot(P.T,Dtr)
         DTE_PCA = numpy.dot(P.T,Dte)
-        PCA_m8_scores.append(lr_binary(DTR_PCA, Ltr, DTE_PCA, l))
+        PCA_m8_scores.append(weighted_logistic_reg_score(DTR_PCA, Ltr, DTE_PCA, l, pi))
 
         LR_labels = np.append(LR_labels, Lte, axis=0)
         LR_labels = np.hstack(LR_labels)
 
-    '''RAW data pi=0.1'''
-    evaluation(scores_append, LR_labels, "LR, RAW data ", l, 0.1)
-    '''RAW data pi=0.5'''
-    evaluation(scores_append, LR_labels, "LR, RAW data ", l, 0.5)
-    '''RAW data pi=0.9'''
-    evaluation(scores_append, LR_labels, "LR, RAW data ", l, 0.9)
+    '''RAW data'''
+    evaluation(scores_append, LR_labels, "LR, RAW data ", l, pi)
+    '''PCA with m = 9'''
+    evaluation(PCA_m9_scores, LR_labels, "LR, PCA m=9, ", l, pi)
+    '''PCA with m  = 8'''
+    evaluation(PCA_m8_scores, LR_labels, "LR, PCA m=8, ", l, pi)
 
-    '''PCA with m = 9, pi=0.1'''
-    evaluation(PCA_m9_scores, LR_labels, "LR, PCA m=9, ", l, 0.1)
-    '''PCA with m = 9, pi=0.5'''
-    evaluation(PCA_m9_scores, LR_labels, "LR, PCA m=9, ", l, 0.5)
-    '''PCA with m = 9, pi=0.9'''
-    evaluation(PCA_m9_scores, LR_labels, "LR, PCA m=9, ", l, 0.9)
-
-    '''PCA with m  = 8, pi=0.1'''
-    evaluation(PCA_m8_scores, LR_labels, "LR, PCA m=8, ", l, 0.1)
-    '''PCA with m  = 8 pi=0.5'''
-    evaluation(PCA_m8_scores, LR_labels, "LR, PCA m=8, ", l, 0.5)
-    '''PCA with m  = 8 pi=0.9'''
-    evaluation(PCA_m8_scores, LR_labels, "LR, PCA m=8, ", l, 0.9)
 
 def evaluation(scores, LR_labels, appendToTitle, l, pi):
     scores_append = np.hstack(scores)
-    scores_tot = compute_dcf_min_effPrior(pi, scores_append, LR_labels)
+    scores_tot_01 = compute_dcf_min_effPrior(0.1, scores_append, LR_labels)
+    scores_tot_05 = compute_dcf_min_effPrior(0.5, scores_append, LR_labels)
+    scores_tot_09 = compute_dcf_min_effPrior(0.9, scores_append, LR_labels)
 
-    #Roc_curve(scores_append, LR_labels, appendToTitle + 'LR, lambda=' + str(l))
-
-    t = PrettyTable(["lamda", "minDCF"])
-    t.title = appendToTitle + "π=" + str(pi)
-    t.add_row([str(l), round(scores_tot, 3)])
+    t = PrettyTable(["Type", "π=0.5", "π=0.1", "π=0.9"])
+    t.title = appendToTitle
+    t.add_row(['WEIGHTED_LR, lambda=' + str(l) + " π_t=" + str(pi), round(scores_tot_05, 3), round(scores_tot_01, 3), round(scores_tot_09, 3)])
     print(t)
 
 def kFold_LR_calibration(DTR, LTR, l, k):
@@ -115,13 +103,13 @@ def kFold_LR_calibration(DTR, LTR, l, k):
     for fold in range(k):
         Dtr, Ltr, Dte, Lte = kfold(fold, k, FoldedData_List, FoldedLabel_List)
 
-        scores = lr_binary(Dtr, Ltr, Dte, l)
+        scores = weighted_logistic_reg_score(Dtr, Ltr, Dte, l, pi=0.5)
         scores_append.append(scores)
 
         s, P = PCA(Dtr, 9)
         DTR_PCA = numpy.dot(P.T,Dtr)
         DTE_PCA = numpy.dot(P.T,Dte)
-        PCA_m9_scores.append(lr_binary(DTR_PCA,Ltr,DTE_PCA,l))
+        PCA_m9_scores.append(weighted_logistic_reg_score(DTR_PCA,Ltr,DTE_PCA,l, pi=0.5))
 
         LR_labels = np.append(LR_labels, Lte, axis=0)
         LR_labels = np.hstack(LR_labels)

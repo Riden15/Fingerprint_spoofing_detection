@@ -25,6 +25,30 @@ def lr_binary(DTR, LTR, DTE, l):
     return S
 
 
+''' WEIGHTED LOGISTIC REGRESSION'''
+def weighted_logreg_obj_wrap(DTR, LTR, l, pi=0.5):
+    M = DTR.shape[0]
+    Z = LTR * 2.0 - 1.0
+    def logreg_obj(v):
+        w = mcol(v[0:M])
+        b = v[-1]
+        reg = 0.5 * l * numpy.linalg.norm(w) ** 2
+        s = (numpy.dot(w.T, DTR) + b).ravel()
+        nt = DTR[:, LTR == 0].shape[1]
+        avg_risk_0 = (numpy.logaddexp(0, -s[LTR == 0] * Z[LTR == 0])).sum()
+        avg_risk_1 = (numpy.logaddexp(0, -s[LTR == 1] * Z[LTR == 1])).sum()
+        return reg + (pi / nt) * avg_risk_1 + (1-pi) / (DTR.shape[1]-nt) * avg_risk_0
+    return logreg_obj
+
+def weighted_logistic_reg_score(DTR, LTR, DTE, l, pi=0.5):
+    logreg_obj = weighted_logreg_obj_wrap(numpy.array(DTR), LTR, l, pi)
+    x, d, f = scipy.optimize.fmin_l_bfgs_b(logreg_obj, numpy.zeros(DTR.shape[0] + 1), approx_grad=True)
+    _w = x[0:DTR.shape[0]]
+    _b = x[-1]
+    STE = numpy.dot(_w.T, DTE) + _b
+    return STE
+
+
 ''' QUADRATIC LOGISTIC REGRESSION'''
 def quad_logreg_obj(DTR, LTR, l, pi):
     M = DTR.shape[0]

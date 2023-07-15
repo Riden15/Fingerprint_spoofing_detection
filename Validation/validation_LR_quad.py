@@ -10,7 +10,7 @@ def validation_LR_quad(DTR, LTR, L, k):
         for pi in [0.1, 0.5, 0.9]:
             kfold_QUAD_LR(DTR, LTR, l, pi, k)
 
-    '''
+'''
     x = numpy.logspace(-5, 2, 20)
     y = numpy.array([])
     y_05 = numpy.array([])
@@ -60,12 +60,10 @@ def kfold_QUAD_LR(DTR, LTR, l, pi, k):
         expanded_DTR = numpy.apply_along_axis(vecxxT, 0, Dtr)
         expanded_DTE = numpy.apply_along_axis(vecxxT, 0, Dte)
         phi = numpy.vstack([expanded_DTR, Dtr])
-
         phi_DTE = numpy.vstack([expanded_DTE, Dte])
 
         scores = quad_logistic_reg_score(phi, Ltr, phi_DTE, l, pi)
         scores_append.append(scores)
-
         LR_labels = np.append(LR_labels, Lte, axis=0)
         LR_labels = np.hstack(LR_labels)
 
@@ -79,7 +77,7 @@ def kfold_QUAD_LR(DTR, LTR, l, pi, k):
         s, P = PCA(Dtr, 8)
         DTR_PCA = numpy.dot(P.T, Dtr)
         DTE_PCA = numpy.dot(P.T, Dte)
-        PCA_m8_scores.append(quad_logistic_reg_score(DTR_PCA, Ltr, DTE_PCA, l))
+        PCA_m8_scores.append(quad_logistic_reg_score(DTR_PCA, Ltr, DTE_PCA, l, pi))
 
     validate_LR(scores_append, LR_labels, 'LR QUAD, RAW data', l, pi)
 
@@ -92,10 +90,6 @@ def validate_LR(scores, LR_labels, appendToTitle, l, pi):
     scores_tot_05 = compute_dcf_min_effPrior(0.1, scores_append, LR_labels)
     scores_tot_01 = compute_dcf_min_effPrior(0.5, scores_append, LR_labels)
     scores_tot_09 = compute_dcf_min_effPrior(0.9, scores_append, LR_labels)
-
-    # plot_ROC(scores_append, LR_labels, appendToTitle + 'WEIGHTED_LR, lambda=' + str(l))
-
-    # bayes_error_min_act_plot(scores_append, LR_labels, appendToTitle + 'WEIGHTED_LR, lambda=' + str(l), 0.4)
 
     t = PrettyTable(["Type", "π=0.1", "π=0.5", "π=0.9"])
     t.title = appendToTitle
@@ -125,13 +119,13 @@ def kfold_QUAD_LR_calibration(DTR, LTR, l, k):
 
         phi_DTE = numpy.vstack([expanded_DTE, Dte])
 
-        scores_append.append(quad_logistic_reg_score(phi, Ltr, phi_DTE, l))
+        scores_append.append(quad_logistic_reg_score(phi, Ltr, phi_DTE, l, 0.5))
 
         # PCA m=9
         s, P = PCA(Dtr, 9)
         DTR_PCA = numpy.dot(P.T, Dtr)
         DTE_PCA = numpy.dot(P.T, Dte)
-        PCA_m9_scores.append(quad_logistic_reg_score(DTR_PCA, Ltr, DTE_PCA, l))
+        PCA_m9_scores.append(quad_logistic_reg_score(DTR_PCA, Ltr, DTE_PCA, l, 0.5))
 
         LR_labels = np.append(LR_labels, Lte, axis=0)
         LR_labels = np.hstack(LR_labels)
