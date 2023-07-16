@@ -104,7 +104,7 @@ def evaluation(DTR, LTR, DTE, LTE):
     compare_evaluation_GMM_vs_SVM_RBF(DTR, LTR, DTE, LTE)
     evaluation_SVM_RBF_score_calibration(DTR, LTR, DTE, LTE)
     compare_evaluation_LRQ_vs_SVM_RBF_calibrated(DTR, LTR, DTE, LTE)
-    #compare_evaluation_GMM_vs_SVM_RBF_calibrated(DTR, LTR, DTE, LTE)
+    compare_evaluation_GMM_vs_SVM_RBF_calibrated(DTR, LTR, DTE, LTE)
 
 
 if __name__ == '__main__':
@@ -113,6 +113,6 @@ if __name__ == '__main__':
 
     DTR, LTR = randomize(D, L)
     DTE, LTE = randomize(Dt, Lt)
-    #plot_features(DTR, LTR)
-    #validation(DTR, LTR)
+    plot_features(DTR, LTR)
+    validation(DTR, LTR)
     evaluation(DTR, LTR, DTE, LTE)
