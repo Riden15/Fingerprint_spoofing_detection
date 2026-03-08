@@ -29,3 +29,6 @@
 *.fdb_latexmk
 *.synctex.gz
 *.class
+
+
+/Data/FingerprintSpoofingDetection_2023.pdf
